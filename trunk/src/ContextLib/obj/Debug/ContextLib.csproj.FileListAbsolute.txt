@@ -1,0 +1,9 @@
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\ContextLib\bin\Debug\ContextLib.dll
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\ContextLib\bin\Debug\ContextLib.pdb
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\ContextLib\bin\Debug\SystemCore.dll
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\ContextLib\bin\Debug\SystemCore.pdb
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\ContextLib\obj\Debug\ResolveAssemblyReference.cache
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\ContextLib\obj\Debug\ContextLib.dll
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\ContextLib\obj\Debug\ContextLib.pdb
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\Interface\bin\Debug\Plugins\ContextLib.dll
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\Interface\bin\Debug\Plugins\ContextLib.pdb

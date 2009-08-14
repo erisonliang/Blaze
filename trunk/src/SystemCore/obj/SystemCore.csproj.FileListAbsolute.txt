@@ -1,0 +1,5 @@
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\SystemCore\obj\Debug\ResolveAssemblyReference.cache
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\SystemCore\bin\Debug\SystemCore.dll
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\SystemCore\bin\Debug\SystemCore.pdb
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\SystemCore\obj\Debug\SystemCore.dll
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\SystemCore\obj\Debug\SystemCore.pdb

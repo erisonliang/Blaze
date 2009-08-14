@@ -1,0 +1,17 @@
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\obj\Debug\ResolveAssemblyReference.cache
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\bin\Debug\WebSearch.dll
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\bin\Debug\WebSearch.pdb
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\bin\Debug\CommonTypes.dll
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\bin\Debug\SystemUtilities.dll
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\bin\Debug\CommonTypes.pdb
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\bin\Debug\SystemUtilities.pdb
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\obj\Debug\WebSearch.dll
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\obj\Debug\WebSearch.pdb
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\bin\Release\WebSearch.dll
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\bin\Release\WebSearch.pdb
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\bin\Release\CommonTypes.dll
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\bin\Release\SystemUtilities.dll
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\bin\Release\CommonTypes.pdb
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\bin\Release\SystemUtilities.pdb
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\obj\Debug\WebSearch.Properties.Resources.resources
+D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\WebSearch\obj\Debug\WebSearch.csproj.GenerateResource.Cache
