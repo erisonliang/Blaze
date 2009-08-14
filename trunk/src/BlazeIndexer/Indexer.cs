@@ -106,6 +106,8 @@ namespace BlazeIndexer
                     }
                 }
 
+                if (ext.Count == 0)
+                    ext.Add(".*");
                 try
                 {
                     fullpathes = new List<string>(FileSearcher.SearchFullNames(directory, ext, indexSubdirectories[directory]));
