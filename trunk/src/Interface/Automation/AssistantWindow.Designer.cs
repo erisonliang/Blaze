@@ -16,6 +16,8 @@
             Gma.UserActivityMonitor.HookManager.KeyDown -= HookManager_KeyDown;
             SuggestionDisplay.KeyDown -= AssistantWindow_KeyDown;
             this.GotFocus -= AssistantWindow_GotFocus;
+            Iterations.KeyDown -= Iterations_KeyDown;
+            Iterations.LostFocus -= Iterations_LostFocus;
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -90,7 +92,7 @@
             this.ToolStrip.Location = new System.Drawing.Point(0, 314);
             this.ToolStrip.Name = "ToolStrip";
             this.ToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.ToolStrip.Size = new System.Drawing.Size(474, 25);
+            this.ToolStrip.Size = new System.Drawing.Size(476, 25);
             this.ToolStrip.TabIndex = 0;
             this.ToolStrip.Text = "toolStrip1";
             // 
@@ -148,9 +150,8 @@
             // 
             this.Iterations.BackColor = System.Drawing.SystemColors.Window;
             this.Iterations.Name = "Iterations";
-            this.Iterations.ReadOnly = true;
-            this.Iterations.Size = new System.Drawing.Size(25, 25);
-            this.Iterations.Text = "1";
+            this.Iterations.Size = new System.Drawing.Size(30, 25);
+            this.Iterations.Text = "1000";
             this.Iterations.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // IncreaseRepetitionNumber
@@ -277,7 +278,7 @@
             this.DoitButton.Image = ((System.Drawing.Image)(resources.GetObject("DoitButton.Image")));
             this.DoitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.DoitButton.Name = "DoitButton";
-            this.DoitButton.Size = new System.Drawing.Size(23, 20);
+            this.DoitButton.Size = new System.Drawing.Size(23, 22);
             this.DoitButton.Text = "Do it! (Enter)";
             this.DoitButton.Click += new System.EventHandler(this.DoitButton_Click);
             // 
@@ -291,7 +292,7 @@
             this.SuggestionDisplay.Location = new System.Drawing.Point(8, 19);
             this.SuggestionDisplay.Name = "SuggestionDisplay";
             this.SuggestionDisplay.ReadOnly = true;
-            this.SuggestionDisplay.Size = new System.Drawing.Size(436, 265);
+            this.SuggestionDisplay.Size = new System.Drawing.Size(438, 265);
             this.SuggestionDisplay.TabIndex = 1;
             this.SuggestionDisplay.Text = "Sorry but no repetitions were detected yet.";
             // 
@@ -304,7 +305,7 @@
             this.groupBox1.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(450, 290);
+            this.groupBox1.Size = new System.Drawing.Size(452, 290);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Blaze has a suggestion for you:";
@@ -319,7 +320,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(474, 339);
+            this.ClientSize = new System.Drawing.Size(476, 339);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.ToolStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

@@ -733,23 +733,30 @@ namespace SystemCore.SystemAbstraction.WindowManagement
 
             foreach (SHDocVw.InternetExplorer ie in shellWindows)
             {
-                if (File.Exists(ie.FullName))
+                try
                 {
-                    filename = Path.GetFileNameWithoutExtension(ie.FullName).ToLower();
-                    if (filename.Equals("explorer"))
+                    if (File.Exists(ie.FullName))
                     {
-                        try
+                        filename = Path.GetFileNameWithoutExtension(ie.FullName).ToLower();
+                        if (filename.Equals("explorer"))
                         {
-                            if (ie.HWND == hWnd.ToInt32())
+                            try
                             {
-                                return ie;
+                                if (ie.HWND == hWnd.ToInt32())
+                                {
+                                    return ie;
+                                }
+                            }
+                            catch
+                            {
+
                             }
                         }
-                        catch
-                        {
-
-                        }
                     }
+                }
+                catch
+                {
+                    // POSSIBLE PROBLEM HERE
                 }
             }
             return null;

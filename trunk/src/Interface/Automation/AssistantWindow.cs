@@ -45,6 +45,54 @@ namespace Blaze.Automation
             SuggestionDisplay.KeyDown += new KeyEventHandler(AssistantWindow_KeyDown);
             this.GotFocus += new EventHandler(AssistantWindow_GotFocus);
             SaveFileDialog.InitialDirectory = SystemCore.CommonTypes.CommonInfo.ScriptsFolder;
+            Iterations.KeyDown += new KeyEventHandler(Iterations_KeyDown);
+            Iterations.LostFocus += new EventHandler(Iterations_LostFocus);
+        }
+
+        void Iterations_LostFocus(object sender, EventArgs e)
+        {
+            //Iterations.Text = GetCurrentIteration().ToString();
+            int num;
+            if (_suggestions.Length > 0)
+            {
+                if (Int32.TryParse(Iterations.Text, out num))
+                {
+                    SetCurrentIteration(num);
+                    UpdateIterations();
+                    LoadSelectedSuggestion();
+                }
+                else
+                    Iterations.Text = GetCurrentIteration().ToString();
+            }
+            else
+            {
+                Iterations.Text = "0";
+            }
+        }
+
+        void Iterations_KeyDown(object sender, KeyEventArgs e)
+        {
+            int num;
+            if (e.KeyCode == Keys.Return)
+            {
+                if (_suggestions.Length > 0)
+                {
+                    if (Int32.TryParse(Iterations.Text, out num))
+                    {
+                        SetCurrentIteration(num);
+                        UpdateIterations();
+                        LoadSelectedSuggestion();
+                    }
+                    else
+                        Iterations.Text = GetCurrentIteration().ToString();
+                }
+                else
+                {
+                    Iterations.Text = "0";
+                }
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
         }
 
         void AssistantWindow_GotFocus(object sender, EventArgs e)
@@ -198,7 +246,12 @@ namespace Blaze.Automation
 
         private void SetCurrentIteration(int val)
         {
-            _iterations[_selected_suggestion - 1] = val;
+            if (val > 1000)
+                _iterations[_selected_suggestion - 1] = 1000;
+            else if (val < 1)
+                _iterations[_selected_suggestion - 1] = 1;
+            else
+                _iterations[_selected_suggestion - 1] = val;
         }
 
         private void SetCurrentSpeed(float val)
@@ -327,8 +380,7 @@ namespace Blaze.Automation
         {
             if (_suggestions.Length > 0)
             {
-                if (GetCurrentIteration() < 1000)
-                    SetCurrentIteration(GetCurrentIteration() + 1);
+                SetCurrentIteration(GetCurrentIteration() + 1);
                 UpdateIterations();
                 LoadSelectedSuggestion();
             }
@@ -338,8 +390,7 @@ namespace Blaze.Automation
         {
             if (_suggestions.Length > 0)
             {
-                if (GetCurrentIteration() > 1)
-                    SetCurrentIteration(GetCurrentIteration() - 1);
+                SetCurrentIteration(GetCurrentIteration() - 1);
                 UpdateIterations();
                 LoadSelectedSuggestion();
             }

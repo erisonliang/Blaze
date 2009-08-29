@@ -354,6 +354,8 @@ namespace ContextLib.DataContainers.Monitoring
             BasicAddAction(action);
         }
 
+        //private static bool _test = false;
+
         private void AssignValidId(UserAction action)
         {
             // find the last logged action that is of the same kind of the new one
@@ -400,6 +402,10 @@ namespace ContextLib.DataContainers.Monitoring
                             {
                                 TypeTextAction old_action = (TypeTextAction)UserActions[i];
                                 TypeTextAction new_action = (TypeTextAction)action;
+                                //if (new_action.Text == "ola 3 ")
+                                //    _test = true;
+                                //if (_test && new_action.Text == "ola 3")
+                                //    System.Windows.Forms.MessageBox.Show("test");
                                 generalizations = TextGeneralization.Generate(old_action.Text, new_action.Text, new_action.Time - old_action.Time);
                                 if (generalizations.Length > 0)
                                 {
