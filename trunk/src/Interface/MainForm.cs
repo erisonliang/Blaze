@@ -54,6 +54,7 @@ namespace Blaze
         private Automation.AssistantWindow _assistant = null;
         private DateTime _last_caps;
         private ContextLib.DataContainers.Monitoring.Suggestion _last_suggestion = null;
+        private MainApplication _app;
         //private bool _is_indexing = false;
         //private bool _is_recording = false;
         //IntPtr _hook_id;
@@ -87,14 +88,11 @@ namespace Blaze
             set { _last_suggestion = value; }
         }
 
-        public MainForm()
+        public MainForm(MainApplication app)
         {
             InitializeComponent();
-            Hide();
-        }
+            _app = app;
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
             _interpreter = new InterpreterEngine(this);
             _loader = new PluginLoader(CommonInfo.PluginsFolder);
             _superListBox = new SuperListBox(this);
@@ -109,9 +107,8 @@ namespace Blaze
             _tooltip.Popup += new PopupEventHandler(_tooltip_Popup);
             RegisterHotKey();
 
-            this.FormClosing += new FormClosingEventHandler(MainForm_FormClosing);
             this.VisibleChanged += new EventHandler(MainForm_VisibleChanged);
-            this.Shown += new EventHandler(MainForm_Shown);
+            //this.Shown += new EventHandler(MainForm_Shown);
             TextInput.KeyDown += new KeyEventHandler(TextInput_KeyDown);
             TextInput.KeyPress += new KeyPressEventHandler(TextInput_KeyPress);
             TextInput.LostFocus += new EventHandler(TextInput_LostFocus);
@@ -119,10 +116,7 @@ namespace Blaze
             NameDisplay.Text = string.Empty;
             CustomLabel.Text = string.Empty;
             CustomLabel.Paint += new PaintEventHandler(CustomLabel_Paint);
-            //IndexingLabel.Text = "idx";
-            //IndexingLabel.Paint += new PaintEventHandler(IndexingLabel_Paint);
-            //RecordingLabel.Text = "rec";
-            //RecordingLabel.Paint += new PaintEventHandler(RecordingLabel_Paint);
+
             LoadPlugins();
 
             // Load index
@@ -146,26 +140,21 @@ namespace Blaze
             CustomLabel.MouseUp += new MouseEventHandler(MainForm_MouseUp);
             CustomLabel.MouseDown += new MouseEventHandler(MainForm_MouseDown);
             CustomLabel.MouseMove += new MouseEventHandler(MainForm_MouseMove);
-            //IndexingLabel.MouseUp += new MouseEventHandler(MainForm_MouseUp);
-            //IndexingLabel.MouseDown += new MouseEventHandler(MainForm_MouseDown);
-            //IndexingLabel.MouseMove += new MouseEventHandler(MainForm_MouseMove);
-            //RecordingLabel.MouseUp += new MouseEventHandler(MainForm_MouseUp);
-            //RecordingLabel.MouseDown += new MouseEventHandler(MainForm_MouseDown);
-            //RecordingLabel.MouseMove += new MouseEventHandler(MainForm_MouseMove);
 
-            //WindowState = FormWindowState.Minimized;
-            //Hide();
             Point new_location = SettingsManager.Instance.GetInterfaceInfo().WindowLocation;
             Rectangle bounds = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
             if (new_location.X >= bounds.X && new_location.X <= bounds.Width && new_location.Y >= bounds.Y && new_location.Y <= bounds.Height)
                 this.Location = new_location;
-            //HookManager.KeyDown += new KeyEventHandler(HookManager_KeyDown);
-            //HookManager.KeyUp += new KeyEventHandler(HookManager_KeyUp);
-            //_hook_id = GlobalKeyboardHook.SetHook(HookCallback);
+
             _last_caps = DateTime.MinValue;
             Gma.UserActivityMonitor.HookManager.KeyDown += new KeyEventHandler(HookManager_KeyDown);
             UserContext.Instance.AssistantObject.NewSuggestion += new Assistant.SuggestionEventHandler(AssistantObject_NewSuggestion);
             UserContext.Instance.AssistantObject.NoNewSuggestion += new Assistant.SuggestionEventHandler(AssistantObject_NoNewSuggestion);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            
         }
 
         void AssistantObject_NoNewSuggestion()
@@ -398,10 +387,10 @@ namespace Blaze
             }
         }
 
-        void MainForm_Shown(object sender, EventArgs e)
-        {
-            HideAutomator();
-        }
+        //void MainForm_Shown(object sender, EventArgs e)
+        //{
+        //    HideAutomator();
+        //}
 
         //
         // Draw description label
@@ -717,10 +706,17 @@ namespace Blaze
 
         public void OpenSettings()
         {
-            _settings = new SettingsForm(this);
-            _settings.ShowDialog(this);
-            _settings.Dispose();
-            _settings = null;
+            if (_settings == null)
+            {
+                _settings = new SettingsForm(this);
+                _settings.ShowDialog(this);
+                _settings.Dispose();
+                _settings = null;
+            }
+            else
+            {
+                _settings.Focus();
+            }
         }
 
         public void RebuildIndex()
@@ -1207,15 +1203,6 @@ namespace Blaze
             //Show();
             //Activate();
             ShowAutomator();
-        }
-
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                e.Cancel = true;
-                Hide();
-            }
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)

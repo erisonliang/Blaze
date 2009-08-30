@@ -226,6 +226,7 @@
       <DependentUpon>DebugWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="FileIndexer\FileIndexer.cs" />
+    <Compile Include="MainApplication.cs" />
     <Compile Include="Interpreter\InterpreterEngine.cs" />
     <Compile Include="Memoization\LookUpTable.cs" />
     <Compile Include="Interpreter\MenuEngine.cs" />

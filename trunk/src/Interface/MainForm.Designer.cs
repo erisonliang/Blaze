@@ -13,9 +13,8 @@ namespace Blaze
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            this.FormClosing -= MainForm_FormClosing;
             this.VisibleChanged -= MainForm_VisibleChanged;
-            this.Shown -= MainForm_Shown;
+            //this.Shown -= MainForm_Shown;
             TextInput.KeyDown -= TextInput_KeyDown;
             TextInput.KeyPress -= TextInput_KeyPress;
             NotifyIcon.DoubleClick -= NotifyIcon_DoubleClick;
@@ -225,7 +224,7 @@ namespace Blaze
             this.toolStripSeparator7,
             this.exitToolStripMenuItem});
             this.MainContextMenu.Name = "MainContextMenu";
-            this.MainContextMenu.Size = new System.Drawing.Size(201, 226);
+            this.MainContextMenu.Size = new System.Drawing.Size(201, 204);
             // 
             // hideToolStripMenuItem1
             // 
