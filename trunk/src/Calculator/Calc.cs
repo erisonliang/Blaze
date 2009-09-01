@@ -161,14 +161,16 @@ namespace Calculator
         {
             Expression expr = new Expression();
             string fixed_input = input.Replace(" ", string.Empty);
-            if (CultureInfo.InvariantCulture.NumberFormat.NumberGroupSeparator == ",")
-            {
-                fixed_input = fixed_input.Replace('.', ',');
-            }
-            else if (CultureInfo.InvariantCulture.NumberFormat.NumberGroupSeparator == ".")
-            {
-                fixed_input = fixed_input.Replace(',', '.');
-            }
+            //if (CultureInfo.InvariantCulture.NumberFormat.NumberGroupSeparator == ",")
+            //{
+            //    fixed_input = fixed_input.Replace('.', ',');
+            //}
+            //else if (CultureInfo.InvariantCulture.NumberFormat.NumberGroupSeparator == ".")
+            //{
+            //    fixed_input = fixed_input.Replace(',', '.');
+            //}
+            fixed_input = fixed_input.Replace(".", CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator);
+            fixed_input = fixed_input.Replace(",", CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator);
             expr.Parse(fixed_input);
             return expr.Eval().ToString();
         }

@@ -444,17 +444,23 @@ namespace Blaze
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            _interface_info.NumberOfSuggestions = (int)suggestionsNumericUpDown.Value;
-            _system_options_info.UpdateTime = (int)updateTimeNumericUpDown.Value;
             HotKey newhotkey = new HotKey(_modifiers[ModifierComboBox.SelectedItem.ToString()],
                                             _keys[MainKeyComboBox.SelectedItem.ToString()]);
             if (newhotkey.KeyName != _hotkey.KeyName ||
                 newhotkey.ModifiersName != _hotkey.ModifiersName)
             {
-                SettingsManager.Instance.SaveHotKey(newhotkey);
                 _parent.UnregisterHotKey();
-                _parent.RegisterHotKey();
+                if (!_parent.RegisterHotKey(newhotkey))
+                {
+                    MessageBox.Show("The hotkey you have chosen is already in use. Please pick another one",
+                                    "Hotkey in use", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    _parent.RegisterHotKey();
+                    return;
+                }
+                SettingsManager.Instance.SaveHotKey(newhotkey);
             }
+            _interface_info.NumberOfSuggestions = (int)suggestionsNumericUpDown.Value;
+            _system_options_info.UpdateTime = (int)updateTimeNumericUpDown.Value;
             List<List<string>> ext = new List<List<string>>();
             List<bool> subdir = new List<bool>();
             foreach (string dir in _directories)

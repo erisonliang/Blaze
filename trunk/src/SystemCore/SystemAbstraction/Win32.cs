@@ -223,6 +223,32 @@ namespace SystemCore.SystemAbstraction
         EmfToWmfBitsFlagsNoXORClip = 0x00000004
     };
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+    public struct SHELLEXECUTEINFO
+    {
+        public int cbSize;
+        public uint fMask;
+        public IntPtr hwnd;
+        [MarshalAs(UnmanagedType.LPTStr)]
+        public string lpVerb;
+        [MarshalAs(UnmanagedType.LPTStr)]
+        public string lpFile;
+        [MarshalAs(UnmanagedType.LPTStr)]
+        public string lpParameters;
+        [MarshalAs(UnmanagedType.LPTStr)]
+        public string lpDirectory;
+        public int nShow;
+        public IntPtr hInstApp;
+        public IntPtr lpIDList;
+        [MarshalAs(UnmanagedType.LPTStr)]
+        public string lpClass;
+        public IntPtr hkeyClass;
+        public uint dwHotKey;
+        public IntPtr hIcon;
+        public IntPtr hProcess;
+    }
+
+
     public class Win32
     {
         #region Properties
@@ -534,7 +560,10 @@ namespace SystemCore.SystemAbstraction
         public static extern short GetKeyState(int vKey);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        public static extern short GetAsyncKeyState(int vKey); 
+        public static extern short GetAsyncKeyState(int vKey);
+
+        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+        public static extern bool ShellExecuteEx(ref SHELLEXECUTEINFO lpExecInfo);
 
         public static void ClearKeyboardBuffer(uint vk, uint sc, IntPtr hkl)
         {

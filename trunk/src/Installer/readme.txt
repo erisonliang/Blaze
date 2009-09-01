@@ -15,6 +15,17 @@ Shift. If this happens, press each stuck key once and it will be fixed.
 
 VERSION HISTORY:
 
+(01/09/2009) - Blaze 0.4.7.12 beta
+* Calculator crash fixed.
+* Double settings window crash fixed.
+* Blaze's window flash on start up fixed.
+
+(29/08/2009) - Blaze 0.4.7.10 beta
+* Blaze random crash fixed.
+* BlazeIndexer crash fixed.
+* More keys available for Blaze hotkey.
+* Users now can directly edit iteration amount in Blaze Assistant.
+
 (28/08/2009) - Blaze 0.4.7.7 beta
 * Several bug fixes.
 * Action monitoring improved: now Blaze keeps track of file operations even if you browse to a subfolder.

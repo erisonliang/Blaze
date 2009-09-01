@@ -692,11 +692,16 @@ namespace Blaze
             //GC.Collect();
         }
 
-        public void RegisterHotKey()
+        public bool RegisterHotKey()
         {
             HotKey hotkey = SettingsManager.Instance.GetHotKey();
             //MessageBox.Show("Key: " + hotkey.Key.ToString() + " Modifiers: " + hotkey.Modifiers.ToString());
-            Win32.RegisterHotKey(this.Handle, _id, hotkey.Modifiers, hotkey.Key);
+            return Win32.RegisterHotKey(this.Handle, _id, hotkey.Modifiers, hotkey.Key);
+        }
+
+        public bool RegisterHotKey(HotKey hotkey)
+        {
+            return Win32.RegisterHotKey(this.Handle, _id, hotkey.Modifiers, hotkey.Key);
         }
 
         public void UnregisterHotKey()

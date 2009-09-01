@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Calculator
 {
@@ -77,7 +78,7 @@ namespace Calculator
                     }
                     else
                     {
-                        operand = new Operand(Double.Parse(term1));
+                        operand = new Operand(Double.Parse(term1, CultureInfo.InvariantCulture));
                     }
                     break;
                 }
@@ -87,7 +88,7 @@ namespace Calculator
                     if (term1 == string.Empty)
                         operand = null;
                     else
-                        operand = new Operand(Double.Parse(term1));
+                        operand = new Operand(Double.Parse(term1, CultureInfo.InvariantCulture));
                     break;
                 }
             }
@@ -136,7 +137,7 @@ namespace Calculator
                 double val;
                 try
                 {
-                    val = Double.Parse(input);
+                    val = Double.Parse(input, CultureInfo.InvariantCulture);
                 }
                 catch
                 {

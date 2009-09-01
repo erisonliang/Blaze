@@ -94,12 +94,19 @@ namespace ContextLib
         ~Observer()
         {
             // keyboard and mouse hooks
-            HookManager.KeyDown -= HookManager_KeyDown;
-            HookManager.KeyUp -= HookManager_KeyUp;
-            HookManager.KeyPress -= HookManager_KeyPress;
-            HookManager.MouseDown -= HookManager_MouseDown;
-            HookManager.MouseUp -= HookManager_MouseUp;
-            HookManager.MouseWheel -= HookManager_MouseWheel;
+            try
+            {
+                HookManager.KeyDown -= HookManager_KeyDown;
+                HookManager.KeyUp -= HookManager_KeyUp;
+                HookManager.KeyPress -= HookManager_KeyPress;
+                HookManager.MouseDown -= HookManager_MouseDown;
+                HookManager.MouseUp -= HookManager_MouseUp;
+                HookManager.MouseWheel -= HookManager_MouseWheel;
+            }
+            catch
+            {
+
+            }
             _file_system_watcher.Created -= _file_system_watcher_Created;
             _file_system_watcher.Deleted -= _file_system_watcher_Deleted;
             _file_system_watcher.Renamed -= _file_system_watcher_Renamed;
