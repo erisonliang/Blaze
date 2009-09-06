@@ -277,7 +277,7 @@ namespace ContextLib.DataContainers.Monitoring.Generalizations
                         last_new_name = string.Empty;
 
                         // merge old names
-                        switch (prev_old_func_type)
+                        switch (prev_old_func_type)    
                         {
                             case Function.FunctionType.ConstantFileDiffFunction: // if old generalization has a constant file diff function type
                                 switch (next_old_func_type)

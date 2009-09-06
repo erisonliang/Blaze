@@ -34,6 +34,7 @@ namespace ContextLib
         private FileSystemWatcher _file_system_watcher;
         //private SystemCore.SystemAbstraction.FileHandling.Logger _logger;
         private Window _working_window = null;
+        private string _monitoring_path = null;
         private string _working_path = null;
         private bool _is_monitoring;
         private bool _is_recording;
@@ -141,7 +142,7 @@ namespace ContextLib
                     }
                     catch
                     {
-                        
+                        _monitoring_path = null;
                         _working_path = null;
                     }
                 }
@@ -569,19 +570,22 @@ namespace ContextLib
                     }
 
                     string working_path = CommonInfo.UserDesktop;
+                    string monitoring_path = working_path;
                     Thread get_path = new Thread(new ThreadStart(delegate() // evil hack T_T
                         {
                             working_path = WindowUtility.Instance.GetWExplorerUrl(new IntPtr(window.Handle));
-                            if (Directory.Exists(working_path))
+                            monitoring_path = working_path;
+                            if (Directory.Exists(monitoring_path))
                             {
-                                DirectoryInfo info = Directory.GetParent(working_path);
+                                DirectoryInfo info = Directory.GetParent(monitoring_path);
                                 if (info != null)
-                                    working_path = info.FullName;
+                                    monitoring_path = info.FullName;
                             }
-                            if ((_working_path == null || working_path != _working_path) && Directory.Exists(working_path))
+                            if ((_working_path == null || working_path != _working_path) && Directory.Exists(working_path) && Directory.Exists(monitoring_path))
                             {
                                 _working_path = working_path;
-                                _file_system_watcher.Path = _working_path;
+                                _monitoring_path = monitoring_path;
+                                _file_system_watcher.Path = _monitoring_path;
                                 if (!_file_system_watcher.EnableRaisingEvents)
                                     _file_system_watcher.EnableRaisingEvents = true;
                                 _working_window = window;
