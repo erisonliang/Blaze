@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Windows.Forms;
 using SystemCore.SystemAbstraction.StringUtilities;
 using Configurator;
 
@@ -229,7 +230,7 @@ namespace SystemCore.CommonTypes
         /// A delegate method that executes the command with the specified parameters.
         /// </summary>
         /// <param name="parameters">A string containing the parameters, provided by the user.</param>
-        public delegate void ExecutionDelegate(string parameters);
+        public delegate void ExecutionDelegate(string parameters, Keys modifiers);
         #endregion
 
         #region Public Methods
@@ -343,9 +344,9 @@ namespace SystemCore.CommonTypes
             return _usage_delegate(parameters);
         }
 
-        public void Execute(string parameters)
+        public void Execute(string parameters, Keys modifiers)
         {
-            _execute_delegate(parameters);
+            _execute_delegate(parameters, modifiers);
         }
 
         public bool FitsPriority(PriorityType priority)

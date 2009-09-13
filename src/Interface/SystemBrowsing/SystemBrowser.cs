@@ -146,11 +146,14 @@ namespace Blaze.SystemBrowsing
                 return null;
         }
 
-        public void Execute(InterpreterItem item)
+        public void Execute(InterpreterItem item, Keys modifiers)
         {
             try
             {
-                ProcessStartInfo info = new ProcessStartInfo(item.AutoComplete);
+                string command = item.AutoComplete;
+                if ((modifiers & Keys.Shift) == Keys.Shift)
+                    command = GetItemFolder(command);
+                ProcessStartInfo info = new ProcessStartInfo(command);
                 info.UseShellExecute = true;
                 info.ErrorDialog = true;
                 System.Diagnostics.Process.Start(info);
@@ -160,6 +163,29 @@ namespace Blaze.SystemBrowsing
             {
                 MessageBox.Show(e.Message);
             }
+        }
+        #endregion
+
+        #region Private Methods
+        private string GetItemFolder(string path)
+        {
+            if (Path.GetExtension(path) == ".lnk")
+            {
+                IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
+                IWshRuntimeLibrary.IWshShortcut link = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(path);
+                if (File.Exists(link.TargetPath))
+                {
+                    return Path.GetDirectoryName(link.TargetPath);
+                }
+                else if (Directory.Exists(link.TargetPath))
+                {
+                    if (link.TargetPath[link.TargetPath.Length - 1] != '\\')
+                        return link.TargetPath + "\\";
+                    else
+                        return link.TargetPath;
+                }
+            }
+            return Path.GetDirectoryName(path);
         }
         #endregion
     }

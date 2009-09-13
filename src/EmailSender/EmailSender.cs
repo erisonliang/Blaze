@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
+using System.Windows.Forms;
 using SystemCore.CommonTypes;
 
 namespace EmailSender
@@ -292,7 +293,7 @@ namespace EmailSender
 
                 return new CommandUsage(_email_command.Name, args, comp);
             }));
-            _email_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            _email_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 Email email = BuildEmail(parameters);
                 ProcessStartInfo info = new ProcessStartInfo("mailto:" + email.Contact + "?body=" + email.Body + "&subject=" + email.Subject);

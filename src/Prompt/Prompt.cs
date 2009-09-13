@@ -312,7 +312,7 @@ namespace Prompt
 
                 return new CommandUsage(_run_command.Name, args, comp);
             }));
-            _run_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            _run_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 ProcessStartInfo info = new ProcessStartInfo(Environment.GetEnvironmentVariable("COMSPEC"));
                 //if (UserContext.Instance.IsWindowsExplorerOnTop)
@@ -354,7 +354,7 @@ namespace Prompt
 
                 return new CommandUsage(_add_command.Name, args, comp);
             }));
-            _add_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            _add_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 CommandPicker ep = new CommandPicker(this);
                 if (ep.ShowDialog() == DialogResult.OK)
@@ -419,7 +419,7 @@ namespace Prompt
 
                     return new CommandUsage(cmd.Name, args, comp);
                 }));
-                cmd.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+                cmd.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
                 {
                     
                     try
@@ -427,6 +427,8 @@ namespace Prompt
                         ProcessStartInfo info = new ProcessStartInfo(pcommand.Path);
                         //if (UserContext.Instance.IsWindowsExplorerOnTop)
                         //    info.WorkingDirectory = UserContext.Instance.GetExplorerPath(true);
+                        string wd = System.IO.Path.GetDirectoryName(pcommand.Path);
+                        info.WorkingDirectory = (System.IO.Directory.Exists(wd) ? wd : string.Empty);
                         info.Arguments = pcommand.GetArguments(parameters);
                         info.UseShellExecute = true;
                         info.ErrorDialog = true;

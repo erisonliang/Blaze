@@ -635,7 +635,7 @@ namespace WebSearch
 
                     return new CommandUsage(cmd.Name, args, comp);
                 }));
-                cmd.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+                cmd.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
                 {
                     try
                     {
@@ -685,7 +685,7 @@ namespace WebSearch
 
                 return new CommandUsage(_add_command.Name, args, comp);
             }));
-            _add_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            _add_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 EnginePicker ep = new EnginePicker(this);
                 if (ep.ShowDialog() == DialogResult.OK)
@@ -722,7 +722,7 @@ namespace WebSearch
 
                 return new CommandUsage(@"Valid URL. i.e.: http://www.google.com", args, comp);
             }));
-            _process_url_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            _process_url_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 try
                 {

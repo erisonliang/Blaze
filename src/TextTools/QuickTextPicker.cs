@@ -125,7 +125,7 @@ namespace TextTools
 
                     return new CommandUsage(new_command.Name, args, comp);
                 }));
-                new_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+                new_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
                 {
                     UserContext.Instance.InsertText(_quick_text.Text, true);
                 }));

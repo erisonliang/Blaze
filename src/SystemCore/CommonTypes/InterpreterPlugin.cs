@@ -186,13 +186,13 @@ namespace SystemCore.CommonTypes
             return null;
         }
 
-        public virtual bool Execute(InterpreterItem item)
+        public virtual bool Execute(InterpreterItem item, Keys modifiers)
         {
             Command command = GetCommandByName(item.CommandName);
             if (command != null)
             {
                 string parameters = BuildParameters(item.Text, item.CommandTokens);
-                command.Execute(parameters);
+                command.Execute(parameters, modifiers);
                 return true;
             }
             return false;

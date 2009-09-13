@@ -216,7 +216,7 @@ namespace Calculator
 
                 return new CommandUsage(@"Valid math expression. i.e.: 2+3*(3^2)", args, comp);
             }));
-            _calc_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            _calc_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 Clipboard.SetText(Eval(parameters));
             }));
