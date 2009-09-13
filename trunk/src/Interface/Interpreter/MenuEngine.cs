@@ -154,7 +154,7 @@ namespace Blaze.Interpreter
 
                     return new CommandUsage(edit_script.Name, args, comp);
                 }));
-                edit_script.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+                edit_script.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
                 {
                     string[] tokens = parameters.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     List args = new List();
@@ -231,7 +231,7 @@ namespace Blaze.Interpreter
 
                 return new CommandUsage(new_script.Name, args, comp);
             }));
-            new_script.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            new_script.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 string[] tokens = parameters.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 List args = new List();
@@ -308,7 +308,7 @@ namespace Blaze.Interpreter
 
                 return new CommandUsage(rebuild_index.Name, args, comp);
             }));
-            rebuild_index.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            rebuild_index.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 _parent.RebuildIndex();
             }));
@@ -343,7 +343,7 @@ namespace Blaze.Interpreter
 
                 return new CommandUsage(configure_blaze.Name, args, comp);
             }));
-            configure_blaze.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            configure_blaze.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 _parent.OpenSettings();
             }));
@@ -379,7 +379,7 @@ namespace Blaze.Interpreter
 
                 return new CommandUsage(clear_command.Name, args, comp);
             }));
-            clear_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            clear_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 _parent.ClearLearnedCommands();
             }));
@@ -414,7 +414,7 @@ namespace Blaze.Interpreter
 
                 return new CommandUsage(scripts_folder_command.Name, args, comp);
             }));
-            scripts_folder_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            scripts_folder_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 if (!Directory.Exists(CommonInfo.ScriptsFolder))
                     Directory.CreateDirectory(Path.GetFullPath(CommonInfo.ScriptsFolder));
@@ -451,7 +451,7 @@ namespace Blaze.Interpreter
 
                 return new CommandUsage(record_macro_command.Name, args, comp);
             }));
-            record_macro_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            record_macro_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 UserContext.Instance.StartMacroRecording();
             }));
@@ -486,7 +486,7 @@ namespace Blaze.Interpreter
 
                 return new CommandUsage(exit_command.Name, args, comp);
             }));
-            exit_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            exit_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 _parent.Exit();
             }));
@@ -521,7 +521,7 @@ namespace Blaze.Interpreter
 
                 return new CommandUsage(assistant_command.Name, args, comp);
             }));
-            assistant_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            assistant_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 _parent.ShowAssistantWindow();
             }));
@@ -570,7 +570,7 @@ namespace Blaze.Interpreter
 
                 return new CommandUsage(redo_command.Name, args, comp);
             }));
-            redo_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            redo_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 if (_parent.LastAcceptedSuggestion != null)
                 {
@@ -636,7 +636,7 @@ namespace Blaze.Interpreter
 
                 return new CommandUsage(continue_command.Name, args, comp);
             }));
-            continue_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            continue_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 if (_parent.LastAcceptedSuggestion != null)
                 {
@@ -697,7 +697,7 @@ namespace Blaze.Interpreter
 
                     return new CommandUsage(script_command.Name, args, comp);
                 }));
-                script_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+                script_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
                 {
                     string[] tokens = parameters.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     List args = new List();

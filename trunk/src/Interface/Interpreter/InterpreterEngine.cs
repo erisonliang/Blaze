@@ -566,12 +566,12 @@ namespace Blaze.Interpreter
                     break;
                 case OwnerType.FileSystem:
                     //StoreKeywords(cmd, item);
-                    _systemBrowser.Execute(item);
+                    _systemBrowser.Execute(item, modifiers);
                     _parent.HideAutomator();
                     break;
                 case OwnerType.Menu:
                     //StoreKeywords(cmd, item);
-                    if (_menuEngine.Execute(item))
+                    if (_menuEngine.Execute(item, modifiers))
                         _parent.HideAutomator();
                     break;
                 case OwnerType.Plugin:
@@ -580,7 +580,7 @@ namespace Blaze.Interpreter
                     {
                         if (plugin.Name == item.OwnerId)
                         {
-                            if (plugin.Execute(item))
+                            if (plugin.Execute(item, modifiers))
                                 _parent.HideAutomator();
                             break;
                         }

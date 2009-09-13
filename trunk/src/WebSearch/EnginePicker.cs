@@ -162,7 +162,7 @@ namespace WebSearch
 
                 return new CommandUsage(new_command.Name, args, comp);
             }));
-            new_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            new_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 try
                 {

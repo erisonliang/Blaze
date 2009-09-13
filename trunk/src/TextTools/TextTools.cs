@@ -181,7 +181,7 @@ namespace TextTools
 
                 return new CommandUsage(_add_command.Name, args, comp);
             }));
-            _add_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            _add_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 QuickTextPicker ep = new QuickTextPicker(this);
                 if (ep.ShowDialog() == DialogResult.OK)
@@ -219,7 +219,7 @@ namespace TextTools
 
                 return new CommandUsage(_to_lower_command.Name, args, comp);
             }));
-            _to_lower_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            _to_lower_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 UserContext.Instance.SelectedTextToLower(true);
             }));
@@ -254,7 +254,7 @@ namespace TextTools
 
                 return new CommandUsage(_to_upper_command.Name, args, comp);
             }));
-            _to_upper_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            _to_upper_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 UserContext.Instance.SelectedTextToUpper(true);
             }));
@@ -289,7 +289,7 @@ namespace TextTools
 
                 return new CommandUsage(_sort_command.Name, args, comp);
             }));
-            _sort_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            _sort_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 UserContext.Instance.SelectedTextSortLines(true);
             }));
@@ -350,7 +350,7 @@ namespace TextTools
 
                 return new CommandUsage(_insert_command.Name, args, comp);
             }));
-            _insert_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+            _insert_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
                 Insertion insertion = BuildInsertion(parameters);
                 string text = insertion.Text;
@@ -407,7 +407,7 @@ namespace TextTools
 
                     return new CommandUsage(cmd.Name, args, comp);
                 }));
-                cmd.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters)
+                cmd.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
                 {
                     UserContext.Instance.InsertText(qtext.Text, true);
                 }));
