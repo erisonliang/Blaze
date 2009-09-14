@@ -218,7 +218,10 @@ namespace Calculator
             }));
             _calc_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
             {
-                Clipboard.SetText(Eval(parameters));
+                if ((modifiers & Keys.Shift) == Keys.Shift)
+                    Clipboard.SetText(parameters + " = " + Eval(parameters));
+                else
+                    Clipboard.SetText(Eval(parameters));
             }));
             Commands.Add(_calc_command);
         }
