@@ -1130,7 +1130,7 @@ namespace ContextLib.DataContainers.Monitoring
                                             {
                                                 string move = origin_dir + @"\" + Path.GetFileName(dir_files[j]);
                                                 files1.Add(move);
-                                                rtf1.Add(RTFNormalizedText(GetFolderItemName(move)));
+                                                rtf1.Add(GenerateRTFConstExFileNarrativePart(GetFolderItemName(move), func.Contents));
                                             }
                                         }
                                     }
@@ -1756,7 +1756,7 @@ namespace ContextLib.DataContainers.Monitoring
         private string GenerateConstExFileNarrativePart(UserAction action, string[] contents)
         {
             string narrative = string.Empty;
-            int choice = _alternatives[action];
+            int choice = _alternatives[action]; 
             string ext = _file_op_dscrps[action][choice].Extension;
             List<string> files1 = _file_op_dscrps[action][choice].RtfList1;
             List<string> files2 = _file_op_dscrps[action][choice].RtfList2;
@@ -1990,7 +1990,7 @@ namespace ContextLib.DataContainers.Monitoring
             return narrative;
         }
 
-        private string GenerateRTFConstExFileNarrativePart(string file, string[] contents)
+         private string GenerateRTFConstExFileNarrativePart(string file, string[] contents)
         {
             string narrative = file.Replace(@"\", @"\\");
             foreach (string token in contents)
