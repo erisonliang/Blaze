@@ -1332,6 +1332,7 @@ namespace ContextLib
                 _post_focus_operations.Add(new PostFocusDelegate(delegate()
                     {
                         SendKeys.SendWait(new_text);
+                        MessageBox.Show(new_text);
                     }));
 
                 //_post_focus_operations.Add(new PostFocusDelegate(delegate()

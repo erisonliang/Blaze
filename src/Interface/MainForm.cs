@@ -630,7 +630,6 @@ namespace Blaze
                     Win32.keybd_event((byte)key, (byte)Win32.MapVirtualKey((uint)key, 0), Win32.KEYEVENTF_EXTENDEDKEY | Win32.KEYEVENTF_KEYUP, 0);
                 }
             }
-
             UserContext.Instance.ObserverObject.StartMonitoring();
         }
 
