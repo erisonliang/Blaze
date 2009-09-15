@@ -97,6 +97,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ContextLib\ContextLib.csproj">
+      <Project>{80E8CF2C-F505-42F1-88A8-3AA019C0BC73}</Project>
+      <Name>ContextLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SystemCore\SystemCore.csproj">
       <Project>{CF005F91-D831-4643-AB04-2B6BDDA7C3A3}</Project>
       <Name>SystemCore</Name>

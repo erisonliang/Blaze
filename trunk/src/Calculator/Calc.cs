@@ -21,6 +21,8 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using SystemCore.CommonTypes;
+using ContextLib;
+using ContextLib.DataContainers.Multimedia;
 
 namespace Calculator
 {
@@ -33,6 +35,7 @@ namespace Calculator
         private Regex _regex_comma_rule;
         private Icon _icon;
         private Command _calc_command;
+        private Command _solve_command;
         #endregion
 
         //#region Accessors
@@ -224,6 +227,79 @@ namespace Calculator
                     Clipboard.SetText(Eval(parameters));
             }));
             Commands.Add(_calc_command);
+
+            _solve_command = new Command("Solve", Command.PriorityType.High);
+            _solve_command.SetIsOwnerDelegate(new Command.OwnershipDelegate(delegate(string parameters)
+            {
+                return true;
+            }));
+            _solve_command.SetNameDelegate(new Command.EvaluationDelegate(delegate(string parameters)
+            {
+                return "Solve:";
+            }));
+            _solve_command.SetDescriptionDelegate(new Command.EvaluationDelegate(delegate(string parameters)
+            {
+                MultiLevelData data = UserContext.Instance.GetSelectedContent();
+                bool valid_calc = false;
+                string calc = string.Empty;
+                if (data != null)
+                {
+                    if (!string.IsNullOrEmpty(data.Text) && _regex_calc.IsMatch(data.Text))
+                    {
+                        bool test1 = !_regex_forbidden_chars.IsMatch(data.Text);
+                        bool test2 = !_regex_comma_rule.IsMatch(data.Text);
+                        valid_calc = test1 && test2;
+                        calc = data.Text;
+                    }
+                    data.Dispose();
+                }
+                if (valid_calc)
+                    return calc;
+                else
+                    return "Invalid math expression";
+            }));
+            _solve_command.SetAutoCompleteDelegate(new Command.EvaluationDelegate(delegate(string parameters)
+            {
+                return _solve_command.Name;
+            }));
+            _solve_command.SetIconDelegate(new Command.IconDelegate(delegate(string parameters)
+            {
+                return _icon.ToBitmap();
+            }));
+            _solve_command.SetUsageDelegate(new Command.UsageDelegate(delegate(string parameters)
+            {
+                List<string> args = new List<string>();
+                Dictionary<string, bool> comp = new Dictionary<string, bool>();
+
+                return new CommandUsage(@"Solves the selected calculation on top window", args, comp);
+            }));
+            _solve_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
+            {
+                MultiLevelData data = UserContext.Instance.GetSelectedContent();
+                bool valid_calc = false;
+                string calc = string.Empty;
+                if (data != null)
+                {
+                    if (!string.IsNullOrEmpty(data.Text) && _regex_calc.IsMatch(data.Text))
+                    {
+                        bool test1 = !_regex_forbidden_chars.IsMatch(data.Text);
+                        bool test2 = !_regex_comma_rule.IsMatch(data.Text);
+                        valid_calc = test1 && test2;
+                        calc = data.Text;
+                    }
+                    data.Dispose();
+                }
+                if (valid_calc)
+                {
+                    string solution;
+                    if ((modifiers & Keys.Shift) == Keys.Shift)
+                        solution = calc + " = " + Eval(calc);
+                    else
+                        solution = Eval(calc);
+                    UserContext.Instance.InsertText(solution, true);
+                }
+            }));
+            Commands.Add(_solve_command);
         }
 
         protected override string GetAssembyName()
