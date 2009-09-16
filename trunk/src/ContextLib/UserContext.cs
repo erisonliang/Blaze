@@ -32,6 +32,7 @@ using ContextLib.DataContainers.Multimedia;
 using ContextLib.DataContainers.Network;
 using NativeWifi;
 using ThreadState=System.Diagnostics.ThreadState;
+using IWshRuntimeLibrary;
 
 namespace ContextLib
 {
@@ -1331,8 +1332,10 @@ namespace ContextLib
             {
                 _post_focus_operations.Add(new PostFocusDelegate(delegate()
                     {
-                        SendKeys.SendWait(new_text);
-                        MessageBox.Show(new_text);
+                        //SendKeys.SendWait(new_text);
+                        WshShellClass wsh = new WshShellClass();
+                        object wait = false;
+                        wsh.SendKeys(new_text, ref wait);
                     }));
 
                 //_post_focus_operations.Add(new PostFocusDelegate(delegate()
