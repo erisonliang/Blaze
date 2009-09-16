@@ -228,10 +228,10 @@ namespace Calculator
             }));
             Commands.Add(_calc_command);
 
-            _solve_command = new Command("Solve", Command.PriorityType.High);
+            _solve_command = new Command("Solve", Command.PriorityType.Medium);
             _solve_command.SetIsOwnerDelegate(new Command.OwnershipDelegate(delegate(string parameters)
             {
-                return true;
+                return false;
             }));
             _solve_command.SetNameDelegate(new Command.EvaluationDelegate(delegate(string parameters)
             {
