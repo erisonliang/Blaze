@@ -90,7 +90,7 @@ namespace Blaze.SystemBrowsing
                     // Get all directories
                     directories = Directory.GetDirectories(FileNameManipulator.GetPath(dir));
                     // Get all files
-                    files = FileSearcher.SearchFullNames(dir, false);
+                    files = FileSearcher.SearchFullNames(dir, false, false);
                 }
                 catch /*(Exception e)*/
                 {
@@ -173,19 +173,39 @@ namespace Blaze.SystemBrowsing
             {
                 IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
                 IWshRuntimeLibrary.IWshShortcut link = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(path);
-                if (File.Exists(link.TargetPath))
+                if (Directory.Exists(link.TargetPath))
                 {
-                    return Path.GetDirectoryName(link.TargetPath);
-                }
-                else if (Directory.Exists(link.TargetPath))
-                {
+                    string dir_str = string.Empty;
+                    DirectoryInfo dir = null;
                     if (link.TargetPath[link.TargetPath.Length - 1] != '\\')
-                        return link.TargetPath + "\\";
+                        dir_str = link.TargetPath + "\\";
                     else
-                        return link.TargetPath;
+                        dir_str = link.TargetPath;
+                    string temp_dir = Path.GetDirectoryName(dir_str);
+                    if (temp_dir != null)
+                        dir = Directory.GetParent(temp_dir);
+                    if (dir != null)
+                        return dir.FullName;
+                    else
+                        return dir_str;
                 }
+                return Path.GetDirectoryName(link.TargetPath);
             }
-            return Path.GetDirectoryName(path);
+            else
+            {
+                if (Directory.Exists(path))
+                {
+                    string temp_dir = Path.GetDirectoryName(path);
+                    DirectoryInfo dir = null;
+                    if (temp_dir != null)
+                        dir = Directory.GetParent(temp_dir);
+                    if (dir != null)
+                        return dir.FullName;
+                    else
+                        return path;
+                }
+                return Path.GetDirectoryName(path);
+            }
         }
         #endregion
     }

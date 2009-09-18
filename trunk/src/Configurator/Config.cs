@@ -129,13 +129,13 @@ namespace Configurator
             CreateUserDir();
             StreamWriter file = new StreamWriter(_file, true, Encoding.Default);
             file.WriteLine("[indexer]");
-            WriteDirectory(file, 1, "%ALLUSERSPROFILE%" + @"\Start Menu\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 2, "%USERPROFILE%" + @"\Start Menu\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 3, "%USERPROFILE%" + @"\Recent\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 4, "%APPDATA%" + @"\Microsoft\Internet Explorer\Quick Launch\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 5, @"C:\Windows\System32\", ".msc", false, string.Empty);
-            WriteDirectory(file, 6, @"Utilities\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 7, "%USERPROFILE%" + @"\Favorites\", ".url", true, string.Empty);
+            WriteDirectory(file, 1, "%ALLUSERSPROFILE%" + @"\Start Menu\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 2, "%USERPROFILE%" + @"\Start Menu\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 3, "%USERPROFILE%" + @"\Recent\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 4, "%APPDATA%" + @"\Microsoft\Internet Explorer\Quick Launch\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 5, @"C:\Windows\System32\", ".msc", false, false, string.Empty);
+            WriteDirectory(file, 6, @"Utilities\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 7, "%USERPROFILE%" + @"\Favorites\", ".url", false, true, string.Empty);
             file.Close();
         }
 
@@ -144,13 +144,13 @@ namespace Configurator
             CreateUserDir();
             StreamWriter file = new StreamWriter(_file, true, Encoding.Default);
             file.WriteLine("[indexer]");
-            WriteDirectory(file, 1, "%SYSTEMDRIVE%" + @"\ProgramData\Microsoft\Windows\Start Menu\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 2, "%USERPROFILE%" + @"\AppData\Roaming\Microsoft\Windows\Start Menu\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 3, "%USERPROFILE%" + @"\AppData\Roaming\Microsoft\Windows\Recent\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 4, "%APPDATA%" + @"\Microsoft\Internet Explorer\Quick Launch\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 5, @"C:\Windows\System32\", ".msc", false, string.Empty);
-            WriteDirectory(file, 6, @"Utilities\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 7, "%USERPROFILE%" + @"\Favorites\", ".url", true, string.Empty);
+            WriteDirectory(file, 1, "%SYSTEMDRIVE%" + @"\ProgramData\Microsoft\Windows\Start Menu\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 2, "%USERPROFILE%" + @"\AppData\Roaming\Microsoft\Windows\Start Menu\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 3, "%USERPROFILE%" + @"\AppData\Roaming\Microsoft\Windows\Recent\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 4, "%APPDATA%" + @"\Microsoft\Internet Explorer\Quick Launch\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 5, @"C:\Windows\System32\", ".msc", false, false, string.Empty);
+            WriteDirectory(file, 6, @"Utilities\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 7, "%USERPROFILE%" + @"\Favorites\", ".url", false, true, string.Empty);
             file.Close();
         }
 
@@ -159,10 +159,10 @@ namespace Configurator
             CreateUserDir();
             StreamWriter file = new StreamWriter(_file, true, Encoding.Default);
             file.WriteLine("[interaction]");
-            WriteDirectory(file, 1, "%APPDATA%" + @"\Microsoft\Internet Explorer\Quick Launch\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 2, @"C:\Windows\System32\", ".msc", false, string.Empty);
-            WriteDirectory(file, 3, @"Utilities\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 4, "%USERPROFILE%" + @"\Favorites\", ".url", true, string.Empty);
+            WriteDirectory(file, 1, "%APPDATA%" + @"\Microsoft\Internet Explorer\Quick Launch\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 2, @"C:\Windows\System32\", ".msc", false, false, string.Empty);
+            WriteDirectory(file, 3, @"Utilities\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 4, "%USERPROFILE%" + @"\Favorites\", ".url", false, true, string.Empty);
             file.Close();
         }
 
@@ -171,24 +171,25 @@ namespace Configurator
             CreateUserDir();
             StreamWriter file = new StreamWriter(_file, true, Encoding.Default);
             file.WriteLine("[indexer]");
-            WriteDirectory(file, 1, "%ALLUSERSPROFILE%" + @"\Start Menu\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 2, "%SYSTEMDRIVE%" + @"\ProgramData\Microsoft\Windows\Start Menu\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 3, "%USERPROFILE%" + @"\Start Menu\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 4, "%USERPROFILE%" + @"\AppData\Roaming\Microsoft\Windows\Start Menu\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 5, "%USERPROFILE%" + @"\Recent\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 6, "%USERPROFILE%" + @"\AppData\Roaming\Microsoft\Windows\Recent\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 7, "%APPDATA%" + @"\Microsoft\Internet Explorer\Quick Launch\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 8, @"C:\Windows\System32\", ".msc", false, string.Empty);
-            WriteDirectory(file, 9, @"Utilities\", ".lnk", true, string.Empty);
-            WriteDirectory(file, 10, "%USERPROFILE%" + @"\Favorites\", ".url", true, string.Empty);
+            WriteDirectory(file, 1, "%ALLUSERSPROFILE%" + @"\Start Menu\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 2, "%SYSTEMDRIVE%" + @"\ProgramData\Microsoft\Windows\Start Menu\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 3, "%USERPROFILE%" + @"\Start Menu\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 4, "%USERPROFILE%" + @"\AppData\Roaming\Microsoft\Windows\Start Menu\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 5, "%USERPROFILE%" + @"\Recent\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 6, "%USERPROFILE%" + @"\AppData\Roaming\Microsoft\Windows\Recent\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 7, "%APPDATA%" + @"\Microsoft\Internet Explorer\Quick Launch\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 8, @"C:\Windows\System32\", ".msc", false, false, string.Empty);
+            WriteDirectory(file, 9, @"Utilities\", ".lnk", false, true, string.Empty);
+            WriteDirectory(file, 10, "%USERPROFILE%" + @"\Favorites\", ".url", false, true, string.Empty);
             file.Close();
         }
 
-        private void WriteDirectory(StreamWriter file, int pos, string path, string extensions, bool indexSubfolders, string plugins)
+        private void WriteDirectory(StreamWriter file, int pos, string path, string extensions, bool includeDirectories, bool indexSubfolders, string plugins)
         {
             file.WriteLine(pos.ToString() + @"\name= " + path);
             file.WriteLine(pos.ToString() + @"\extensions= " + extensions);
-            file.WriteLine(pos.ToString() + @"\indexSubfolders= " + indexSubfolders.ToString());
+            file.WriteLine(pos.ToString() + @"\includeDirectories= " + includeDirectories.ToString());
+            file.WriteLine(pos.ToString() + @"\indexSubdirectories= " + indexSubfolders.ToString());
             file.WriteLine(pos.ToString() + @"\plugins= "+plugins);
         }
         #endregion

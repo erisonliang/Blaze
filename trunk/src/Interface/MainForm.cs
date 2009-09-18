@@ -598,7 +598,7 @@ namespace Blaze
 
             if (release_keys)
             {
-                Thread.Sleep(50);
+                Thread.Sleep(100);
                 HotKey hotkey = SettingsManager.Instance.GetMainHotKey();
                 Keys key;
                 if (hotkey.IsAlt && Win32.GetAsyncKeyState((int)VirtualKey.VK_MENU) == 0 /*!UserContext.Instance.ObserverObject.IsModifierSet(ContextLib.DataContainers.Monitoring.UserAction.Modifiers.Alt)*/)

@@ -89,6 +89,7 @@ namespace BlazeIndexer
             DirInfo info = SettingsManager.Instance.GetDirectories();
             List<string> directories = info.Directories;
             Dictionary<string, List<string>> extensions = info.Extensions;
+            Dictionary<string, bool> includeDirectories = info.IncludeDirectories;
             Dictionary<string, bool> indexSubdirectories = info.IndexSubdirectories;
 
             for (int i = 0; i < directories.Count; i++)
@@ -107,11 +108,9 @@ namespace BlazeIndexer
                     }
                 }
 
-                if (ext.Count == 0)
-                    ext.Add(".*");
                 try
                 {
-                    fullpathes = new List<string>(FileSearcher.SearchFullNames(Environment.ExpandEnvironmentVariables(directory), ext, indexSubdirectories[directory]));
+                    fullpathes = new List<string>(FileSearcher.SearchFullNames(Environment.ExpandEnvironmentVariables(directory), ext, indexSubdirectories[directory], includeDirectories[directory]));
                 }
                 catch (Exception)
                 {
@@ -122,7 +121,10 @@ namespace BlazeIndexer
                 for (int j = 0; j < fullpathes.Count; j++)
                 {
                     string path = fullpathes[j];
-                    string name = FileNameManipulator.GetFileName(path);
+                    string name = FileNameManipulator.GetFileName(Directory.Exists(path)
+                                       ? Path.GetDirectoryName(path)
+                                       : Path.GetFullPath(path));
+                        //FileNameManipulator.GetFileName(path);
 
                     //FileInfo finfo = new FileInfo(path);
                     //if (finfo.Extension.ToLower() == ".lnk")

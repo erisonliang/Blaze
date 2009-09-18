@@ -10,87 +10,51 @@ namespace SystemCore.SystemAbstraction.FileHandling
 {
     public static class FileSearcher
     {
-        public static FileInfo[] Search(string dir_path, List<string> extensions, bool recursive)
+        public static string[] SearchFullNames(string dir_path, List<string> extensions, bool recursive, bool include_dirs)
         {
             DirectoryInfo root = new DirectoryInfo(dir_path);
-            List<FileInfo> subFiles = new List<FileInfo>();
+            List<string> items = new List<string>();
+            if (extensions.Contains(".*"))
+                return SearchFullNames(dir_path, recursive, include_dirs);
             foreach (FileInfo file in root.GetFiles())
             {
                 if (extensions.Contains(file.Extension.ToLower()))
                 {
-                    subFiles.Add(file);
+                    items.Add(file.FullName);
+                }
+            }
+            if (include_dirs)
+            {
+                foreach (DirectoryInfo dir in root.GetDirectories())
+                {
+                    items.Add(dir.FullName + "\\");
                 }
             }
             if (recursive)
             {
                 foreach (DirectoryInfo directory in root.GetDirectories())
                 {
-                    subFiles.AddRange(Search(directory.FullName, extensions, recursive));
+                    items.AddRange(SearchFullNames(directory.FullName, extensions, recursive, include_dirs));
                 }
             }
-            return subFiles.ToArray();
+            return items.ToArray();
         }
 
-        public static FileInfo[] Search(string dir_path, List<string> extensions)
+        public static string[] SearchFullNames(string dir_path, bool recursive, bool include_dirs)
         {
-            return Search(dir_path, extensions, true);
-        }
-
-        public static string[] SearchFullNames(string dir_path, List<string> extensions, bool recursive)
-        {
-            DirectoryInfo root = new DirectoryInfo(dir_path);
-            List<string> subFiles = new List<string>();
-            if (extensions.Contains(".*"))
-                return SearchFullNames(dir_path, recursive);
-            foreach (FileInfo file in root.GetFiles())
+            List<string> items = new List<string>();
+            foreach (string file in Directory.GetFiles(dir_path, "*.*", (recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)))
             {
-                if (extensions.Contains(file.Extension.ToLower()))
+                items.Add(file);
+            }
+            if (include_dirs)
+            {
+                foreach (string dir in Directory.GetDirectories(dir_path, "*", (recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)))
                 {
-                    subFiles.Add(file.FullName);
+                    items.Add(dir + "\\");
                 }
             }
-            if (recursive)
-            {
-                foreach (DirectoryInfo directory in root.GetDirectories())
-                {
-                    subFiles.AddRange(SearchFullNames(directory.FullName, extensions, recursive));
-                }
-            }
-            return subFiles.ToArray();
-        }
-
-        public static string[] SearchFullNames(string dir_path, List<string> extensions)
-        {
-            if (extensions.Contains(".*"))
-                return SearchFullNames(dir_path, true);
-            else
-                return SearchFullNames(dir_path, extensions, true);
-        }
-
-        public static FileInfo[] Search(string dir_path, bool recursive)
-        {
-            DirectoryInfo root = new DirectoryInfo(dir_path);
-            List<FileInfo> subFiles = new List<FileInfo>();
-            foreach (FileInfo file in root.GetFiles())
-            {
-                subFiles.Add(file);
-            }
-            if (recursive)
-            {
-                foreach (DirectoryInfo directory in root.GetDirectories())
-                {
-                    subFiles.AddRange(Search(directory.FullName, recursive));
-                }
-            }
-            return subFiles.ToArray();
-        }
-
-        public static string[] SearchFullNames(string dir_path, bool recursive)
-        {
-            if (recursive)
-                return Directory.GetFiles(dir_path, "*.*", SearchOption.AllDirectories);
-            else
-                return Directory.GetFiles(dir_path, "*.*", SearchOption.TopDirectoryOnly);
+            return items.ToArray();
         }
     }
 }

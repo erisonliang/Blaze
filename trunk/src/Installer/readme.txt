@@ -15,6 +15,13 @@ Shift. If this happens, press each stuck key once and it will be fixed.
 
 VERSION HISTORY:
 
+(18/09/2009) - Blaze 0.4.8.4 beta
+
+* Now Blaze can include directories for indexation.
+* Shift + Enter behavior fixed. Now it always opens the item's parent directory, even if it is a folder.
+* Now Blaze allows plugins to be aware of pressed modifier keys in order to customize the execution.
+* Several bug fixes.
+
 (09/09/2009) - Blaze 0.4.8.0 beta
 
 * First release of Blaze Portable!
@@ -22,7 +29,6 @@ VERSION HISTORY:
 * The key to open Blaze Assistant can now be changed and disabled.
 * Blaze now accepts environment variables in directory paths.
 * Several bug fixes.
-
 
 (01/09/2009) - Blaze 0.4.7.12 beta
 * Calculator crash fixed.

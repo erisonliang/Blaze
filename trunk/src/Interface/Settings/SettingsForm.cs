@@ -40,6 +40,7 @@ namespace Blaze
         private List<string> _directories;
         private Dictionary<string, List<string>> _extensions;
         private Dictionary<string, bool> _indexSubdirectories;
+        private Dictionary<string, bool> _includeDirectories;
         private TypePicker _typePicker;
         private FolderBrowserDialog _directoryPicker;
         private Dictionary<string, List<string>> _dirPlugins;
@@ -161,7 +162,8 @@ namespace Blaze
                 FileTypesListBox.Items.Clear();
                 FileTypesListBox.Items.AddRange(_extensions[DirectoriesListBox.SelectedItem.ToString()].ToArray());
                 //IncludeSubDirCheckBox.Checked = _indexSubdirectories[DirectoriesListBox.SelectedItem.ToString()];
-                OptionsListBox.SetItemChecked(0, _indexSubdirectories[DirectoriesListBox.SelectedItem.ToString()]);
+                OptionsListBox.SetItemChecked(0, _includeDirectories[DirectoriesListBox.SelectedItem.ToString()]);
+                OptionsListBox.SetItemChecked(1, _indexSubdirectories[DirectoriesListBox.SelectedItem.ToString()]);
                 string item = DirectoriesListBox.SelectedItem.ToString();
                 for (int i = 0; i < _indexerPlugins.Count; i++)
                 {
@@ -184,6 +186,10 @@ namespace Blaze
             {
                 string item = DirectoriesListBox.SelectedItem.ToString();
                 if (e.Index == 0)
+                {
+                    _includeDirectories[item] = (e.NewValue == CheckState.Checked ? true : false);
+                }
+                else if (e.Index == 1)
                 {
                     _indexSubdirectories[item] = (e.NewValue == CheckState.Checked ? true : false);
                 }
@@ -376,7 +382,8 @@ namespace Blaze
             //
             // Plugins
             //
-            OptionsListBox.Items.Add("Index subdirectories");
+            OptionsListBox.Items.Add("Include directories");
+            OptionsListBox.Items.Add("Search subdirectories");
             _plugins_map_options = new Dictionary<string, int>();
             _options_map_plugins = new Dictionary<int, string>();
             _indexerPlugins = new List<IndexerPlugin>();
@@ -412,6 +419,7 @@ namespace Blaze
             DirInfo info = SettingsManager.Instance.GetDirectories();
             _directories = new List<string>(info.Directories.ToArray());
             _extensions = new Dictionary<string, List<string>>(info.Extensions);
+            _includeDirectories = new Dictionary<string, bool>(info.IncludeDirectories);
             _indexSubdirectories = new Dictionary<string, bool>(info.IndexSubdirectories);
             _dirPlugins = new Dictionary<string, List<string>>(info.Plugins);
             DirectoriesListBox.Items.AddRange(_directories.ToArray());
@@ -441,6 +449,7 @@ namespace Blaze
                     _directories.Remove(item);
                     _extensions.Remove(item);
                     _indexSubdirectories.Remove(item);
+                    _includeDirectories.Remove(item);
                     _dirPlugins.Remove(item);
                     DirectoriesListBox.Items.Clear();
                     DirectoriesListBox.Items.AddRange(_directories.ToArray());
@@ -475,18 +484,17 @@ namespace Blaze
             }
         }
 
-        private void IncludeSubDirCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (DirectoriesListBox.SelectedItem != null)
-            {
-                string item = DirectoriesListBox.SelectedItem.ToString();
-                if (item != string.Empty)
-                {
-                    //_indexSubdirectories[item] = IncludeSubDirCheckBox.Checked;
-                    _indexSubdirectories[item] = OptionsListBox.GetItemChecked(0);
-                }
-            }
-        }
+        //private void IncludeSubDirCheckBox_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    if (DirectoriesListBox.SelectedItem != null)
+        //    {
+        //        string item = DirectoriesListBox.SelectedItem.ToString();
+        //        if (item != string.Empty)
+        //        {
+        //            _indexSubdirectories[item] = OptionsListBox.GetItemChecked(1);
+        //        }
+        //    }
+        //}
 
         private void okButton_Click(object sender, EventArgs e)
         {
@@ -517,12 +525,14 @@ namespace Blaze
             _system_options_info.UpdateTime = (int)updateTimeNumericUpDown.Value;
             List<List<string>> ext = new List<List<string>>();
             List<bool> subdir = new List<bool>();
+            List<bool> incdir = new List<bool>();
             foreach (string dir in _directories)
             {
                 ext.Add(_extensions[dir]);
                 subdir.Add(_indexSubdirectories[dir]);
+                incdir.Add(_includeDirectories[dir]);
             }
-            SettingsManager.Instance.SaveDirectories(new DirInfo(_directories, _extensions, _indexSubdirectories, _dirPlugins));
+            SettingsManager.Instance.SaveDirectories(new DirInfo(_directories, _extensions, _includeDirectories, _indexSubdirectories, _dirPlugins));
             SettingsManager.Instance.SaveLoadablePlugins(_pluginInfo);
             SettingsManager.Instance.SaveInterfaceInfo(_interface_info);
             SettingsManager.Instance.SaveSystemOptionsInfo(_system_options_info);
@@ -571,13 +581,15 @@ namespace Blaze
                 _directories.Add(dir);
                 _extensions.Add(dir, new List<string>());
                 _indexSubdirectories.Add(dir, false);
+                _includeDirectories.Add(dir,false);
                 _dirPlugins.Add(dir, new List<string>());
                 DirectoriesListBox.Items.Clear();
                 DirectoriesListBox.Items.AddRange(_directories.ToArray());
                 FileTypesListBox.Items.Clear();
                 FileTypesListBox.Items.AddRange(_extensions[dir].ToArray());
                 //IncludeSubDirCheckBox.Checked = _indexSubdirectories[dir];
-                OptionsListBox.SetItemChecked(0, _indexSubdirectories[dir]);
+                OptionsListBox.SetItemChecked(1, _indexSubdirectories[dir]);
+                OptionsListBox.SetItemChecked(0, _includeDirectories[dir]);
             }
             _directoryPicker.Dispose();
             _directoryPicker = null;
