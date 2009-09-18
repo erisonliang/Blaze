@@ -23,6 +23,7 @@ namespace SystemCore.Settings
         private List<string> _directories;
         private Dictionary<string, List<string>> _extensions;
         private Dictionary<string, bool> _indexSubdirectories;
+        private Dictionary<string, bool> _includeDirectories;
         private Dictionary<string, List<string>> _plugins;
         #endregion
 
@@ -45,6 +46,12 @@ namespace SystemCore.Settings
             set { _indexSubdirectories = value; }
         }
 
+        public Dictionary<string, bool> IncludeDirectories
+        {
+            get { return _includeDirectories; }
+            set { _includeDirectories = value; }
+        }
+
         public Dictionary<string, List<string>> Plugins
         {
             get { return _plugins; }
@@ -53,11 +60,12 @@ namespace SystemCore.Settings
         #endregion
 
         #region Constructors
-        public DirInfo(List<string> directories, Dictionary<string, List<string>> extensions, Dictionary<string, bool> indexSubdirectories, Dictionary<string, List<string>> plugins)
+        public DirInfo(List<string> directories, Dictionary<string, List<string>> extensions, Dictionary<string, bool> includeDirectories, Dictionary<string, bool> indexSubdirectories, Dictionary<string, List<string>> plugins)
         {
             _directories = directories;
             _extensions = extensions;
             _indexSubdirectories = indexSubdirectories;
+            _includeDirectories = includeDirectories;
             _plugins = plugins;
         }
 
@@ -66,6 +74,7 @@ namespace SystemCore.Settings
             _directories = new List<string>(info.Directories);
             _extensions = new Dictionary<string, List<string>>(info.Extensions);
             _indexSubdirectories = new Dictionary<string, bool>(info.IndexSubdirectories);
+            _includeDirectories = new Dictionary<string, bool>(info.IncludeDirectories);
             _plugins = new Dictionary<string, List<string>>(info.Plugins);
         }
 
@@ -74,6 +83,7 @@ namespace SystemCore.Settings
             _directories = new List<string>();
             _extensions = new Dictionary<string, List<string>>();
             _indexSubdirectories = new Dictionary<string, bool>();
+            _includeDirectories = new Dictionary<string, bool>();
             _plugins = new Dictionary<string, List<string>>();
         }
         #endregion

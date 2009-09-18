@@ -45,7 +45,7 @@ namespace SystemCore.Settings
         #region Public Methods
         public List<Plugin> Load()
         {
-            List<string> pluginFiles = new List<string>(FileSearcher.SearchFullNames(_path, new List<string>(new string[] { ".dll" }), true));
+            List<string> pluginFiles = new List<string>(FileSearcher.SearchFullNames(_path, new List<string>(new string[] { ".dll" }), true, false));
 
             //List<InterpreterPlugin> interpreterPlugins = new List<InterpreterPlugin>();
             //List<IndexerPlugin> indexerPlugins = new List<IndexerPlugin>();

@@ -68,6 +68,7 @@ namespace SystemCore.Settings
                 List<string> directories = new List<string>();
                 Dictionary<string, List<string>> extensions = new Dictionary<string, List<string>>();
                 Dictionary<string, bool> indexSubdirectories = new Dictionary<string, bool>();
+                Dictionary<string, bool> includeDirectories = new Dictionary<string, bool>();
                 Dictionary<string, List<string>> plugins = new Dictionary<string, List<string>>();
                 List<string> categories = INIManipulator.GetCategories(_path);
                 if (categories.Count > 0)
@@ -79,18 +80,20 @@ namespace SystemCore.Settings
                         int key_len = keys.Count;
                         if (key_len > 0)
                         {
-                            for (int i = 0; i < key_len; i += 4)
+                            for (int i = 0; i < key_len; i += 5)
                             {
                                 string name;
                                 string[] exts;
+                                bool incdir = false;
                                 bool subdir = false;
                                 string[] plugs;
                                 try
                                 {
                                     name = INIManipulator.GetValue(_path, category, keys[i], "");
                                     exts = StrToArray(INIManipulator.GetValue(_path, category, keys[i + 1], ".lnk"));
-                                    Boolean.TryParse(INIManipulator.GetValue(_path, category, keys[i + 2], "false"), out subdir);
-                                    plugs = StrToArray(INIManipulator.GetValue(_path, category, keys[i + 3], ""));
+                                    Boolean.TryParse(INIManipulator.GetValue(_path, category, keys[i + 2], "false"), out incdir);
+                                    Boolean.TryParse(INIManipulator.GetValue(_path, category, keys[i + 3], "false"), out subdir);
+                                    plugs = StrToArray(INIManipulator.GetValue(_path, category, keys[i + 4], ""));
                                 }
                                 catch (Exception)
                                 {
@@ -98,13 +101,14 @@ namespace SystemCore.Settings
                                 }
                                 directories.Add(name);
                                 extensions.Add(name, new List<string>(exts));
+                                includeDirectories.Add(name, incdir);
                                 indexSubdirectories.Add(name, subdir);
                                 plugins.Add(name, new List<string>(plugs));
                             }
                         }
                     }
                 }
-                _directories = new DirInfo(directories, extensions, indexSubdirectories, plugins);
+                _directories = new DirInfo(directories, extensions, includeDirectories,indexSubdirectories, plugins);
             }
             return _directories;
         }
@@ -115,6 +119,7 @@ namespace SystemCore.Settings
             _directories = dirs;
             List<string> directories = dirs.Directories;
             Dictionary<string, List<string>> extensions = dirs.Extensions;
+            Dictionary<string, bool> includeDirectories = dirs.IncludeDirectories;
             Dictionary<string, bool> indexSubdirectories = dirs.IndexSubdirectories;
             Dictionary<string, List<string>> dirPlugins = dirs.Plugins;
             string category = "indexer";
@@ -126,7 +131,8 @@ namespace SystemCore.Settings
                 int pos = i + 1;
                 INIManipulator.WriteValue(_path, category, pos.ToString() + "\\name", dir);
                 INIManipulator.WriteValue(_path, category, pos.ToString() + "\\extensions", ArrayToStr(extensions[dir].ToArray()));
-                INIManipulator.WriteValue(_path, category, pos.ToString() + "\\indexSubfolders", indexSubdirectories[dir].ToString());
+                INIManipulator.WriteValue(_path, category, pos.ToString() + "\\includeDirectories", includeDirectories[dir].ToString());
+                INIManipulator.WriteValue(_path, category, pos.ToString() + "\\indexSubdirectories", indexSubdirectories[dir].ToString());
                 INIManipulator.WriteValue(_path, category, pos.ToString() + "\\plugins", ArrayToStr(dirPlugins[dir].ToArray()));
             }
         }
