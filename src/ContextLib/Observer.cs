@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using SystemCore.CommonTypes;
@@ -49,6 +50,7 @@ namespace ContextLib
         private object _locker = new object();
         private bool _use_compression = true;
         private System.Timers.Timer _timer;
+        private System.Text.RegularExpressions.Regex _regex;
         #endregion
 
         #region Accessors
@@ -66,6 +68,7 @@ namespace ContextLib
         #region Constructors
         public Observer(int action_window_size, int action_life_period, int action_validation_period, int action_acceptance_period)
         {
+            _regex = new Regex(@"\\");
             _actions = new UserActionWindow(action_window_size, action_life_period, action_validation_period);
             _actions.UseCompression = _use_compression;
             _file_system_watcher = new FileSystemWatcher();
@@ -470,15 +473,18 @@ namespace ContextLib
             {
                 if ((DateTime.Now - _last_user_action) <= _accept_user_action)
                 {
-                    lock (_locker)
+                    if (IsValidSubdirectory(e.Name))
                     {
-                        UpdateWorkingDir(false);
-
-                        if (_is_monitoring)
+                        lock (_locker)
                         {
-                            UserAction action = new FileCreatedAction(e.FullPath, _working_path);
-                            _actions.AddAction(action);
-                            NotifyOtherAgents();
+                            UpdateWorkingDir(false);
+
+                            if (_is_monitoring)
+                            {
+                                UserAction action = new FileCreatedAction(e.FullPath, _working_path);
+                                _actions.AddAction(action);
+                                NotifyOtherAgents();
+                            }
                         }
                     }
                 }
@@ -495,15 +501,18 @@ namespace ContextLib
             {
                 if ((DateTime.Now - _last_user_action) <= _accept_user_action)
                 {
-                    lock (_locker)
+                    if (IsValidSubdirectory(e.Name))
                     {
-                        UpdateWorkingDir(false);
-
-                        if (_is_monitoring)
+                        lock (_locker)
                         {
-                            UserAction action = new FileDeletedAction(e.FullPath, _working_path);
-                            _actions.AddAction(action);
-                            NotifyOtherAgents();
+                            UpdateWorkingDir(false);
+
+                            if (_is_monitoring)
+                            {
+                                UserAction action = new FileDeletedAction(e.FullPath, _working_path);
+                                _actions.AddAction(action);
+                                NotifyOtherAgents();
+                            }
                         }
                     }
                 }
@@ -520,15 +529,18 @@ namespace ContextLib
             {
                 if ((DateTime.Now - _last_user_action) <= _accept_user_action)
                 {
-                    lock (_locker)
+                    if (IsValidSubdirectory(e.OldName))
                     {
-
-                        if (_is_monitoring)
+                        lock (_locker)
                         {
-                            UpdateWorkingDir(false);
-                            UserAction action = new FileRenamedAction(e.OldFullPath, e.FullPath, _working_path);
-                            _actions.AddAction(action);
-                            NotifyOtherAgents();
+
+                            if (_is_monitoring)
+                            {
+                                UpdateWorkingDir(false);
+                                UserAction action = new FileRenamedAction(e.OldFullPath, e.FullPath, _working_path);
+                                _actions.AddAction(action);
+                                NotifyOtherAgents();
+                            }
                         }
                     }
                 }
@@ -599,6 +611,14 @@ namespace ContextLib
                 //System.Media.SoundPlayer exit = new System.Media.SoundPlayer(@"D:\OLD\Saved Games\GaimPortable\App\Gaim\sounds\gaim\send.wav");
                 //exit.Play();
             }
+        }
+
+        private bool IsValidSubdirectory(string path)
+        {
+            if (_regex.Matches(path).Count <= 2)
+                return true;
+            else
+                return false;
         }
 
         private bool IsBrowsingExplorerWindow(Window wnd)
