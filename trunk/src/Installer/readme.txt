@@ -15,6 +15,12 @@ Shift. If this happens, press each stuck key once and it will be fixed.
 
 VERSION HISTORY:
 
+(21/09/2009) - Blaze 0.4.8.5 beta
+
+* Fixed a crash regarding web browser's cached files.
+* A few performance enhancements.
+
+
 (18/09/2009) - Blaze 0.4.8.4 beta
 
 * Now Blaze can include directories for indexation.
