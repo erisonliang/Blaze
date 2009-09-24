@@ -565,6 +565,10 @@ namespace SystemCore.SystemAbstraction
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         public static extern bool ShellExecuteEx(ref SHELLEXECUTEINFO lpExecInfo);
 
+        [DllImport("kernel32.dll")]
+        public static extern uint GetFullPathName(string lpFileName, uint nBufferLength,
+           [Out] StringBuilder lpBuffer, out StringBuilder lpFilePart);
+
         public static void ClearKeyboardBuffer(uint vk, uint sc, IntPtr hkl)
         {
             byte[] lpKeyStateNull = new byte[256];
