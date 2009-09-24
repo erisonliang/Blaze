@@ -123,7 +123,12 @@ namespace BlazeIndexer
                     string path = fullpathes[j];
                     string name = FileNameManipulator.GetFileName(Directory.Exists(path)
                                        ? Path.GetDirectoryName(path)
-                                       : Path.GetFullPath(path));
+                                       : path);
+                    //System.Text.StringBuilder buff = new System.Text.StringBuilder();
+                    //System.Text.StringBuilder fname = new System.Text.StringBuilder();
+                    //SystemCore.SystemAbstraction.Win32.GetFullPathName(path, 1024, out buff, out fname);
+                    //System.Windows.Forms.MessageBox.Show("path: " + buff + Environment.NewLine + "fname: " + fname);
+
                         //FileNameManipulator.GetFileName(path);
 
                     //FileInfo finfo = new FileInfo(path);
