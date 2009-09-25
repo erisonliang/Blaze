@@ -28,6 +28,7 @@ using SystemCore.SystemAbstraction.WindowManagement;
 using Blaze.Interpreter;
 using Configurator;
 using ContextLib;
+using ContextLib.DataContainers.Multimedia;
 
 namespace Blaze
 {
@@ -41,7 +42,7 @@ namespace Blaze
         private int _id;
         private const Int32 WM_HOTKEY = 0x312;
         private SuperListBox _superListBox;
-        private static Point _listBoxDisplacement = new Point(86, 85);
+        private static Pair<float,float> _listBoxDisplacement = new Pair<float, float>(0.223f, 0.890f);
         private SettingsForm _settings = null;
         private List<Plugin> _plugins;
         private int _last_index;
@@ -529,7 +530,7 @@ namespace Blaze
             int iskip = (UserContext.Instance.ObserverObject.UseCompression ? 0 : 1), fskip = 1;
 
             UserContext.Instance.StopMacroRecording(CommonInfo.ScriptsFolder, iskip, fskip);
-            _interpreter.LoadIndex();
+            //_interpreter.LoadIndex();
             UserContext.Instance.TakeContextSnapshot();
 
             Show();
@@ -592,7 +593,7 @@ namespace Blaze
             }
             GC.Collect();
             Hide();
-            _interpreter.UnloadIndex();
+            //_interpreter.UnloadIndex();
 
             UserContext.Instance.PerformPostFocusOperations();
 
@@ -635,7 +636,8 @@ namespace Blaze
 
         public void UpdateListBoxPosition()
         {
-            _superListBox.Location = new Point(Location.X + _listBoxDisplacement.X, Location.Y + _listBoxDisplacement.Y);
+            //_superListBox.Location = new Point(Location.X + _listBoxDisplacement.X, Location.Y + _listBoxDisplacement.Y);
+            _superListBox.Location = new Point(Location.X + (int)(this.Size.Width * _listBoxDisplacement.First), Location.Y + (int)(this.Size.Height * _listBoxDisplacement.Second));
         }
 
         public void UpdateUponInput()

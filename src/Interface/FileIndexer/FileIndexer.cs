@@ -23,6 +23,7 @@ using System.Threading;
 using System.Windows.Forms;
 using SystemCore.CommonTypes;
 using SystemCore.Settings;
+using SystemCore.SystemAbstraction.FileHandling;
 using SystemCore.SystemAbstraction.ImageHandling;
 using Configurator;
 
@@ -333,7 +334,7 @@ namespace Blaze.Indexer
                 {
                     string command = _index.Paths[cmd][pos];
                     if ((modifiers & Keys.Shift) == Keys.Shift)
-                        command = GetItemFolder(command);
+                        command = FileSearcher.GetItemFolder(command);
                     try
                     {
                         ProcessStartInfo info = new ProcessStartInfo(command);
@@ -356,7 +357,7 @@ namespace Blaze.Indexer
                 {
                     string command = _old_index.Paths[cmd][pos];
                     if ((modifiers & Keys.Shift) == Keys.Shift)
-                        command = GetItemFolder(command);
+                        command = FileSearcher.GetItemFolder(command);
                     try
                     {
                         ProcessStartInfo info = new ProcessStartInfo(command);
@@ -371,47 +372,6 @@ namespace Blaze.Indexer
                     }
                     command = null;
                 }
-            }
-        }
-
-        private string GetItemFolder(string path)
-        {
-            if (Path.GetExtension(path) == ".lnk")
-            {
-                IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
-                IWshRuntimeLibrary.IWshShortcut link = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(path);
-                if (Directory.Exists(link.TargetPath))
-                {
-                    string dir_str = string.Empty;
-                    DirectoryInfo dir = null;
-                    if (link.TargetPath[link.TargetPath.Length - 1] != '\\')
-                        dir_str = link.TargetPath + "\\";
-                    else
-                        dir_str = link.TargetPath;
-                    string temp_dir = Path.GetDirectoryName(dir_str);
-                    if (temp_dir != null)
-                        dir = Directory.GetParent(temp_dir);
-                    if (dir != null)
-                        return dir.FullName;
-                    else
-                        return dir_str;
-                }
-                return Path.GetDirectoryName(link.TargetPath);
-            }
-            else
-            {
-                if (Directory.Exists(path))
-                {
-                    string temp_dir = Path.GetDirectoryName(path);
-                    DirectoryInfo dir = null;
-                    if (temp_dir != null)
-                        dir = Directory.GetParent(temp_dir);
-                    if (dir != null)
-                        return dir.FullName;
-                    else
-                        return path;
-                }
-                return Path.GetDirectoryName(path);
             }
         }
 

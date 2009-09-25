@@ -115,35 +115,17 @@ namespace Prompt
                     MessageBox.Show("The command " + pcommand.Name + " has no path specified. Please, specify a path.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                else if (!File.Exists(pcommand.Path))
+                else if (!File.Exists(pcommand.Path) && !Directory.Exists(pcommand.Path))
                 {
                     MessageBox.Show(pcommand.Name + "'s path does not exist. Please, specify a valid path.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                //else
-                //{
-                    
-                //    FileInfo finfo = new FileInfo(pcommand.Path);
-                //    if (finfo.Extension.ToLower() != ".exe")
-                //    {
-                //        MessageBox.Show(pcommand.Name + " command doesn't have a valid .exe file associated. Please, specify one.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //        return;
-                //    }
-                //}
+
                 if (!names.Add(pcommand.Name))
                 {
                     MessageBox.Show(pcommand.Name + " command already exists. Please pick a different name.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                
-                //else if (pcommand.Arguments != string.Empty)
-                //{
-                //    if (!pcommand.Arguments.Contains(PromptCommand.ArgumentsToken))
-                //    {
-                //        MessageBox.Show(pcommand.Name + "'s arguments don't have a user input location specified ('" + PromptCommand.ArgumentsToken + "'). Please, specify a user input location.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //        return;
-                //    }
-                //}
                 
             }
 

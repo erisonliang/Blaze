@@ -63,10 +63,10 @@ namespace EmailSender
 
         #region Constructors
         public EmailSender()
-            : base("Sends email through you're default windows email "+ Environment.NewLine + " client.")
+            : base("Sends email through your default windows email "+ Environment.NewLine + " client.")
         {
             _description += Environment.NewLine + Environment.NewLine +
-                            "E.g.: email john.doe@email.provider.com Hi man, " + Environment.NewLine + "what's up?";
+                            "E.g.: email \"john.doe@provider.com\" \"Hi man, " + Environment.NewLine + "what's up?\"";
             _icon = Properties.Resources.email;
         }
         #endregion

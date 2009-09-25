@@ -54,26 +54,39 @@ namespace Prompt
                 if (File.Exists(path))
                 {
                     FileInfo info = new FileInfo(path);
-                    //if (info.Extension.ToLower() == ".exe")
-                    //{
-                        nameTextBox.Text = FileNameManipulator.GetFileName(info.Name);
-                        pathTextBox.Text = path;
-                    //}
+                    nameTextBox.Text = FileNameManipulator.GetFileName(info.Name);
+                    pathTextBox.Text = path;
+                    data.Dispose();
+                    return;
+                }
+                else if (Directory.Exists(path))
+                {
+                    DirectoryInfo info = new DirectoryInfo(path);
+                    nameTextBox.Text = FileNameManipulator.GetFolderName(path);
+                    pathTextBox.Text = path;
                     data.Dispose();
                     return;
                 }
             }
-            if (data.Text != null && data.Text.Trim() != string.Empty && File.Exists(data.Text.Trim()))
+            if (data.Text != null && data.Text.Trim() != string.Empty)
             {
-                string path = data.Text;
-                FileInfo info = new FileInfo(path);
-                //if (info.Extension.ToLower() == ".exe")
-                //{
+                string path = data.Text.Trim();
+                if (File.Exists(path))
+                {
+                    FileInfo info = new FileInfo(path);
                     nameTextBox.Text = FileNameManipulator.GetFileName(info.Name);
                     pathTextBox.Text = path;
-                //}
-                data.Dispose();
-                return;
+                    data.Dispose();
+                    return;
+                }
+                else if (Directory.Exists(path))
+                {
+                    DirectoryInfo info = new DirectoryInfo(path);
+                    nameTextBox.Text = FileNameManipulator.GetFolderName(path);
+                    pathTextBox.Text = path;
+                    data.Dispose();
+                    return;
+                }
             }
             data.Dispose();
             
@@ -105,7 +118,7 @@ namespace Prompt
                 //_tooltip.RemoveAll();
                 return;
             }
-            else if (!File.Exists(pathTextBox.Text))
+            else if (!File.Exists(pathTextBox.Text) && !Directory.Exists(pathTextBox.Text))
             {
                 pathTextBox.Focus();
                 _tooltip.SetToolTip(pathTextBox, "Error");
@@ -152,7 +165,14 @@ namespace Prompt
             {
                 if (parameters == string.Empty)
                 {
-                    return "Run " + new_pcommand.Name + " command.";
+                    if (System.IO.Directory.Exists(new_pcommand.Path))
+                    {
+                        return "Open " + new_pcommand.Path;
+                    }
+                    else
+                    {
+                        return "Run " + new_pcommand.Name;
+                    }
                 }
                 else
                 {
@@ -195,13 +215,17 @@ namespace Prompt
 
                 try
                 {
-                    ProcessStartInfo info = new ProcessStartInfo(new_pcommand.Path);
-                    if (UserContext.Instance.IsWindowsExplorerOnTop)
-                        info.WorkingDirectory = UserContext.Instance.GetExplorerPath(true);
+                    ProcessStartInfo info;
+                    if ((modifiers & Keys.Shift) == Keys.Shift)
+                        info = new ProcessStartInfo(FileSearcher.GetItemFolder(new_pcommand.Path));
+                    else
+                        info = new ProcessStartInfo(new_pcommand.Path);
+                    string wd = System.IO.Path.GetDirectoryName(new_pcommand.Path);
+                    info.WorkingDirectory = (System.IO.Directory.Exists(wd) ? wd : string.Empty);
                     info.Arguments = new_pcommand.GetArguments(parameters);
                     info.UseShellExecute = true;
                     info.ErrorDialog = true;
-                    System.Diagnostics.Process.Start(info);
+                    Process.Start(info);
                     info = null;
                 }
                 catch

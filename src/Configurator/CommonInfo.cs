@@ -1,4 +1,4 @@
-// Blaze: Automated Desktop Experience
+ // Blaze: Automated Desktop Experience
 // Copyright (C) 2008,2009  Gabriel Barata
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@ namespace Configurator
 {
     public static class CommonInfo
     {
-        public static bool IsPortable = true;
+        public static bool IsPortable = false;
         public static string GUID = "{258b9f7e-f835-4b65-b833-906667ec51e6}";
         public static string AppName = "Blaze";
         public static string BinFolder = @"Bin\";

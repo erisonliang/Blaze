@@ -80,7 +80,8 @@ namespace Calculator
                             "/ : division" + Environment.NewLine +
                             "\\ : remainder" + Environment.NewLine +
                             "^ : powers" + Environment.NewLine +
-                            "% : percentage";
+                            "% : percentage"+ Environment.NewLine +
+                            "Parenthesis () are also suported.";
             _regex_calc = new Regex(@"\d*[\-\+\*\/\(\)\u0025\u005E\\]+[\d\s\-\+\*\/\(\)\u0025\u005E\\\s]+"); // \u0025 -> %
             _regex_forbidden_chars = new Regex(@"([^\d|\+|\-|\*|\/|\(|\)\u0025\u005E\\\,\.\s]|\|)+");
             _regex_comma_rule = new Regex(@"[\d]+[\,\.][\d]*[\,\.][\d]*");
