@@ -432,7 +432,7 @@ namespace Blaze
                                         "The main goal is to develop an application launcher that is able to automate the" + Environment.NewLine +
                                         "recurrent tasks that arise from everyday usage.";
             Process proc = Process.GetCurrentProcess();
-            MemoryEditableLabel.Text = (proc.WorkingSet64 / 1024).ToString() + " kilobytes";
+            MemoryEditableLabel.Text = (proc.PrivateMemorySize64 / 1024).ToString() + " kilobytes";
             StartTimeEditableLabel.Text = proc.StartTime.ToString();
             IndexingTimeEditableLabel.Text = SettingsManager.Instance.GetIndexingTime().ToString();
             IndexedItemsEditableLabel.Text = SettingsManager.Instance.GetNumberOfIndexedItems().ToString() + " items";
@@ -442,7 +442,7 @@ namespace Blaze
         private void RemoveDirectoryButton_Click(object sender, EventArgs e)
         {
             if (DirectoriesListBox.SelectedItem != null)
-            {
+            { 
                 string item = DirectoriesListBox.SelectedItem.ToString();
                 if (item != string.Empty)
                 {

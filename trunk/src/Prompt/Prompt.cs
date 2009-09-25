@@ -381,7 +381,14 @@ namespace Prompt
                 {
                     if (parameters == string.Empty)
                     {
-                        return "Run " + pcommand.Name + ".";
+                        if (System.IO.Directory.Exists(pcommand.Path))
+                        {
+                            return "Open " + pcommand.Path;
+                        }
+                        else
+                        {
+                            return "Run " + pcommand.Name;   
+                        }
                     }
                     else
                     {
@@ -424,15 +431,17 @@ namespace Prompt
                     
                     try
                     {
-                        ProcessStartInfo info = new ProcessStartInfo(pcommand.Path);
-                        //if (UserContext.Instance.IsWindowsExplorerOnTop)
-                        //    info.WorkingDirectory = UserContext.Instance.GetExplorerPath(true);
+                        ProcessStartInfo info;
+                        if ((modifiers & Keys.Shift) == Keys.Shift)
+                            info = new ProcessStartInfo(FileSearcher.GetItemFolder(pcommand.Path));
+                        else
+                            info = new ProcessStartInfo(pcommand.Path);
                         string wd = System.IO.Path.GetDirectoryName(pcommand.Path);
                         info.WorkingDirectory = (System.IO.Directory.Exists(wd) ? wd : string.Empty);
                         info.Arguments = pcommand.GetArguments(parameters);
                         info.UseShellExecute = true;
                         info.ErrorDialog = true;
-                        System.Diagnostics.Process.Start(info);
+                        Process.Start(info);
                         info = null;
                     }
                     catch

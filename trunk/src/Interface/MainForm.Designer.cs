@@ -116,45 +116,45 @@ namespace Blaze
             this.toolStripSeparator8,
             this.NotifyIconContextMenu_Exit});
             this.NotifyIconContextMenu.Name = "NotifyIconContextMenu";
-            this.NotifyIconContextMenu.Size = new System.Drawing.Size(201, 204);
+            this.NotifyIconContextMenu.Size = new System.Drawing.Size(236, 220);
             this.NotifyIconContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.NotifyIconContextMenu_Opening);
             // 
             // restoreToolStripMenuItem
             // 
             this.restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
-            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(235, 24);
             this.restoreToolStripMenuItem.Text = "Show";
             this.restoreToolStripMenuItem.Click += new System.EventHandler(this.restoreToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(197, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(232, 6);
             // 
             // rebuildIndexToolStripMenuItem
             // 
             this.rebuildIndexToolStripMenuItem.Name = "rebuildIndexToolStripMenuItem";
-            this.rebuildIndexToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.rebuildIndexToolStripMenuItem.Size = new System.Drawing.Size(235, 24);
             this.rebuildIndexToolStripMenuItem.Text = "Rebuild Index";
             this.rebuildIndexToolStripMenuItem.Click += new System.EventHandler(this.rebuildIndexToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(235, 24);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(197, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(232, 6);
             // 
             // showAssistantWindowMenuItem2
             // 
             this.showAssistantWindowMenuItem2.CheckOnClick = true;
             this.showAssistantWindowMenuItem2.Name = "showAssistantWindowMenuItem2";
-            this.showAssistantWindowMenuItem2.Size = new System.Drawing.Size(200, 22);
+            this.showAssistantWindowMenuItem2.Size = new System.Drawing.Size(235, 24);
             this.showAssistantWindowMenuItem2.Text = "Show Assistant Window";
             this.showAssistantWindowMenuItem2.Click += new System.EventHandler(this.showAssistantWindowMenuItem2_Click);
             // 
@@ -162,38 +162,38 @@ namespace Blaze
             // 
             this.showDebugWindowMenuItem2.CheckOnClick = true;
             this.showDebugWindowMenuItem2.Name = "showDebugWindowMenuItem2";
-            this.showDebugWindowMenuItem2.Size = new System.Drawing.Size(200, 22);
+            this.showDebugWindowMenuItem2.Size = new System.Drawing.Size(235, 24);
             this.showDebugWindowMenuItem2.Text = "Show Debug Window";
             this.showDebugWindowMenuItem2.Click += new System.EventHandler(this.showDebugWindowMenuItem2_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(197, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(232, 6);
             // 
             // blazeWebpageToolStripMenuItem1
             // 
             this.blazeWebpageToolStripMenuItem1.Name = "blazeWebpageToolStripMenuItem1";
-            this.blazeWebpageToolStripMenuItem1.Size = new System.Drawing.Size(200, 22);
+            this.blazeWebpageToolStripMenuItem1.Size = new System.Drawing.Size(235, 24);
             this.blazeWebpageToolStripMenuItem1.Text = "Blaze Webpage";
             this.blazeWebpageToolStripMenuItem1.Click += new System.EventHandler(this.blazeWebpageToolStripMenuItem1_Click);
             // 
             // helpToolStripMenuItem1
             // 
             this.helpToolStripMenuItem1.Name = "helpToolStripMenuItem1";
-            this.helpToolStripMenuItem1.Size = new System.Drawing.Size(200, 22);
+            this.helpToolStripMenuItem1.Size = new System.Drawing.Size(235, 24);
             this.helpToolStripMenuItem1.Text = "Help";
             this.helpToolStripMenuItem1.Click += new System.EventHandler(this.helpToolStripMenuItem1_Click);
             // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(197, 6);
+            this.toolStripSeparator8.Size = new System.Drawing.Size(232, 6);
             // 
             // NotifyIconContextMenu_Exit
             // 
             this.NotifyIconContextMenu_Exit.Name = "NotifyIconContextMenu_Exit";
-            this.NotifyIconContextMenu_Exit.Size = new System.Drawing.Size(200, 22);
+            this.NotifyIconContextMenu_Exit.Size = new System.Drawing.Size(235, 24);
             this.NotifyIconContextMenu_Exit.Text = "Exit";
             this.NotifyIconContextMenu_Exit.Click += new System.EventHandler(this.NotifyIconContextMenu_Exit_Click);
             // 
@@ -203,9 +203,10 @@ namespace Blaze
             this.TextInput.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.TextInput.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TextInput.ForeColor = System.Drawing.Color.Black;
-            this.TextInput.Location = new System.Drawing.Point(85, 64);
+            this.TextInput.Location = new System.Drawing.Point(113, 79);
+            this.TextInput.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.TextInput.Name = "TextInput";
-            this.TextInput.Size = new System.Drawing.Size(287, 20);
+            this.TextInput.Size = new System.Drawing.Size(383, 24);
             this.TextInput.TabIndex = 0;
             // 
             // MainContextMenu
@@ -224,44 +225,44 @@ namespace Blaze
             this.toolStripSeparator7,
             this.exitToolStripMenuItem});
             this.MainContextMenu.Name = "MainContextMenu";
-            this.MainContextMenu.Size = new System.Drawing.Size(201, 204);
+            this.MainContextMenu.Size = new System.Drawing.Size(236, 220);
             // 
             // hideToolStripMenuItem1
             // 
             this.hideToolStripMenuItem1.Name = "hideToolStripMenuItem1";
-            this.hideToolStripMenuItem1.Size = new System.Drawing.Size(200, 22);
+            this.hideToolStripMenuItem1.Size = new System.Drawing.Size(235, 24);
             this.hideToolStripMenuItem1.Text = "Hide";
             this.hideToolStripMenuItem1.Click += new System.EventHandler(this.hideToolStripMenuItem1_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(197, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(232, 6);
             // 
             // rebuildIndexToolStripMenuItem1
             // 
             this.rebuildIndexToolStripMenuItem1.Name = "rebuildIndexToolStripMenuItem1";
-            this.rebuildIndexToolStripMenuItem1.Size = new System.Drawing.Size(200, 22);
+            this.rebuildIndexToolStripMenuItem1.Size = new System.Drawing.Size(235, 24);
             this.rebuildIndexToolStripMenuItem1.Text = "Rebuild Index";
             this.rebuildIndexToolStripMenuItem1.Click += new System.EventHandler(this.rebuildIndexToolStripMenuItem1_Click);
             // 
             // settingsToolStripMenuItem1
             // 
             this.settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
-            this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(200, 22);
+            this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(235, 24);
             this.settingsToolStripMenuItem1.Text = "Settings";
             this.settingsToolStripMenuItem1.Click += new System.EventHandler(this.settingsToolStripMenuItem1_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(197, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(232, 6);
             // 
             // showAssistantWindowMenuItem1
             // 
             this.showAssistantWindowMenuItem1.CheckOnClick = true;
             this.showAssistantWindowMenuItem1.Name = "showAssistantWindowMenuItem1";
-            this.showAssistantWindowMenuItem1.Size = new System.Drawing.Size(200, 22);
+            this.showAssistantWindowMenuItem1.Size = new System.Drawing.Size(235, 24);
             this.showAssistantWindowMenuItem1.Text = "Show Assistant Window";
             this.showAssistantWindowMenuItem1.Click += new System.EventHandler(this.showAssistantWindowMenuItem1_Click);
             // 
@@ -269,47 +270,48 @@ namespace Blaze
             // 
             this.showDebugWindowMenuItem1.CheckOnClick = true;
             this.showDebugWindowMenuItem1.Name = "showDebugWindowMenuItem1";
-            this.showDebugWindowMenuItem1.Size = new System.Drawing.Size(200, 22);
+            this.showDebugWindowMenuItem1.Size = new System.Drawing.Size(235, 24);
             this.showDebugWindowMenuItem1.Text = "Show Debug Window";
             this.showDebugWindowMenuItem1.Click += new System.EventHandler(this.showDebugWindowMenuItem1_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(197, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(232, 6);
             // 
             // blazeWebpageToolStripMenuItem
             // 
             this.blazeWebpageToolStripMenuItem.Name = "blazeWebpageToolStripMenuItem";
-            this.blazeWebpageToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.blazeWebpageToolStripMenuItem.Size = new System.Drawing.Size(235, 24);
             this.blazeWebpageToolStripMenuItem.Text = "Blaze Webpage";
             this.blazeWebpageToolStripMenuItem.Click += new System.EventHandler(this.blazeWebpageToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(235, 24);
             this.helpToolStripMenuItem.Text = "Help";
             this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
             // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(197, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(232, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(235, 24);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // IconBox
             // 
             this.IconBox.BackColor = System.Drawing.Color.Transparent;
-            this.IconBox.Location = new System.Drawing.Point(28, 32);
+            this.IconBox.Location = new System.Drawing.Point(37, 39);
+            this.IconBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.IconBox.Name = "IconBox";
-            this.IconBox.Size = new System.Drawing.Size(32, 32);
+            this.IconBox.Size = new System.Drawing.Size(43, 39);
             this.IconBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.IconBox.TabIndex = 2;
             this.IconBox.TabStop = false;
@@ -320,9 +322,10 @@ namespace Blaze
             this.NameDisplay.BackColor = System.Drawing.Color.Transparent;
             this.NameDisplay.Font = new System.Drawing.Font("Verdana", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.NameDisplay.ForeColor = System.Drawing.Color.Black;
-            this.NameDisplay.Location = new System.Drawing.Point(82, 11);
+            this.NameDisplay.Location = new System.Drawing.Point(109, 14);
+            this.NameDisplay.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.NameDisplay.Name = "NameDisplay";
-            this.NameDisplay.Size = new System.Drawing.Size(289, 23);
+            this.NameDisplay.Size = new System.Drawing.Size(385, 28);
             this.NameDisplay.TabIndex = 4;
             this.NameDisplay.Text = "NameDisplay";
             // 
@@ -331,28 +334,31 @@ namespace Blaze
             this.CustomLabel.BackColor = System.Drawing.Color.Transparent;
             this.CustomLabel.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CustomLabel.ForeColor = System.Drawing.Color.Black;
-            this.CustomLabel.Location = new System.Drawing.Point(85, 36);
+            this.CustomLabel.Location = new System.Drawing.Point(113, 44);
+            this.CustomLabel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.CustomLabel.Name = "CustomLabel";
-            this.CustomLabel.Size = new System.Drawing.Size(286, 18);
+            this.CustomLabel.Size = new System.Drawing.Size(381, 22);
             this.CustomLabel.TabIndex = 5;
             this.CustomLabel.TabStop = true;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Chartreuse;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(384, 96);
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(512, 118);
             this.ContextMenuStrip = this.MainContextMenu;
             this.Controls.Add(this.TextInput);
             this.Controls.Add(this.NameDisplay);
             this.Controls.Add(this.IconBox);
             this.Controls.Add(this.CustomLabel);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = global::Blaze.Properties.Resources.blaze_big;
             this.KeyPreview = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MainForm";

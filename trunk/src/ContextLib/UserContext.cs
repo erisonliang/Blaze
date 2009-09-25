@@ -138,7 +138,7 @@ namespace ContextLib
             MultiLevelData clipboard_backup = new MultiLevelData();
             clipboard_backup.PopulateFromClipboard();
             // copy selected content into the clipboard
-            Thread.Sleep(5);
+            //Thread.Sleep(5);
 
             
 
@@ -172,10 +172,10 @@ namespace ContextLib
             //Win32.AttachThreadInput(activeThreadId, currentThreadId, false);
 
             // store clipboard content
-            Thread.Sleep(5);
+            //Thread.Sleep(5);
             _selected_content.PopulateFromClipboard();
             // restore clipboard
-            Thread.Sleep(5);
+            //Thread.Sleep(5);
             clipboard_backup.RestoreToClipboard();
             //_selected_content = new MultiLevelData();
             //_selected_content.Text = WindowUtility.Instance.GetTextFromTopWindowEx();

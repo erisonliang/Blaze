@@ -15,6 +15,14 @@ Shift. If this happens, press each stuck key once and it will be fixed.
 
 VERSION HISTORY:
 
+(25/09/2009) - Blaze 0.4.8.8 beta
+
+* Blaze Indexer doesn't crash by indexing directories longer than 260 characteres anymore.
+* Blaze now is High-DPI aware.
+* Prompt plugin was improved. Now directories can also be added as new commands. Furthermore, now and Shift+Enter can also be used to open the command's parent directory.
+* Blaze UI now shows faster.
+* A few typos were corrected.
+
 (21/09/2009) - Blaze 0.4.8.5 beta
 
 * Fixed a crash regarding web browser's cached files.
