@@ -316,6 +316,21 @@ namespace ContextLib.DataContainers.Monitoring
             code += "speed_multiplier = 1" + Environment.NewLine;
             code += Environment.NewLine;
 
+            // generate amount of time to wait between repetitions
+            code += "# Change this value to modify the amount of time to wait between repetitions, in milliseconds" + Environment.NewLine;
+            code += "wait_time = 0" + Environment.NewLine;
+            code += Environment.NewLine;
+
+            // determine amount of iterations
+            code += "repetitions = 1" + Environment.NewLine;
+            code += "len = len(sys.argv)" + Environment.NewLine;
+            code += "if len > 0 and sys.argv[0].isdigit():" + Environment.NewLine;
+            code += "   repetitions = int(sys.argv[0])" + Environment.NewLine;
+            code += Environment.NewLine;
+
+            // generate the for loop
+            code += "for index in range(repetitions):" + Environment.NewLine;
+
             // generate actions
             for (int i = 0; i < _user_actions.Count; i++)
             {
@@ -323,11 +338,17 @@ namespace ContextLib.DataContainers.Monitoring
                     continue;
                 action_count++;
                 UserAction action = _user_actions[i];
-                code += "# Action " + action_count.ToString() + " (at " + action.Time.ToString() + "):" + Environment.NewLine;
-                code += "Threading.Thread.Sleep(" + (int)((action.Time - temp_time).TotalMilliseconds / _speed_multiplier) + " / speed_multiplier)" + Environment.NewLine;
-                code += action.IpySnippet;
+                code += "   # Action " + action_count.ToString() + " (at " + action.Time.ToString() + "):" + Environment.NewLine;
+                code += "   Threading.Thread.Sleep(" + (int)((action.Time - temp_time).TotalMilliseconds / _speed_multiplier) + " / speed_multiplier)" + Environment.NewLine;
+                //code += "   " + action.IpySnippet;
+                string[] code_lines = action.IpySnippet.Split(new string[]{Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+                for (int j = 0; j < code_lines.Length; j++)
+                    code += "   " + code_lines[j] + Environment.NewLine;
                 temp_time = action.Time;
             }
+
+            code += "   #Wait before executing the next repetition" + Environment.NewLine;
+            code += "   Threading.Thread.Sleep(wait_time / speed_multiplier)" + Environment.NewLine;
 
             return code;
         }
