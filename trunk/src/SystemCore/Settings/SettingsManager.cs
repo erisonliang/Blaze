@@ -39,6 +39,7 @@ namespace SystemCore.Settings
         private int _indexed_items = 0;
         private InterfaceInfo _interface_info = null;
         private SystemOptionsInfo _system_options_info = null;
+        private AutomationOptionsInfo _automation_options_info = null;
         #endregion
 
         #region Accessors
@@ -432,7 +433,8 @@ namespace SystemCore.Settings
         {
             if (_system_options_info == null)
             {
-                int update_time = 15;
+                int update_time = 20;
+                bool stop_auto_update = true;
                 List<string> categories = INIManipulator.GetCategories(_path);
                 if (categories.Count > 0)
                 {
@@ -443,14 +445,19 @@ namespace SystemCore.Settings
                         if (keys.Count > 0)
                         {
                             string update_time_name = "updateTime";
+                            string stop_auto_update_name = "stopAutoUpdateOnBattery";
                             if (keys.Contains(update_time_name))
                             {
-                                Int32.TryParse(INIManipulator.GetValue(_path, category, update_time_name, "15"), out update_time);
+                                Int32.TryParse(INIManipulator.GetValue(_path, category, update_time_name, "20"), out update_time);
+                            }
+                            if (keys.Contains(stop_auto_update_name))
+                            {
+                                Boolean.TryParse(INIManipulator.GetValue(_path, category, stop_auto_update_name, "true"), out stop_auto_update);
                             }
                         }
                     }
                 }
-                _system_options_info = new SystemOptionsInfo(update_time);
+                _system_options_info = new SystemOptionsInfo(update_time, stop_auto_update);
             }
             return _system_options_info;
         }
@@ -460,6 +467,48 @@ namespace SystemCore.Settings
             _system_options_info = info;
             string category = "system";
             INIManipulator.WriteValue(_path, category, "updateTime", info.UpdateTime.ToString());
+            INIManipulator.WriteValue(_path, category, "stopAutoUpdateOnBattery", info.StopAutoUpdateOnBattery.ToString());
+        }
+
+        public AutomationOptionsInfo GetAutomationOptionsInfo()
+        {
+            if (_automation_options_info == null)
+            {
+                bool is_monitoring = true;
+                bool stop_monitoring = true;
+                List<string> categories = INIManipulator.GetCategories(_path);
+                if (categories.Count > 0)
+                {
+                    string category = "automation";
+                    if (categories.Contains(category))
+                    {
+                        List<string> keys = INIManipulator.GetKeys(_path, category);
+                        if (keys.Count > 0)
+                        {
+                            string is_monitoring_name = "monitoringEnabled";
+                            string stop_monitoring_name = "stopMonitoringOnBattery";
+                            if (keys.Contains(is_monitoring_name))
+                            {
+                                Boolean.TryParse(INIManipulator.GetValue(_path, category, is_monitoring_name, "true"), out is_monitoring);
+                            }
+                            if (keys.Contains(stop_monitoring_name))
+                            {
+                                Boolean.TryParse(INIManipulator.GetValue(_path, category, stop_monitoring_name, "true"), out stop_monitoring);
+                            }
+                        }
+                    }
+                }
+                _automation_options_info = new AutomationOptionsInfo(is_monitoring, stop_monitoring);
+            }
+            return _automation_options_info;
+        }
+
+        public void SaveAutomationOptionsInfo(AutomationOptionsInfo info)
+        {
+            _automation_options_info = info;
+            string category = "automation";
+            INIManipulator.WriteValue(_path, category, "monitoringEnabled", info.IsMonitoringEnabled.ToString());
+            INIManipulator.WriteValue(_path, category, "stopMonitoringOnBattery", info.StopAutoUpdateOnBattery.ToString());
         }
 
         public TimeSpan GetIndexingTime()

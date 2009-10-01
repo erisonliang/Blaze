@@ -15,18 +15,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace SystemCore.Settings
 {
-    public class SystemOptionsInfo
+    public class AutomationOptionsInfo
     {
         #region Properties
-        private int _update_time;
+        private bool _is_monitoring_enabled;
         private bool _stop_auto_update_on_battery;
         #endregion
 
         #region Accessors
-        public int UpdateTime
+        public bool IsMonitoringEnabled
         {
-            get { return _update_time; }
-            set { _update_time = value; }
+            get { return _is_monitoring_enabled; }
+            set { _is_monitoring_enabled = value; }
         }
 
         public bool StopAutoUpdateOnBattery
@@ -37,15 +37,15 @@ namespace SystemCore.Settings
         #endregion
 
         #region Constructors
-        public SystemOptionsInfo(int update_time, bool stop_auto_update_on_battery)
+        public AutomationOptionsInfo(bool is_monitoring_enabled, bool stop_auto_update_on_battery)
         {
-            _update_time = update_time;
+            _is_monitoring_enabled = is_monitoring_enabled;
             _stop_auto_update_on_battery = stop_auto_update_on_battery;
         }
 
-        public SystemOptionsInfo(SystemOptionsInfo info)
+        public AutomationOptionsInfo(AutomationOptionsInfo info)
         {
-            _update_time = info.UpdateTime;
+            _is_monitoring_enabled = info.IsMonitoringEnabled;
             _stop_auto_update_on_battery = info.StopAutoUpdateOnBattery;
         }
         #endregion

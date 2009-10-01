@@ -154,6 +154,8 @@ namespace Blaze
             Gma.UserActivityMonitor.HookManager.KeyDown += new KeyEventHandler(HookManager_KeyDown);
             UserContext.Instance.AssistantObject.NewSuggestion += new Assistant.SuggestionEventHandler(AssistantObject_NewSuggestion);
             UserContext.Instance.AssistantObject.NoNewSuggestion += new Assistant.SuggestionEventHandler(AssistantObject_NoNewSuggestion);
+            if (SettingsManager.Instance.GetAutomationOptionsInfo().IsMonitoringEnabled)
+                UserContext.Instance.ObserverObject.StartMonitoring();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -526,7 +528,7 @@ namespace Blaze
 
         public void ShowAutomator(bool release_keys)
         {
-            UserContext.Instance.ObserverObject.StopMonitoring();
+            UserContext.Instance.ObserverObject.PauseMonitoring();
             int iskip = (UserContext.Instance.ObserverObject.UseCompression ? 0 : 1), fskip = 1;
 
             UserContext.Instance.StopMacroRecording(CommonInfo.ScriptsFolder, iskip, fskip);
@@ -631,7 +633,8 @@ namespace Blaze
                     Win32.keybd_event((byte)key, (byte)Win32.MapVirtualKey((uint)key, 0), Win32.KEYEVENTF_EXTENDEDKEY | Win32.KEYEVENTF_KEYUP, 0);
                 }
             }
-            UserContext.Instance.ObserverObject.StartMonitoring();
+            if (UserContext.Instance.ObserverObject.IsMonitoringEnabled)
+                UserContext.Instance.ObserverObject.ResumeMonitoring();
         }
 
         public void UpdateListBoxPosition()

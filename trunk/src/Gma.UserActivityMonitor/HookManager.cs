@@ -9,6 +9,10 @@ namespace Gma.UserActivityMonitor {
     /// </summary>
     public static partial class HookManager
     {
+        #region Properties
+        public static bool Enabled { get; set; }
+        #endregion
+
         //################################################################
         #region Mouse events
 

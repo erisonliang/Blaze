@@ -39,6 +39,7 @@ namespace ContextLib
         private string _monitoring_path = null;
         private string _working_path = null;
         private bool _is_monitoring;
+        private bool _is_monitoring_enabled;
         private bool _is_recording;
         private Apprentice _apprentice = null;
         private Assistant _assistant = null;
@@ -55,6 +56,7 @@ namespace ContextLib
 
         #region Accessors
         public bool IsMonitoring { get { return _is_monitoring; } }
+        public bool IsMonitoringEnabled { get { return _is_monitoring_enabled; } }
         public bool IsRecording { get { return _is_recording; } }
         public string WorkingPath { get { return _working_path; } }
         public int NumberOfActions { get { return _actions.UserActions.Count; } }
@@ -71,15 +73,10 @@ namespace ContextLib
             _regex = new Regex(@"\\");
             _actions = new UserActionWindow(action_window_size, action_life_period, action_validation_period);
             _actions.UseCompression = _use_compression;
-            _file_system_watcher = new FileSystemWatcher();
-            _file_system_watcher.IncludeSubdirectories = true;
             _accept_user_action = new TimeSpan(action_acceptance_period * TimeSpan.TicksPerMillisecond);
             _accept_dir_update = new TimeSpan(500 * TimeSpan.TicksPerMillisecond);
             _last_dir_updade = DateTime.Now;
             _last_user_action = DateTime.Now;
-            _file_system_watcher.Created += new FileSystemEventHandler(_file_system_watcher_Created);
-            _file_system_watcher.Deleted += new FileSystemEventHandler(_file_system_watcher_Deleted);
-            _file_system_watcher.Renamed += new RenamedEventHandler(_file_system_watcher_Renamed);
             _use_compression = true;
 
             _timer = new System.Timers.Timer();
@@ -87,7 +84,17 @@ namespace ContextLib
             _timer.AutoReset = false;
             _timer.Interval = action_validation_period / 2;
 
-            // keyboard and mouse hooks
+            _is_monitoring = false;
+            _is_monitoring_enabled = false;
+
+            _file_system_watcher = new FileSystemWatcher();
+            _file_system_watcher.IncludeSubdirectories = true;
+
+            _file_system_watcher.Created += new FileSystemEventHandler(_file_system_watcher_Created);
+            _file_system_watcher.Deleted += new FileSystemEventHandler(_file_system_watcher_Deleted);
+            _file_system_watcher.Renamed += new RenamedEventHandler(_file_system_watcher_Renamed);
+
+            HookManager.Enabled = _is_monitoring_enabled;
             HookManager.KeyDown += new KeyEventHandler(HookManager_KeyDown);
             HookManager.KeyUp += new KeyEventHandler(HookManager_KeyUp);
             HookManager.KeyPress += new Gma.UserActivityMonitor.HookManager.KeyPressExEventHandler(HookManager_KeyPress);
@@ -98,7 +105,6 @@ namespace ContextLib
 
         ~Observer()
         {
-            // keyboard and mouse hooks
             try
             {
                 HookManager.KeyDown -= HookManager_KeyDown;
@@ -115,25 +121,46 @@ namespace ContextLib
             _file_system_watcher.Created -= _file_system_watcher_Created;
             _file_system_watcher.Deleted -= _file_system_watcher_Deleted;
             _file_system_watcher.Renamed -= _file_system_watcher_Renamed;
+            _file_system_watcher.Dispose();
         }
         #endregion
 
         #region Timer Event Handler
         void _timer_Tick(object sender, EventArgs e)
         {
-            //_actions.ValidadeActions();
-            //_apprentice.Rebuild(_actions.UserActions);
-            //_assistant.GenerateSuggestions(_apprentice.GetLongestRepetitions(), _actions.Generalizations);
+            _actions.ValidadeActions();
+            _apprentice.Rebuild(_actions.UserActions);
+            _assistant.GenerateSuggestions(_apprentice.GetLongestRepetitions(), _actions.Generalizations);
             //if (_actions.UserActions.Count > 0)
             //{
-            //    _timer.Stop();
-            //    _timer.Start();
+                _timer.Stop();
+                _timer.Start();
             //}
         }
         #endregion
 
         #region Public Methods
         public void StartMonitoring()
+        {
+            if (!_is_monitoring_enabled)
+            {
+                _is_monitoring_enabled = true;
+                HookManager.Enabled = _is_monitoring_enabled;
+                ResumeMonitoring();
+            }
+        }
+
+        public void StopMonitoring()
+        {
+            if (_is_monitoring_enabled)
+            {
+                PauseMonitoring();
+                _is_monitoring_enabled = false;
+                HookManager.Enabled = _is_monitoring_enabled;
+            }
+        }
+
+        public void ResumeMonitoring()
         {
             if (!_is_monitoring)
             {
@@ -155,7 +182,7 @@ namespace ContextLib
             }
         }
 
-        public void StopMonitoring()
+        public void PauseMonitoring()
         {
             if (_is_monitoring)
             {
@@ -172,6 +199,8 @@ namespace ContextLib
         {
             if (!_is_recording)
             {
+                HookManager.Enabled = true;
+                ResumeMonitoring();
                 _macro = new Macro();
                 _macro.UseCompression = _use_compression;
                 _macro.Start();
@@ -187,6 +216,11 @@ namespace ContextLib
                 _is_recording = false;
                 _macro.Finish();
                 //_logger.WriteLine("Macro recording stopped at {0}.", DateTime.Now);
+                if (!_is_monitoring_enabled)
+                {
+                    HookManager.Enabled = _is_monitoring_enabled;
+                    PauseMonitoring();
+                }
             }
         }
 

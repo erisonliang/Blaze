@@ -176,16 +176,45 @@ namespace ContextLib.DataContainers.Multimedia
         /// </summary>
         public void RestoreToClipboard()
         {
+            IDataObject data = null;
             try
             {
-                Clipboard.SetDataObject(GetDataObject());
+                data = GetDataObject();
+                if (!string.IsNullOrEmpty(_text))
+                    Clipboard.SetText(_text);
+                if (_image != null)
+                    Clipboard.SetImage(_image);
+                if (_fileList != null && _fileList.Length > 0)
+                {
+                    StringCollection sc = new StringCollection();
+                    foreach (string str in _fileList)
+                        sc.Add(str);
+                    Clipboard.SetFileDropList(sc);
+                }
+                if (_audio != null)
+                    Clipboard.SetAudio(_audio);
+                //Clipboard.SetDataObject(GetDataObject());
             }
             catch
             {
                 try
                 {
                     System.Threading.Thread.Sleep(25);
-                    Clipboard.SetDataObject(GetDataObject());
+                    data = GetDataObject();
+                    if (!string.IsNullOrEmpty(_text))
+                        Clipboard.SetText(_text);
+                    if (_image != null)
+                        Clipboard.SetImage(_image);
+                    if (_fileList != null && _fileList.Length > 0)
+                    {
+                        StringCollection sc = new StringCollection();
+                        foreach (string str in _fileList)
+                            sc.Add(str);
+                        Clipboard.SetFileDropList(sc);
+                    }
+                    if (_audio != null)
+                        Clipboard.SetAudio(_audio);
+                    //Clipboard.SetDataObject(GetDataObject());
                 }
                 catch (Exception e)
                 {
@@ -201,13 +230,13 @@ namespace ContextLib.DataContainers.Multimedia
         public IDataObject GetDataObject()
         {
             IDataObject dataObj = new DataObject();
-            dataObj.SetData(DataFormats.Text, _text);
-            dataObj.SetData(DataFormats.Bitmap, _image);
+            dataObj.SetData(DataFormats.Text, true, _text);
+            dataObj.SetData(DataFormats.Bitmap, true, _image);
             StringCollection sc = new StringCollection();
             if (_fileList != null)
                 sc.AddRange(_fileList);
-            dataObj.SetData(DataFormats.FileDrop, sc);
-            dataObj.SetData(DataFormats.WaveAudio, _audio);
+            dataObj.SetData(DataFormats.FileDrop, true, sc);
+            dataObj.SetData(DataFormats.WaveAudio, true, _audio);
             return dataObj;
         }
 

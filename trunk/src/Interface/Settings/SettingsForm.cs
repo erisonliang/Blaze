@@ -25,6 +25,7 @@ using SystemCore.SystemAbstraction;
 using Blaze.Settings;
 using Configurator;
 using ContextLib;
+using SystemCore.SystemAbstraction.FileHandling;
 
 namespace Blaze
 {
@@ -52,6 +53,7 @@ namespace Blaze
         private PluginInfo _pluginInfo;
         private InterfaceInfo _interface_info;
         private SystemOptionsInfo _system_options_info;
+        private AutomationOptionsInfo _automation_options_info;
         #endregion
 
         #region Assembly Attribute Accessors
@@ -377,6 +379,18 @@ namespace Blaze
             //
             _system_options_info = new SystemOptionsInfo(SettingsManager.Instance.GetSystemOptionsInfo());
             updateTimeNumericUpDown.Value = _system_options_info.UpdateTime;
+            stopIndexingCheckBox.Checked = _system_options_info.StopAutoUpdateOnBattery;
+            //
+
+            //
+            // Automation Options
+            //
+            _automation_options_info = new AutomationOptionsInfo(SettingsManager.Instance.GetAutomationOptionsInfo());
+            if (_automation_options_info.IsMonitoringEnabled)
+                yesAutomationRadioButton.Checked = true;
+            else
+                noAutomationRadioButton.Checked = true;
+            stopMonitoringCheckBox.Checked = _automation_options_info.StopAutoUpdateOnBattery;
             //
 
             //
@@ -431,6 +445,7 @@ namespace Blaze
             AutomatorDescriptionLabel.Text = "Blaze is an application that is being developed in the scope of a college project." + Environment.NewLine +
                                         "The main goal is to develop an application launcher that is able to automate the" + Environment.NewLine +
                                         "recurrent tasks that arise from everyday usage.";
+            stopMonitoringCheckBox.Text = "Stop monitoring when my laptop is " + Environment.NewLine + "running on battery";
             Process proc = Process.GetCurrentProcess();
             MemoryEditableLabel.Text = (proc.PrivateMemorySize64 / 1024).ToString() + " kilobytes";
             StartTimeEditableLabel.Text = proc.StartTime.ToString();
@@ -523,6 +538,9 @@ namespace Blaze
             }
             _interface_info.NumberOfSuggestions = (int)suggestionsNumericUpDown.Value;
             _system_options_info.UpdateTime = (int)updateTimeNumericUpDown.Value;
+            _system_options_info.StopAutoUpdateOnBattery = stopIndexingCheckBox.Checked;
+            _automation_options_info.IsMonitoringEnabled = yesAutomationRadioButton.Checked;
+            _automation_options_info.StopAutoUpdateOnBattery = stopMonitoringCheckBox.Checked;
             List<List<string>> ext = new List<List<string>>();
             List<bool> subdir = new List<bool>();
             List<bool> incdir = new List<bool>();
@@ -536,6 +554,11 @@ namespace Blaze
             SettingsManager.Instance.SaveLoadablePlugins(_pluginInfo);
             SettingsManager.Instance.SaveInterfaceInfo(_interface_info);
             SettingsManager.Instance.SaveSystemOptionsInfo(_system_options_info);
+            SettingsManager.Instance.SaveAutomationOptionsInfo(_automation_options_info);
+            if (_automation_options_info.IsMonitoringEnabled)
+                UserContext.Instance.ObserverObject.StartMonitoring();
+            else
+                UserContext.Instance.ObserverObject.StopMonitoring();
             _parent.Interpreter.SetUpdateTimerInterval(_system_options_info.UpdateTime);
             _parent.LoadPlugins();
             _parent.UpdateUponInput();
@@ -568,7 +591,7 @@ namespace Blaze
             if (_directoryPicker.ShowDialog() == DialogResult.OK)
             {
                 //string dir = _directoryPicker.directoryInput.Text;
-                string dir = _directoryPicker.SelectedPath;
+                string dir = (CommonInfo.IsPortable ? FileNameManipulator.RelativePath(_directoryPicker.SelectedPath, Environment.CurrentDirectory) : _directoryPicker.SelectedPath);
                 if (dir[dir.Length - 1] != '\\')
                     dir += "\\";
                 if (_directories.Contains(dir))

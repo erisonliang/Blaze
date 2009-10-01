@@ -40,6 +40,7 @@ namespace Blaze.Interpreter
         private List<InterpreterPlugin> _plugins;
         private PluginCommandCache _commandCache;
         private System.Timers.Timer _timer;
+        private System.Timers.Timer _auto_timer;
         //private string[] _special_keywords;
         #endregion
 
@@ -59,13 +60,36 @@ namespace Blaze.Interpreter
             _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Tick);
             _timer.Interval = 1000 * 60 * SettingsManager.Instance.GetSystemOptionsInfo().UpdateTime;
             _timer.AutoReset = true;
-            _timer.Start();
+            if (_timer.Interval > 0)
+                _timer.Start();
+            _auto_timer = new System.Timers.Timer();
+            _auto_timer.Elapsed += new System.Timers.ElapsedEventHandler(_auto_timer_Elapsed);
+            _auto_timer.Interval = 5000;
+            _auto_timer.AutoReset = true;
+            _auto_timer.Start();
+        }
+
+        void _auto_timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (SettingsManager.Instance.GetAutomationOptionsInfo().StopAutoUpdateOnBattery)
+            {
+                if (UserContext.Instance.IsRunningOnBatteryPower())
+                    UserContext.Instance.ObserverObject.StopMonitoring();
+                else if (SystemCore.Settings.SettingsManager.Instance.GetAutomationOptionsInfo().IsMonitoringEnabled)
+                    UserContext.Instance.ObserverObject.StartMonitoring();
+            }
         }
         #endregion
 
         void _timer_Tick(object sender, EventArgs e)
         {
-            BuildIndex();
+            if (SettingsManager.Instance.GetSystemOptionsInfo().StopAutoUpdateOnBattery)
+            {
+                if (!UserContext.Instance.IsRunningOnBatteryPower())
+                    BuildIndex();
+            }
+            else
+                BuildIndex();
         }
 
         #region Public Methods

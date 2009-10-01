@@ -98,12 +98,12 @@ namespace ContextLib
             _assistant = new Assistant();
             _observer.Apprentice = _apprentice;
             _observer.Assistant = _assistant;
-            _observer.StartMonitoring();
+            _observer.ResumeMonitoring();
         }
 
         ~UserContext()
         {
-            _observer.StopMonitoring();
+            _observer.PauseMonitoring();
         }
         #endregion
 
@@ -200,6 +200,7 @@ namespace ContextLib
                     {
                         operation();
                     }));
+                op.SetApartmentState(ApartmentState.STA);
                 op.Start();
             }
             _post_focus_operations.Clear();
@@ -1319,15 +1320,7 @@ namespace ContextLib
         /// <param name="pf">Boolean indicating if this method should only be executed once <see cref="PerformPostFocusOperations"/> is also executed.</param>
         public void InsertText(string text, bool pf)
         {
-            string new_text = FixBraces(text).Replace("+", "{+}")
-                                    .Replace("^", "{^}")
-                                    .Replace("%", "{%}")
-                                    .Replace("~", "{~}")
-                                    .Replace("(", "{(}")
-                                    .Replace(")", "{)}")
-                                    .Replace("[", "{[}")
-                                    .Replace("]", "{]}")
-                                    .Replace(Environment.NewLine, "{ENTER}");
+            string new_text = FixBraces(text);
             if (pf)
             {
                 _post_focus_operations.Add(new PostFocusDelegate(delegate()
@@ -1359,6 +1352,29 @@ namespace ContextLib
             }
         }
 
+        public void PasteText(string text, bool pf)
+        {
+            if (pf)
+            {
+                _post_focus_operations.Add(new PostFocusDelegate(delegate()
+                {
+                    MultiLevelData clipboard_backup = new MultiLevelData();
+                    clipboard_backup.PopulateFromClipboard();
+                    Clipboard.SetText(text);
+                    SendKeys.SendWait("+{INSERT}");
+                    clipboard_backup.RestoreToClipboard();
+                }));
+            }
+            else
+            {
+                MultiLevelData clipboard_backup = new MultiLevelData();
+                clipboard_backup.PopulateFromClipboard();
+                Clipboard.SetText(text);
+                SendKeys.SendWait("+{INSERT}");
+                clipboard_backup.RestoreToClipboard();
+            }
+        }
+
         // fix brace characters
         private string FixBraces(string txt)
         {
@@ -1372,7 +1388,15 @@ namespace ContextLib
                 else
                     new_txt += c;
             }
-            return new_txt;
+            return new_txt.Replace("+", "{+}")
+                            .Replace("^", "{^}")
+                            .Replace("%", "{%}")
+                            .Replace("~", "{~}")
+                            .Replace("(", "{(}")
+                            .Replace(")", "{)}")
+                            .Replace("[", "{[}")
+                            .Replace("]", "{]}")
+                            .Replace(Environment.NewLine, "{ENTER}");
         }
 
         /// <summary>
