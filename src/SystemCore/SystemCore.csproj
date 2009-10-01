@@ -99,6 +99,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Settings\AutomationOptionsInfo.cs" />
     <Compile Include="Settings\DirInfo.cs" />
     <Compile Include="Settings\InterfaceInfo.cs" />
     <Compile Include="Settings\LearnedContent.cs" />

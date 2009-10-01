@@ -90,7 +90,7 @@ namespace Blaze.SystemBrowsing
                     // Get all directories
                     directories = Directory.GetDirectories(FileNameManipulator.GetPath(dir));
                     // Get all files
-                    files = FileSearcher.SearchFullNames(dir, false, false);
+                    files = FileSearcher.SearchFullNames(dir, false, false, false);
                 }
                 catch /*(Exception e)*/
                 {

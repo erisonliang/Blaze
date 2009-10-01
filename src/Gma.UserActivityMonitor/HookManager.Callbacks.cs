@@ -368,6 +368,12 @@ namespace Gma.UserActivityMonitor
         /// </returns>
         private static int KeyboardHookProc(int nCode, Int32 wParam, IntPtr lParam)
         {
+            if (!HookManager.Enabled)
+            {
+                //forward to other application
+                return CallNextHookEx(s_KeyboardHookHandle, nCode, wParam, lParam);
+            }
+
             //indicates if any of underlaing events set e.Handled flag
             bool handled = false;
 

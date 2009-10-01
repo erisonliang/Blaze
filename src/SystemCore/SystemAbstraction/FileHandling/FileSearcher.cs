@@ -10,48 +10,56 @@ namespace SystemCore.SystemAbstraction.FileHandling
 {
     public static class FileSearcher
     {
-        public static string[] SearchFullNames(string dir_path, List<string> extensions, bool recursive, bool include_dirs)
+        public static string[] SearchFullNames(string dir_path, List<string> extensions, bool recursive, bool include_dirs, bool relative_path)
         {
             DirectoryInfo root = new DirectoryInfo(dir_path);
             List<string> items = new List<string>();
             if (extensions.Contains(".*"))
-                return SearchFullNames(dir_path, recursive, include_dirs);
+                return SearchFullNames(dir_path, recursive, include_dirs, relative_path);
             foreach (FileInfo file in root.GetFiles())
             {
                 if (extensions.Contains(file.Extension.ToLower()))
                 {
-                    items.Add(file.FullName);
+                    items.Add(relative_path ?
+                        FileNameManipulator.RelativePath(file.FullName, Environment.CurrentDirectory)
+                        : file.FullName);
                 }
             }
             if (include_dirs)
             {
                 foreach (DirectoryInfo dir in root.GetDirectories())
                 {
-                    items.Add(dir.FullName + "\\");
+                    items.Add(relative_path ?
+                        FileNameManipulator.RelativePath(dir.FullName + "\\", Environment.CurrentDirectory)
+                        : dir.FullName + "\\");
                 }
             }
             if (recursive)
             {
                 foreach (DirectoryInfo directory in root.GetDirectories())
                 {
-                    items.AddRange(SearchFullNames(directory.FullName, extensions, recursive, include_dirs));
+                    items.AddRange(SearchFullNames(directory.FullName, extensions, recursive, include_dirs, relative_path));
                 }
             }
             return items.ToArray();
         }
 
-        public static string[] SearchFullNames(string dir_path, bool recursive, bool include_dirs)
+        public static string[] SearchFullNames(string dir_path, bool recursive, bool include_dirs, bool relative_path)
         {
             List<string> items = new List<string>();
             foreach (string file in Directory.GetFiles(dir_path, "*.*", (recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)))
             {
-                items.Add(file);
+                items.Add(relative_path ?
+                    FileNameManipulator.RelativePath(file, Environment.CurrentDirectory)
+                    : file);
             }
             if (include_dirs)
             {
                 foreach (string dir in Directory.GetDirectories(dir_path, "*", (recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)))
                 {
-                    items.Add(dir + "\\");
+                    items.Add(relative_path ?
+                        FileNameManipulator.RelativePath(dir, Environment.CurrentDirectory)
+                        : dir + "\\");
                 }
             }
             return items.ToArray();

@@ -117,7 +117,11 @@ namespace Configurator
             file.WriteLine("[interface]");
             file.WriteLine("suggestions=10");
             file.WriteLine("[system]");
-            file.WriteLine("updateTime=15");
+            file.WriteLine(CommonInfo.IsPortable ? "updateTime=0" : "updateTime=20");
+            file.WriteLine("stopAutoUpdateOnBattery=true");
+            file.WriteLine("[automation]");
+            file.WriteLine("monitoringEnabled=true");
+            file.WriteLine("stopMonitoringOnBattery=true");
             file.Close();
 
             //CreateShortcut(@"Utilities\C Drive", @"C:\");
@@ -158,7 +162,7 @@ namespace Configurator
         {
             CreateUserDir();
             StreamWriter file = new StreamWriter(_file, true, Encoding.Default);
-            file.WriteLine("[interaction]");
+            file.WriteLine("[indexer]");
             WriteDirectory(file, 1, "%APPDATA%" + @"\Microsoft\Internet Explorer\Quick Launch\", ".lnk", false, true, string.Empty);
             WriteDirectory(file, 2, @"C:\Windows\System32\", ".msc", false, false, string.Empty);
             WriteDirectory(file, 3, @"Utilities\", ".lnk", false, true, string.Empty);

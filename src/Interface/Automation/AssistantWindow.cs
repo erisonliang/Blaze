@@ -181,8 +181,8 @@ namespace Blaze.Automation
 
         private void AssistantWindow_Load(object sender, EventArgs e)
         {
-            UserContext.Instance.ObserverObject.StopMonitoring();
-            UserContext.Instance.ObserverObject.StopMonitoring();
+            UserContext.Instance.ObserverObject.PauseMonitoring();
+            UserContext.Instance.ObserverObject.PauseMonitoring();
             int iskip = (UserContext.Instance.ObserverObject.UseCompression ? 0 : 1), fskip = 1;
             UserContext.Instance.StopMacroRecording(CommonInfo.ScriptsFolder, iskip, fskip);
             UserContext.Instance.AssistantObject.ValidateSuggestions();
@@ -218,7 +218,7 @@ namespace Blaze.Automation
         protected override void OnClosing(CancelEventArgs e)
         {
             _suggestions = null;
-            UserContext.Instance.ObserverObject.StartMonitoring();
+            UserContext.Instance.ObserverObject.ResumeMonitoring();
             Gma.UserActivityMonitor.HookManager.KeyDown -= HookManager_KeyDown;
             base.OnClosing(e);
         }

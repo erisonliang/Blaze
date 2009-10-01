@@ -110,7 +110,7 @@ namespace BlazeIndexer
 
                 try
                 {
-                    fullpathes = new List<string>(FileSearcher.SearchFullNames(Environment.ExpandEnvironmentVariables(directory), ext, indexSubdirectories[directory], includeDirectories[directory]));
+                    fullpathes = new List<string>(FileSearcher.SearchFullNames(Environment.ExpandEnvironmentVariables(directory), ext, indexSubdirectories[directory], includeDirectories[directory], (CommonInfo.IsPortable ? true : false)));
                 }
                 catch (Exception)
                 {

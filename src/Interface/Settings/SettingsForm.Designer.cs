@@ -36,13 +36,22 @@ namespace Blaze
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.GeneralTab = new System.Windows.Forms.TabPage();
-            this.systemGroupBox = new System.Windows.Forms.GroupBox();
+            this.automationGroupBox = new System.Windows.Forms.GroupBox();
+            this.stopMonitoringCheckBox = new System.Windows.Forms.CheckBox();
+            this.noAutomationRadioButton = new System.Windows.Forms.RadioButton();
+            this.yesAutomationRadioButton = new System.Windows.Forms.RadioButton();
+            this.monitorLabel = new System.Windows.Forms.Label();
+            this.indexingGroupBox = new System.Windows.Forms.GroupBox();
+            this.stopIndexingCheckBox = new System.Windows.Forms.CheckBox();
+            this.manualUpdatesLabel = new System.Windows.Forms.Label();
             this.updateTimeNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.updateTimeLabel = new System.Windows.Forms.Label();
             this.interfaceGroupBox = new System.Windows.Forms.GroupBox();
             this.suggestionsNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.suggestionsLabel = new System.Windows.Forms.Label();
             this.InteractionGroupBox = new System.Windows.Forms.GroupBox();
+            this.AssistantKeyComboBox = new System.Windows.Forms.ComboBox();
+            this.AssistantHotKeyLabel = new System.Windows.Forms.Label();
             this.HotKeyPlusLabel = new System.Windows.Forms.Label();
             this.BlazeHotKeyLabel = new System.Windows.Forms.Label();
             this.MainKeyComboBox = new System.Windows.Forms.ComboBox();
@@ -90,11 +99,10 @@ namespace Blaze
             this.AutomatorLabel = new System.Windows.Forms.Label();
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.AssistantHotKeyLabel = new System.Windows.Forms.Label();
-            this.AssistantKeyComboBox = new System.Windows.Forms.ComboBox();
             this.tabControl.SuspendLayout();
             this.GeneralTab.SuspendLayout();
-            this.systemGroupBox.SuspendLayout();
+            this.automationGroupBox.SuspendLayout();
+            this.indexingGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updateTimeNumericUpDown)).BeginInit();
             this.interfaceGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.suggestionsNumericUpDown)).BeginInit();
@@ -129,7 +137,8 @@ namespace Blaze
             // 
             // GeneralTab
             // 
-            this.GeneralTab.Controls.Add(this.systemGroupBox);
+            this.GeneralTab.Controls.Add(this.automationGroupBox);
+            this.GeneralTab.Controls.Add(this.indexingGroupBox);
             this.GeneralTab.Controls.Add(this.interfaceGroupBox);
             this.GeneralTab.Controls.Add(this.InteractionGroupBox);
             this.GeneralTab.Location = new System.Drawing.Point(4, 22);
@@ -140,16 +149,91 @@ namespace Blaze
             this.GeneralTab.Text = "General";
             this.GeneralTab.UseVisualStyleBackColor = true;
             // 
-            // systemGroupBox
+            // automationGroupBox
             // 
-            this.systemGroupBox.Controls.Add(this.updateTimeNumericUpDown);
-            this.systemGroupBox.Controls.Add(this.updateTimeLabel);
-            this.systemGroupBox.Location = new System.Drawing.Point(7, 164);
-            this.systemGroupBox.Name = "systemGroupBox";
-            this.systemGroupBox.Size = new System.Drawing.Size(223, 57);
-            this.systemGroupBox.TabIndex = 2;
-            this.systemGroupBox.TabStop = false;
-            this.systemGroupBox.Text = "System";
+            this.automationGroupBox.Controls.Add(this.stopMonitoringCheckBox);
+            this.automationGroupBox.Controls.Add(this.noAutomationRadioButton);
+            this.automationGroupBox.Controls.Add(this.yesAutomationRadioButton);
+            this.automationGroupBox.Controls.Add(this.monitorLabel);
+            this.automationGroupBox.Location = new System.Drawing.Point(335, 6);
+            this.automationGroupBox.Name = "automationGroupBox";
+            this.automationGroupBox.Size = new System.Drawing.Size(210, 96);
+            this.automationGroupBox.TabIndex = 3;
+            this.automationGroupBox.TabStop = false;
+            this.automationGroupBox.Text = "Automation";
+            // 
+            // stopMonitoringCheckBox
+            // 
+            this.stopMonitoringCheckBox.AutoSize = true;
+            this.stopMonitoringCheckBox.Location = new System.Drawing.Point(9, 59);
+            this.stopMonitoringCheckBox.Name = "stopMonitoringCheckBox";
+            this.stopMonitoringCheckBox.Size = new System.Drawing.Size(274, 17);
+            this.stopMonitoringCheckBox.TabIndex = 3;
+            this.stopMonitoringCheckBox.Text = "Stop monitoring when my laptop is running on battery";
+            this.stopMonitoringCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // noAutomationRadioButton
+            // 
+            this.noAutomationRadioButton.AutoSize = true;
+            this.noAutomationRadioButton.Location = new System.Drawing.Point(109, 36);
+            this.noAutomationRadioButton.Name = "noAutomationRadioButton";
+            this.noAutomationRadioButton.Size = new System.Drawing.Size(39, 17);
+            this.noAutomationRadioButton.TabIndex = 2;
+            this.noAutomationRadioButton.TabStop = true;
+            this.noAutomationRadioButton.Text = "No";
+            this.noAutomationRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // yesAutomationRadioButton
+            // 
+            this.yesAutomationRadioButton.AutoSize = true;
+            this.yesAutomationRadioButton.Location = new System.Drawing.Point(109, 12);
+            this.yesAutomationRadioButton.Name = "yesAutomationRadioButton";
+            this.yesAutomationRadioButton.Size = new System.Drawing.Size(43, 17);
+            this.yesAutomationRadioButton.TabIndex = 1;
+            this.yesAutomationRadioButton.TabStop = true;
+            this.yesAutomationRadioButton.Text = "Yes";
+            this.yesAutomationRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // monitorLabel
+            // 
+            this.monitorLabel.AutoSize = true;
+            this.monitorLabel.Location = new System.Drawing.Point(6, 16);
+            this.monitorLabel.Name = "monitorLabel";
+            this.monitorLabel.Size = new System.Drawing.Size(97, 13);
+            this.monitorLabel.TabIndex = 0;
+            this.monitorLabel.Text = "Monitor my activity:";
+            // 
+            // indexingGroupBox
+            // 
+            this.indexingGroupBox.Controls.Add(this.stopIndexingCheckBox);
+            this.indexingGroupBox.Controls.Add(this.manualUpdatesLabel);
+            this.indexingGroupBox.Controls.Add(this.updateTimeNumericUpDown);
+            this.indexingGroupBox.Controls.Add(this.updateTimeLabel);
+            this.indexingGroupBox.Location = new System.Drawing.Point(7, 164);
+            this.indexingGroupBox.Name = "indexingGroupBox";
+            this.indexingGroupBox.Size = new System.Drawing.Size(376, 80);
+            this.indexingGroupBox.TabIndex = 2;
+            this.indexingGroupBox.TabStop = false;
+            this.indexingGroupBox.Text = "Indexing";
+            // 
+            // stopIndexingCheckBox
+            // 
+            this.stopIndexingCheckBox.AutoSize = true;
+            this.stopIndexingCheckBox.Location = new System.Drawing.Point(10, 50);
+            this.stopIndexingCheckBox.Name = "stopIndexingCheckBox";
+            this.stopIndexingCheckBox.Size = new System.Drawing.Size(292, 17);
+            this.stopIndexingCheckBox.TabIndex = 3;
+            this.stopIndexingCheckBox.Text = "Stop index updates when my laptop is running on battery";
+            this.stopIndexingCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // manualUpdatesLabel
+            // 
+            this.manualUpdatesLabel.AutoSize = true;
+            this.manualUpdatesLabel.Location = new System.Drawing.Point(228, 25);
+            this.manualUpdatesLabel.Name = "manualUpdatesLabel";
+            this.manualUpdatesLabel.Size = new System.Drawing.Size(134, 13);
+            this.manualUpdatesLabel.TabIndex = 2;
+            this.manualUpdatesLabel.Text = "(0 for manual updates only)";
             // 
             // updateTimeNumericUpDown
             // 
@@ -233,6 +317,24 @@ namespace Blaze
             this.InteractionGroupBox.TabIndex = 0;
             this.InteractionGroupBox.TabStop = false;
             this.InteractionGroupBox.Text = "Interaction";
+            // 
+            // AssistantKeyComboBox
+            // 
+            this.AssistantKeyComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.AssistantKeyComboBox.FormattingEnabled = true;
+            this.AssistantKeyComboBox.Location = new System.Drawing.Point(103, 57);
+            this.AssistantKeyComboBox.Name = "AssistantKeyComboBox";
+            this.AssistantKeyComboBox.Size = new System.Drawing.Size(90, 21);
+            this.AssistantKeyComboBox.TabIndex = 7;
+            // 
+            // AssistantHotKeyLabel
+            // 
+            this.AssistantHotKeyLabel.AutoSize = true;
+            this.AssistantHotKeyLabel.Location = new System.Drawing.Point(7, 60);
+            this.AssistantHotKeyLabel.Name = "AssistantHotKeyLabel";
+            this.AssistantHotKeyLabel.Size = new System.Drawing.Size(90, 13);
+            this.AssistantHotKeyLabel.TabIndex = 6;
+            this.AssistantHotKeyLabel.Text = "Assistant HotKey:";
             // 
             // HotKeyPlusLabel
             // 
@@ -707,24 +809,6 @@ namespace Blaze
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             // 
-            // AssistantHotKeyLabel
-            // 
-            this.AssistantHotKeyLabel.AutoSize = true;
-            this.AssistantHotKeyLabel.Location = new System.Drawing.Point(7, 60);
-            this.AssistantHotKeyLabel.Name = "AssistantHotKeyLabel";
-            this.AssistantHotKeyLabel.Size = new System.Drawing.Size(90, 13);
-            this.AssistantHotKeyLabel.TabIndex = 6;
-            this.AssistantHotKeyLabel.Text = "Assistant HotKey:";
-            // 
-            // AssistantKeyComboBox
-            // 
-            this.AssistantKeyComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.AssistantKeyComboBox.FormattingEnabled = true;
-            this.AssistantKeyComboBox.Location = new System.Drawing.Point(103, 57);
-            this.AssistantKeyComboBox.Name = "AssistantKeyComboBox";
-            this.AssistantKeyComboBox.Size = new System.Drawing.Size(90, 21);
-            this.AssistantKeyComboBox.TabIndex = 7;
-            // 
             // SettingsForm
             // 
             this.AcceptButton = this.okButton;
@@ -747,8 +831,10 @@ namespace Blaze
             this.Load += new System.EventHandler(this.SettingsForm_Load);
             this.tabControl.ResumeLayout(false);
             this.GeneralTab.ResumeLayout(false);
-            this.systemGroupBox.ResumeLayout(false);
-            this.systemGroupBox.PerformLayout();
+            this.automationGroupBox.ResumeLayout(false);
+            this.automationGroupBox.PerformLayout();
+            this.indexingGroupBox.ResumeLayout(false);
+            this.indexingGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updateTimeNumericUpDown)).EndInit();
             this.interfaceGroupBox.ResumeLayout(false);
             this.interfaceGroupBox.PerformLayout();
@@ -823,7 +909,7 @@ namespace Blaze
         private System.Windows.Forms.Label StartTimeEditableLabel;
         private System.Windows.Forms.GroupBox interfaceGroupBox;
         private System.Windows.Forms.Label suggestionsLabel;
-        private System.Windows.Forms.GroupBox systemGroupBox;
+        private System.Windows.Forms.GroupBox indexingGroupBox;
         private System.Windows.Forms.NumericUpDown updateTimeNumericUpDown;
         private System.Windows.Forms.Label updateTimeLabel;
         private System.Windows.Forms.NumericUpDown suggestionsNumericUpDown;
@@ -833,5 +919,12 @@ namespace Blaze
         private System.Windows.Forms.Label HomePageLabel;
         private System.Windows.Forms.Label AssistantHotKeyLabel;
         private System.Windows.Forms.ComboBox AssistantKeyComboBox;
+        private System.Windows.Forms.Label manualUpdatesLabel;
+        private System.Windows.Forms.CheckBox stopIndexingCheckBox;
+        private System.Windows.Forms.GroupBox automationGroupBox;
+        private System.Windows.Forms.RadioButton noAutomationRadioButton;
+        private System.Windows.Forms.RadioButton yesAutomationRadioButton;
+        private System.Windows.Forms.Label monitorLabel;
+        private System.Windows.Forms.CheckBox stopMonitoringCheckBox;
     }
 }
