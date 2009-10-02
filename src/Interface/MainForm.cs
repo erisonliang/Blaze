@@ -834,6 +834,12 @@ namespace Blaze
                     _tooltip_content = _items[index].CommandUsage;
                     _tooltip.Show(usage, TextBox, new Point(0, 21));
                 }
+                else if (_items[index].OwnerType == OwnerType.FileSystem ||
+                            _items[index].OwnerType == OwnerType.Indexer)
+                {
+                    _tooltip_content = null;
+                    _tooltip.Show("Path: " + _items[index].Desciption, TextBox, new Point(0, 21));
+                }
                 else
                 {
                     _tooltip.Hide(TextBox);
@@ -848,8 +854,10 @@ namespace Blaze
         void _tooltip_Popup(object sender, PopupEventArgs e)
         {
             string test = _tooltip.GetToolTip(e.AssociatedControl);
-            Size size = TextRenderer.MeasureText(test, new Font("Verdana", 9, FontStyle.Bold));
-            e.ToolTipSize = size + new Size((int)(0.05 * size.Width), 4);
+            Size size = (_tooltip_content == null ?
+                TextRenderer.MeasureText(test, new Font("Verdana", 9, FontStyle.Regular))
+                : TextRenderer.MeasureText(test, new Font("Verdana", 9, FontStyle.Bold)));
+            e.ToolTipSize = size + (_tooltip_content == null ? new Size(0, 4) : new Size((int)(0.05 * size.Width), 4));
         }
 
         void _tooltip_Draw(object sender, DrawToolTipEventArgs e)
@@ -894,6 +902,29 @@ namespace Blaze
                         displacement = new SizeF(e.Graphics.MeasureString(arg, normal).Width + displacement.Width, displacement.Height);
                     }
                 }
+                brush.Dispose();
+                normal.Dispose();
+                bold.Dispose();
+            }
+            else
+            {
+                e.DrawBackground();
+                e.Graphics.DrawLines(SystemPens.ControlLightLight, new Point[] {
+                        new Point (0, e.Bounds.Height - 1), 
+                        new Point (0, 0), 
+                        new Point (e.Bounds.Width - 1, 0)
+                    });
+                e.Graphics.DrawLines(SystemPens.ControlDarkDark, new Point[] {
+                        new Point (0, e.Bounds.Height - 1), 
+                        new Point (e.Bounds.Width - 1, e.Bounds.Height - 1), 
+                        new Point (e.Bounds.Width - 1, 0)
+                    });
+                SolidBrush brush = new SolidBrush(Color.Black);
+                Font normal = new Font("Verdana", 9, FontStyle.Regular);
+                PointF pos = new PointF(e.Bounds.X + 2, e.Bounds.Y + 1);
+                e.Graphics.DrawString(e.ToolTipText, normal, brush, pos);
+                brush.Dispose();
+                normal.Dispose();
             }
         }
         //

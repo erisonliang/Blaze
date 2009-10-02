@@ -58,10 +58,12 @@ namespace Blaze.Interpreter
             //_special_keywords = new string[] { @"!this", @"!clipboard", @"!actproc", @"!desktop", @"!explorer" };
             _timer = new System.Timers.Timer();
             _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Tick);
-            _timer.Interval = 1000 * 60 * SettingsManager.Instance.GetSystemOptionsInfo().UpdateTime;
             _timer.AutoReset = true;
-            if (_timer.Interval > 0)
+            if (SettingsManager.Instance.GetSystemOptionsInfo().UpdateTime > 0)
+            {
+                _timer.Interval = 1000 * 60 * SettingsManager.Instance.GetSystemOptionsInfo().UpdateTime;
                 _timer.Start();
+            }
             _auto_timer = new System.Timers.Timer();
             _auto_timer.Elapsed += new System.Timers.ElapsedEventHandler(_auto_timer_Elapsed);
             _auto_timer.Interval = 5000;

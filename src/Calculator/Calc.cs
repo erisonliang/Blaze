@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using SystemCore.CommonTypes;
 using ContextLib;
 using ContextLib.DataContainers.Multimedia;
+using SystemCore.SystemAbstraction.StringUtilities;
 
 namespace Calculator
 {
@@ -82,9 +83,9 @@ namespace Calculator
                             "^ : powers" + Environment.NewLine +
                             "% : percentage"+ Environment.NewLine +
                             "Parenthesis () are also suported.";
-            _regex_calc = new Regex(@"\d*[\-\+\*\/\(\)\u0025\u005E\\]+[\d\s\-\+\*\/\(\)\u0025\u005E\\\s]+"); // \u0025 -> %
+            _regex_calc = new Regex(@"(\d[(\.|,)\d]*)*[\-\+\*\/\(\)\u0025\u005E\\]+[\d(\.|,)\d*\s\-\+\*\/\(\)\u0025\u005E\\\s]+"); // \u0025 -> %
             _regex_forbidden_chars = new Regex(@"([^\d|\+|\-|\*|\/|\(|\)\u0025\u005E\\\,\.\s]|\|)+");
-            _regex_comma_rule = new Regex(@"[\d]+[\,\.][\d]*[\,\.][\d]*");
+            _regex_comma_rule = new Regex(@"[\d]*[\,\.][\d]*[\,\.]");
             _icon = Properties.Resources.calc;
         }
         #endregion
@@ -236,13 +237,9 @@ namespace Calculator
             }));
             _solve_command.SetNameDelegate(new Command.EvaluationDelegate(delegate(string parameters)
             {
-                return "Solve:";
-            }));
-            _solve_command.SetDescriptionDelegate(new Command.EvaluationDelegate(delegate(string parameters)
-            {
                 MultiLevelData data = UserContext.Instance.GetSelectedContent();
+                string calc = "Invalid expression";
                 bool valid_calc = false;
-                string calc = string.Empty;
                 if (data != null)
                 {
                     if (!string.IsNullOrEmpty(data.Text) && _regex_calc.IsMatch(data.Text))
@@ -254,10 +251,11 @@ namespace Calculator
                     }
                     data.Dispose();
                 }
-                if (valid_calc)
-                    return calc;
-                else
-                    return "Invalid math expression";
+                return "Solve: " + (valid_calc ? StringUtility.ApplyEllipsis(calc, 12) : calc) + (valid_calc ? " = " + Eval(calc) : string.Empty);
+            }));
+            _solve_command.SetDescriptionDelegate(new Command.EvaluationDelegate(delegate(string parameters)
+            {
+                return "Hit return key to paste solution";
             }));
             _solve_command.SetAutoCompleteDelegate(new Command.EvaluationDelegate(delegate(string parameters)
             {
