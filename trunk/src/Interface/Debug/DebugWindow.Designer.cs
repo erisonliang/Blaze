@@ -69,6 +69,9 @@
             // 
             // tabControl
             // 
+            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.ObserverTab1);
             this.tabControl.Controls.Add(this.ObserverTab2);
             this.tabControl.Controls.Add(this.ApprenticeTab);
@@ -130,6 +133,9 @@
             // 
             // ActionsListBox
             // 
+            this.ActionsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.ActionsListBox.FormattingEnabled = true;
             this.ActionsListBox.Location = new System.Drawing.Point(7, 70);
             this.ActionsListBox.Name = "ActionsListBox";
@@ -290,6 +296,9 @@
             // 
             // GeneralizationsListBox
             // 
+            this.GeneralizationsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.GeneralizationsListBox.FormattingEnabled = true;
             this.GeneralizationsListBox.Location = new System.Drawing.Point(6, 48);
             this.GeneralizationsListBox.Name = "GeneralizationsListBox";
@@ -331,6 +340,9 @@
             // 
             // RepetitionsListBox
             // 
+            this.RepetitionsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.RepetitionsListBox.FormattingEnabled = true;
             this.RepetitionsListBox.Location = new System.Drawing.Point(6, 48);
             this.RepetitionsListBox.Name = "RepetitionsListBox";

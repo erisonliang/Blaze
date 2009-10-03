@@ -39,8 +39,8 @@ namespace Blaze.Interpreter
         private MenuEngine _menuEngine;
         private List<InterpreterPlugin> _plugins;
         private PluginCommandCache _commandCache;
-        private System.Timers.Timer _timer;
-        private System.Timers.Timer _auto_timer;
+        private System.Timers.Timer _indexer_timer;
+        private System.Timers.Timer _automation_timer;
         //private string[] _special_keywords;
         #endregion
 
@@ -56,34 +56,23 @@ namespace Blaze.Interpreter
             _menuEngine = new MenuEngine(parent);
             _plugins = new List<InterpreterPlugin>();
             //_special_keywords = new string[] { @"!this", @"!clipboard", @"!actproc", @"!desktop", @"!explorer" };
-            _timer = new System.Timers.Timer();
-            _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Tick);
-            _timer.AutoReset = true;
+            _indexer_timer = new System.Timers.Timer();
+            _indexer_timer.Elapsed += new System.Timers.ElapsedEventHandler(_indexer_timer_Elapsed);
+            _indexer_timer.AutoReset = true;
             if (SettingsManager.Instance.GetSystemOptionsInfo().UpdateTime > 0)
             {
-                _timer.Interval = 1000 * 60 * SettingsManager.Instance.GetSystemOptionsInfo().UpdateTime;
-                _timer.Start();
+                _indexer_timer.Interval = 1000 * 60 * SettingsManager.Instance.GetSystemOptionsInfo().UpdateTime;
+                _indexer_timer.Start();
             }
-            _auto_timer = new System.Timers.Timer();
-            _auto_timer.Elapsed += new System.Timers.ElapsedEventHandler(_auto_timer_Elapsed);
-            _auto_timer.Interval = 5000;
-            _auto_timer.AutoReset = true;
-            _auto_timer.Start();
-        }
-
-        void _auto_timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            if (SettingsManager.Instance.GetAutomationOptionsInfo().StopAutoUpdateOnBattery)
-            {
-                if (UserContext.Instance.IsRunningOnBatteryPower())
-                    UserContext.Instance.ObserverObject.StopMonitoring();
-                else if (SystemCore.Settings.SettingsManager.Instance.GetAutomationOptionsInfo().IsMonitoringEnabled)
-                    UserContext.Instance.ObserverObject.StartMonitoring();
-            }
+            _automation_timer = new System.Timers.Timer();
+            _automation_timer.Elapsed += new System.Timers.ElapsedEventHandler(_automation_timer_Elapsed);
+            _automation_timer.Interval = 5000;
+            _automation_timer.AutoReset = true;
+            _automation_timer.Start();
         }
         #endregion
 
-        void _timer_Tick(object sender, EventArgs e)
+        void _indexer_timer_Elapsed(object sender, EventArgs e)
         {
             if (SettingsManager.Instance.GetSystemOptionsInfo().StopAutoUpdateOnBattery)
             {
@@ -92,6 +81,17 @@ namespace Blaze.Interpreter
             }
             else
                 BuildIndex();
+        }
+
+        void _automation_timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (SettingsManager.Instance.GetAutomationOptionsInfo().StopAutoUpdateOnBattery)
+            {
+                if (UserContext.Instance.IsRunningOnBatteryPower() && !UserContext.Instance.ObserverObject.IsRecording)
+                    UserContext.Instance.ObserverObject.StopMonitoring();
+                else if (SystemCore.Settings.SettingsManager.Instance.GetAutomationOptionsInfo().IsMonitoringEnabled)
+                    UserContext.Instance.ObserverObject.StartMonitoring();
+            }
         }
 
         #region Public Methods
@@ -650,13 +650,13 @@ namespace Blaze.Interpreter
         {
             if (minutes > 0)
             {
-                _timer.Interval = minutes * 60 * 1000;
-                if (!_timer.Enabled)
-                    _timer.Start();
+                _indexer_timer.Interval = minutes * 60 * 1000;
+                if (!_indexer_timer.Enabled)
+                    _indexer_timer.Start();
             }
-            else if (_timer.Enabled)
+            else if (_indexer_timer.Enabled)
             {
-                _timer.Stop();
+                _indexer_timer.Stop();
             }
         }
         #endregion
