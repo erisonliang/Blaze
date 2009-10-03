@@ -593,7 +593,7 @@ namespace Blaze
             {
                 _superListBox.Hide();//_superListBox.Dispose();//
             }
-            GC.Collect();
+            //GC.Collect();
             Hide();
             //_interpreter.UnloadIndex();
 
@@ -635,6 +635,7 @@ namespace Blaze
             }
             if (UserContext.Instance.ObserverObject.IsMonitoringEnabled)
                 UserContext.Instance.ObserverObject.ResumeMonitoring();
+            GC.Collect();
         }
 
         public void UpdateListBoxPosition()
