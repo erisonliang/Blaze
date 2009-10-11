@@ -34,9 +34,13 @@ namespace Calculator
         private Regex _regex_calc;
         private Regex _regex_forbidden_chars;
         private Regex _regex_comma_rule;
+        private Regex _regex_convert_base;
+        private Regex _regex_base;
+        private Regex _regex_int;
         private Icon _icon;
         private Command _calc_command;
         private Command _solve_command;
+        private Command _convert_base_command;
         #endregion
 
         //#region Accessors
@@ -87,6 +91,9 @@ namespace Calculator
             _regex_forbidden_chars = new Regex(@"([^\d|\+|\-|\*|\/|\(|\)\u0025\u005E\\\,\.\s]|\|)+");
             _regex_comma_rule = new Regex(@"[\d]*[\,\.][\d]*[\,\.]");
             _icon = Properties.Resources.calc;
+            _regex_convert_base = new Regex(@"^\d+\s*(dec|hex|oct|bin)(\s*$|\s*(to|>))(\s*$|\s*(dec|hex|oct|bin)$)");
+            _regex_base = new Regex(@"(dec|hex|oct|bin)");
+            _regex_int = new Regex(@"[0-9]+");
         }
         #endregion
 
@@ -179,6 +186,73 @@ namespace Calculator
             expr.Parse(fixed_input);
             return expr.Eval().ToString();
         }
+
+        private string ConvertBase(string input)
+        {
+            int index = input.LastIndexOf("to");
+            if (index == -1)
+                index = input.LastIndexOf(">");
+            if (index == -1)
+            {
+                string val = _regex_int.Match(input).Value;
+                string base_str = _regex_base.Match(input).Value;
+                int origin = 0;
+                string final = string.Empty;
+                if (base_str == "dec")
+                {
+                    origin = Convert.ToInt32(val, 10);
+                    final = Convert.ToString(origin, 16) + " hex";
+                }
+                else
+                {
+                    if (base_str == "hex")
+                        origin = Convert.ToInt32(val, 16);
+                    else if (base_str == "oct")
+                        origin = Convert.ToInt32(val, 8);
+                    else if (base_str == "bin")
+                        origin = Convert.ToInt32(val, 2);
+                    final = Convert.ToString(origin, 10) + " dec";
+                }
+                return final;
+            }
+            else
+            {
+                string temp_input = input.Replace("to", string.Empty).Replace(">", string.Empty);
+                string left_input = temp_input.Substring(0, index);
+                string right_input = temp_input.Substring(index);
+
+                string val = _regex_int.Match(left_input).Value;
+                string origin_base = _regex_base.Match(left_input).Value;
+                string destination_base;
+                int origin = 0;
+                string final = string.Empty;
+
+                if (origin_base == "dec")
+                {
+                    destination_base = (right_input.Trim().Length > 0 ? _regex_base.Match(right_input).Value : "hex");
+                    origin = Convert.ToInt32(val, 10);
+                }
+                else
+                {
+                    destination_base = (right_input.Trim().Length > 0 ? _regex_base.Match(right_input).Value : "dec");
+                    if (origin_base == "hex")
+                        origin = Convert.ToInt32(val, 16);
+                    else if (origin_base == "oct")
+                        origin = Convert.ToInt32(val, 8);
+                    else if (origin_base == "bin")
+                        origin = Convert.ToInt32(val, 2);
+                }
+                if (destination_base == "dec")
+                    final = Convert.ToString(origin, 10) + " dec";
+                else if (destination_base == "hex")
+                    final = Convert.ToString(origin, 16) + " hex";
+                else if (destination_base == "oct")
+                    final = Convert.ToString(origin, 8) + " oct";
+                else if (destination_base == "bin")
+                    final = Convert.ToString(origin, 2) + " bin";
+                return final;
+            }
+        }
         #endregion
 
         #region Overrided Methods
@@ -247,11 +321,20 @@ namespace Calculator
                         bool test1 = !_regex_forbidden_chars.IsMatch(data.Text);
                         bool test2 = !_regex_comma_rule.IsMatch(data.Text);
                         valid_calc = test1 && test2;
-                        calc = data.Text;
+                        if (valid_calc)
+                            calc = data.Text;
                     }
                     data.Dispose();
                 }
-                return "Solve: " + (valid_calc ? StringUtility.ApplyEllipsis(calc, 12) : calc) + (valid_calc ? " = " + Eval(calc) : string.Empty);
+                if (valid_calc)
+                {
+                    string result = Eval(calc);
+                    return "Solve: " + StringUtility.ApplyEllipsis(calc, 14 - result.Length) + " = " + result;
+                }
+                else
+                {
+                    return "Solve: " + calc;
+                }
             }));
             _solve_command.SetDescriptionDelegate(new Command.EvaluationDelegate(delegate(string parameters)
             {
@@ -259,7 +342,7 @@ namespace Calculator
             }));
             _solve_command.SetAutoCompleteDelegate(new Command.EvaluationDelegate(delegate(string parameters)
             {
-                return _solve_command.Name;
+                return parameters;
             }));
             _solve_command.SetIconDelegate(new Command.IconDelegate(delegate(string parameters)
             {
@@ -299,6 +382,50 @@ namespace Calculator
                 }
             }));
             Commands.Add(_solve_command);
+
+            _convert_base_command = new Command("Convert to Base", Command.PriorityType.High);
+            _convert_base_command.SetIsOwnerDelegate(new Command.OwnershipDelegate(delegate(string parameters)
+            {
+                if (_regex_convert_base.IsMatch(parameters))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }));
+            _convert_base_command.SetNameDelegate(new Command.EvaluationDelegate(delegate(string parameters)
+            {
+                return ConvertBase(parameters);
+            }));
+            _convert_base_command.SetDescriptionDelegate(new Command.EvaluationDelegate(delegate(string parameters)
+            {
+                return "Hit return key to copy to clipboard";
+            }));
+            _convert_base_command.SetAutoCompleteDelegate(new Command.EvaluationDelegate(delegate(string parameters)
+            {
+                return _convert_base_command.Name;
+            }));
+            _convert_base_command.SetIconDelegate(new Command.IconDelegate(delegate(string parameters)
+            {
+                return _icon.ToBitmap();
+            }));
+            _convert_base_command.SetUsageDelegate(new Command.UsageDelegate(delegate(string parameters)
+            {
+                List<string> args = new List<string>();
+                Dictionary<string, bool> comp = new Dictionary<string, bool>();
+
+                return new CommandUsage(@"Converts a value from a base to another. i.e.: 16 dec to hex", args, comp);
+            }));
+            _convert_base_command.SetExecuteDelegate(new Command.ExecutionDelegate(delegate(string parameters, Keys modifiers)
+            {
+                if ((modifiers & Keys.Shift) == Keys.Shift)
+                    Clipboard.SetText(parameters + " = " + ConvertBase(parameters));
+                else
+                    Clipboard.SetText(ConvertBase(parameters));
+            }));
+            Commands.Add(_convert_base_command);
         }
 
         protected override string GetAssembyName()

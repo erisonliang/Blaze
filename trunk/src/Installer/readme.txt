@@ -1,4 +1,4 @@
-Blaze is an application that is being developed in the scope of a
+ Blaze is an application that is being developed in the scope of a
 college project. As a matter of fact, it’s my Master thesis. The main
 goal is to develop an application that capable of automating the
 recurrent tasks that arise from the everyday usage. I’m having a lot
@@ -15,6 +15,28 @@ Shift. If this happens, press each stuck key once and it will be fixed.
 
 VERSION HISTORY:
 
+(11/10/2009) - Blaze 0.5.1.0 beta
+
+* Fixed a bug that caused in-place calculations to crash Blaze.
+* Blaze's calculator now performs base conversion. It supports dec, hex, bin and oct. Example: 10 hex to dec
+
+(03/10/2009) - Blaze 0.5.0.1 beta
+
+* Activity monitoring can now be disabled.
+* Blaze now presents power saving options for laptops:
+    o Indexation can be disabled when laptop is running on battery power.
+    o Activity monitoring can be disabled when laptop is running on battery power.
+* Calculator plugin was improved:
+    o Now pressing Shift+Return instead of Return will copy the whole expression to the clipboard.
+    o New command: Solve. Just select a calculation on any editable field, open Blaze, type "Solve" and hit Return or Shift+Return.
+    o You now can type decimals without the leading zero.
+* When invoking a macro, you can now pass, as a parameter, the amount of times it should be repeated.
+* Blaze Portable is even more portable and USB Drive friendly:
+    o User added paths are now converted to relative paths.
+    o Relative paths are also used inside the index.
+* Blaze's help tooltip is more useful: now it shows the path of the selected item. Press Ctrl+Shift to open the help tooltip.
+* Several bugs fixed.
+
 (25/09/2009) - Blaze 0.4.8.8 beta
 
 * Blaze Indexer doesn't crash by indexing directories longer than 260 characteres anymore.
@@ -28,7 +50,7 @@ VERSION HISTORY:
 * Fixed a crash regarding web browser's cached files.
 * A few performance enhancements.
 
-(18/09/2009) - Blaze 0.4.8.4 beta
+ (18/09/2009) - Blaze 0.4.8.4 beta
 
 * Now Blaze can include directories for indexation.
 * Shift + Enter behavior fixed. Now it always opens the item's parent directory, even if it is a folder.

@@ -335,7 +335,10 @@ namespace SystemCore.SystemAbstraction.StringUtilities
 
         public static string ApplyEllipsis(string str, int max_len)
         {
-            return str.Substring(0, max_len - 3) + "...";
+            if (str.Length > max_len - 3)
+                return str.Substring(0, max_len - 3) + "...";
+            else
+                return str;
         }
     }
 }
