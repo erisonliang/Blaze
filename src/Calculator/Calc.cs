@@ -36,7 +36,7 @@ namespace Calculator
         private Regex _regex_comma_rule;
         private Regex _regex_convert_base;
         private Regex _regex_base;
-        private Regex _regex_int;
+        private Regex _regex_base_value;
         private Icon _icon;
         private Command _calc_command;
         private Command _solve_command;
@@ -91,9 +91,9 @@ namespace Calculator
             _regex_forbidden_chars = new Regex(@"([^\d|\+|\-|\*|\/|\(|\)\u0025\u005E\\\,\.\s]|\|)+");
             _regex_comma_rule = new Regex(@"[\d]*[\,\.][\d]*[\,\.]");
             _icon = Properties.Resources.calc;
-            _regex_convert_base = new Regex(@"^\d+\s*(dec|hex|oct|bin)(\s*$|\s*(to|>))(\s*$|\s*(dec|hex|oct|bin)$)");
+            _regex_convert_base = new Regex(@"(^\d+\s*(dec|oct|bin)|^[0-9a-fA-F]+\s*hex)(\s*$|\s*(to|>))(\s*$|\s*(dec|hex|oct|bin)$)");
             _regex_base = new Regex(@"(dec|hex|oct|bin)");
-            _regex_int = new Regex(@"[0-9]+");
+            _regex_base_value = new Regex(@"[0-9a-fA-F]+");
         }
         #endregion
 
@@ -187,14 +187,14 @@ namespace Calculator
             return expr.Eval().ToString();
         }
 
-        private string ConvertBase(string input)
+         private string ConvertBase(string input)
         {
             int index = input.LastIndexOf("to");
             if (index == -1)
                 index = input.LastIndexOf(">");
             if (index == -1)
             {
-                string val = _regex_int.Match(input).Value;
+                string val = _regex_base_value.Match(input).Value;
                 string base_str = _regex_base.Match(input).Value;
                 int origin = 0;
                 string final = string.Empty;
@@ -221,7 +221,7 @@ namespace Calculator
                 string left_input = temp_input.Substring(0, index);
                 string right_input = temp_input.Substring(index);
 
-                string val = _regex_int.Match(left_input).Value;
+                string val = _regex_base_value.Match(left_input).Value;
                 string origin_base = _regex_base.Match(left_input).Value;
                 string destination_base;
                 int origin = 0;
