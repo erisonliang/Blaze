@@ -40,5 +40,9 @@ namespace Configurator
         public static string IndexerPath = @"BlazeIndexer.exe";
         public static string UserDesktop = Environment.GetEnvironmentVariable("USERPROFILE") + @"\Desktop";
         public static string UserHomeDrive = Environment.GetEnvironmentVariable("HOMEDRIVE");
+        public static string BlazeWebsite = "http://blaze-wins.sourceforge.net/";
+        public static string BlazeVersionUrl = (IsPortable ? "http://blaze-wins.sourceforge.net/latest-portable-version.php" : "http://blaze-wins.sourceforge.net/latest-version.php");
+        public static string BlazeDownloadUrl = (IsPortable ? "http://blaze-wins.sourceforge.net/latest-portable-download.php" : "http://blaze-wins.sourceforge.net/latest-download.php");
+        public static Version BlazeVersion = new Version("0.5.1.0");
     }
 }
