@@ -1,7 +1,7 @@
 <Window x:Class="BlazeUpdater.Window1"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Blaze Updater" Height="200" Width="300" AllowsTransparency="False" WindowStyle="ThreeDBorderWindow" Loaded="Window_Loaded" Name="mainWindow">
+    Title="Blaze Updater" Height="200" Width="300" AllowsTransparency="False" WindowStyle="ThreeDBorderWindow" Loaded="Window_Loaded" Name="mainWindow" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="278*" />
@@ -11,11 +11,10 @@
         <ProgressBar Margin="66,14,8,0" Name="progressBar1" Height="16" VerticalAlignment="Top" />
         <Expander Header="Less details" Margin="8,41,8,0" Name="expander1" IsExpanded="True" Height="83" VerticalAlignment="Top">
             <StackPanel Height="61" Name="stackPanel1" Width="257">
-                <Label Name="label2" Width="71" Height="27" HorizontalAlignment="Left" Margin="4,2">Percentage:</Label>
-                <Label Name="label3" Height="26" Width="45" HorizontalAlignment="Left" Margin="4,-2">Speed:</Label>
+                <Label Name="percentageLabel" Width="250" Height="27" HorizontalAlignment="Left" Margin="4,2">Percentage:</Label>
+                <Label Name="speedLabel" Height="26" Width="250" HorizontalAlignment="Left" Margin="4,-2">Speed:</Label>
             </StackPanel>
         </Expander>
-        <Button Height="23" HorizontalAlignment="Right" Name="cancelButton" VerticalAlignment="Bottom" Width="75" Margin="0,0,8,8">Cancel</Button>
-        <Button Height="23" Margin="112,0,91,8" Name="okButton" VerticalAlignment="Bottom">Update</Button>
+        <Button Height="23" HorizontalAlignment="Right" Name="cancelButton" VerticalAlignment="Bottom" Width="75" Margin="0,0,8,8" Click="cancelButton_Click">Cancel</Button>
     </Grid>
 </Window>
