@@ -19,7 +19,7 @@ namespace Configurator
 {
     public static class CommonInfo
     {
-        public static bool IsPortable = true;
+        public static bool IsPortable = false;
         public static string GUID = "{258b9f7e-f835-4b65-b833-906667ec51e6}";
         public static string AppName = "Blaze";
         public static string BinFolder = @"Bin\";
@@ -43,6 +43,7 @@ namespace Configurator
         public static string BlazeWebsite = "http://blaze-wins.sourceforge.net/";
         public static string BlazeVersionUrl = (IsPortable ? "http://blaze-wins.sourceforge.net/latest-portable-version.php" : "http://blaze-wins.sourceforge.net/latest-version.php");
         public static string BlazeDownloadUrl = (IsPortable ? "http://blaze-wins.sourceforge.net/latest-portable-download.php" : "http://blaze-wins.sourceforge.net/latest-download.php");
+        public static string BlazeTempPath = System.IO.Path.GetTempPath() + (IsPortable ? "Blaze Update.zip" : "Blaze Update.exe" );
         public static Version BlazeVersion = new Version("0.5.1.0");
     }
 }
