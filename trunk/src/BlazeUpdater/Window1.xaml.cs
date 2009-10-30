@@ -56,12 +56,19 @@ namespace BlazeUpdater
         void _backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             double downloaded = (double)((double)e.ProgressPercentage / (double)100) * _fileSize;
+            double left = _fileSize - downloaded;
+            double speed = downloaded / (DateTime.Now - _beginning).TotalSeconds;
+            TimeSpan remainging = (speed == 0? TimeSpan.Zero : TimeSpan.FromSeconds(left / speed));
             progressBar1.Value = e.ProgressPercentage;
             percentageLabel.Content = "Progress: " + e.ProgressPercentage.ToString() + "% (" + downloaded.ToString("#.#") + " out of " + _fileSize.ToString() + " KBytes)";
             if ((DateTime.Now - _last_update) >= TimeSpan.FromSeconds(.5))
             {
-                speedLabel.Content = "Speed: " + (downloaded / (DateTime.Now - _beginning).TotalSeconds).ToString("#.#") + " KB/s";
+                speedLabel.Content = "Speed: " + speed.ToString("#.#") + " KB/s";
                 _last_update = DateTime.Now;
+                timeRemainingLabel.Content = "Time Remaining: " + (speed == 0 ? "being estimated..." :
+                                                remainging.Hours + "h " +
+                                                remainging.Minutes + "m " +
+                                                remainging.Seconds + "s ");
             }
         }
 
@@ -206,11 +213,11 @@ namespace BlazeUpdater
         void expander1_Expanded(object sender, RoutedEventArgs e)
         {
             DoubleAnimation expanderAnimation = new DoubleAnimation();
-            expanderAnimation.To = 83;
+            expanderAnimation.To = 103;
             expanderAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.25));
 
             DoubleAnimation windowAnimation = new DoubleAnimation();
-            windowAnimation.To = 200;
+            windowAnimation.To = 220;
             windowAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.25));
 
             expander1.BeginAnimation(Expander.HeightProperty, expanderAnimation);
