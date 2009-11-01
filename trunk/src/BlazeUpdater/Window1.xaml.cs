@@ -202,7 +202,7 @@ namespace BlazeUpdater
             expanderAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.25));
 
             DoubleAnimation windowAnimation = new DoubleAnimation();
-            windowAnimation.To = 115;
+            windowAnimation.To = 125;
             windowAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.25));
 
             expander1.BeginAnimation(Expander.HeightProperty, expanderAnimation);
@@ -217,7 +217,7 @@ namespace BlazeUpdater
             expanderAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.25));
 
             DoubleAnimation windowAnimation = new DoubleAnimation();
-            windowAnimation.To = 220;
+            windowAnimation.To = 240;
             windowAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.25));
 
             expander1.BeginAnimation(Expander.HeightProperty, expanderAnimation);

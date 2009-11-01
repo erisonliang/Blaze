@@ -34,10 +34,12 @@ namespace BlazeUpdater
             {
                 _suppress = true;
             }
-
+             
             if (version_on_server >= local_version)
             {
-                MessageBox.Show("There is a new version of Blaze available. Would you like to download it now?", "Blaze Updater", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (MessageBox.Show("There is a new version of Blaze available. Would you like to download it now?", "Blaze Updater", MessageBoxButton.YesNo, MessageBoxImage.Question)
+                    == MessageBoxResult.No)
+                    this.Shutdown();
             }
             else
             {
