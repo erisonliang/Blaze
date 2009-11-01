@@ -1517,5 +1517,15 @@ namespace Blaze
         {
             System.Diagnostics.Process.Start("http://blaze-wins.sourceforge.net/index.php?page=documentation");
         }
+
+        private void updateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(CommonInfo.BlazeUpdaterPath);
+        }
+
+        private void updateToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(CommonInfo.BlazeUpdaterPath);
+        }
     }
 }

@@ -44,6 +44,7 @@ namespace Configurator
         public static string BlazeVersionUrl = (IsPortable ? "http://blaze-wins.sourceforge.net/latest-portable-version.php" : "http://blaze-wins.sourceforge.net/latest-version.php");
         public static string BlazeDownloadUrl = (IsPortable ? "http://blaze-wins.sourceforge.net/latest-portable-download.php" : "http://blaze-wins.sourceforge.net/latest-download.php");
         public static string BlazeTempPath = System.IO.Path.GetTempPath() + (IsPortable ? "Blaze Update.zip" : "Blaze Update.exe" );
-        public static Version BlazeVersion = new Version("0.5.1.0");
+        public static Version BlazeVersion = new Version("0.5.1.5");
+        public static string BlazeUpdaterPath = @".\BlazeUpdater.exe";
     }
 }
