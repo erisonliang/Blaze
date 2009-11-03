@@ -435,6 +435,7 @@ namespace SystemCore.Settings
             {
                 int update_time = 20;
                 bool stop_auto_update = true;
+                bool auto_update = true;
                 List<string> categories = INIManipulator.GetCategories(_path);
                 if (categories.Count > 0)
                 {
@@ -446,6 +447,7 @@ namespace SystemCore.Settings
                         {
                             string update_time_name = "updateTime";
                             string stop_auto_update_name = "stopAutoUpdateOnBattery";
+                            string auto_update_name = "autoUpdate";
                             if (keys.Contains(update_time_name))
                             {
                                 Int32.TryParse(INIManipulator.GetValue(_path, category, update_time_name, "20"), out update_time);
@@ -454,10 +456,14 @@ namespace SystemCore.Settings
                             {
                                 Boolean.TryParse(INIManipulator.GetValue(_path, category, stop_auto_update_name, "true"), out stop_auto_update);
                             }
+                            if (keys.Contains(auto_update_name))
+                            {
+                                Boolean.TryParse(INIManipulator.GetValue(_path, category, auto_update_name, "true"), out auto_update);
+                            }
                         }
                     }
                 }
-                _system_options_info = new SystemOptionsInfo(update_time, stop_auto_update);
+                _system_options_info = new SystemOptionsInfo(update_time, stop_auto_update, auto_update);
             }
             return _system_options_info;
         }
@@ -468,6 +474,7 @@ namespace SystemCore.Settings
             string category = "system";
             INIManipulator.WriteValue(_path, category, "updateTime", info.UpdateTime.ToString());
             INIManipulator.WriteValue(_path, category, "stopAutoUpdateOnBattery", info.StopAutoUpdateOnBattery.ToString());
+            INIManipulator.WriteValue(_path, category, "autoUpdate", info.AutoUpdates.ToString());
         }
 
         public AutomationOptionsInfo GetAutomationOptionsInfo()

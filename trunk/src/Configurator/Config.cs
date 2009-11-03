@@ -119,6 +119,7 @@ namespace Configurator
             file.WriteLine("[system]");
             file.WriteLine(CommonInfo.IsPortable ? "updateTime=0" : "updateTime=20");
             file.WriteLine("stopAutoUpdateOnBattery=true");
+            file.WriteLine("autoUpdate=" + (CommonInfo.IsPortable ? "false" : "true"));
             file.WriteLine("[automation]");
             file.WriteLine("monitoringEnabled=true");
             file.WriteLine("stopMonitoringOnBattery=true");

@@ -20,6 +20,7 @@ namespace SystemCore.Settings
         #region Properties
         private int _update_time;
         private bool _stop_auto_update_on_battery;
+        private bool _auto_updates;
         #endregion
 
         #region Accessors
@@ -34,19 +35,27 @@ namespace SystemCore.Settings
             get { return _stop_auto_update_on_battery; }
             set { _stop_auto_update_on_battery = value; }
         }
+
+        public bool AutoUpdates
+        {
+            get { return _auto_updates; }
+            set { _auto_updates = value; }
+        }
         #endregion
 
         #region Constructors
-        public SystemOptionsInfo(int update_time, bool stop_auto_update_on_battery)
+        public SystemOptionsInfo(int update_time, bool stop_auto_update_on_battery, bool auto_updates)
         {
             _update_time = update_time;
             _stop_auto_update_on_battery = stop_auto_update_on_battery;
+            _auto_updates = auto_updates;
         }
 
         public SystemOptionsInfo(SystemOptionsInfo info)
         {
             _update_time = info.UpdateTime;
             _stop_auto_update_on_battery = info.StopAutoUpdateOnBattery;
+            _auto_updates = info.AutoUpdates;
         }
         #endregion
     }

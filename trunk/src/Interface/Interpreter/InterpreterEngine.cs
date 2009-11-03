@@ -41,6 +41,7 @@ namespace Blaze.Interpreter
         private PluginCommandCache _commandCache;
         private System.Timers.Timer _indexer_timer;
         private System.Timers.Timer _automation_timer;
+        private System.Timers.Timer _auto_update_timer;
         //private string[] _special_keywords;
         #endregion
 
@@ -64,14 +65,22 @@ namespace Blaze.Interpreter
                 _indexer_timer.Interval = 1000 * 60 * SettingsManager.Instance.GetSystemOptionsInfo().UpdateTime;
                 _indexer_timer.Start();
             }
+
             _automation_timer = new System.Timers.Timer();
             _automation_timer.Elapsed += new System.Timers.ElapsedEventHandler(_automation_timer_Elapsed);
             _automation_timer.Interval = 5000;
             _automation_timer.AutoReset = true;
             _automation_timer.Start();
+
+            _auto_update_timer = new System.Timers.Timer();
+            _auto_update_timer.Elapsed += new System.Timers.ElapsedEventHandler(_auto_update_timer_Elapsed);
+            _auto_update_timer.Interval = 15000;
+            _auto_update_timer.AutoReset = true;
+            _auto_update_timer.Start();
         }
         #endregion
 
+        #region Timers
         void _indexer_timer_Elapsed(object sender, EventArgs e)
         {
             if (SettingsManager.Instance.GetSystemOptionsInfo().StopAutoUpdateOnBattery)
@@ -93,6 +102,15 @@ namespace Blaze.Interpreter
                     UserContext.Instance.ObserverObject.StartMonitoring();
             }
         }
+
+        void _auto_update_timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (_auto_update_timer.Interval == 15000)
+                _auto_update_timer.Interval = 3600000;
+            if (SettingsManager.Instance.GetSystemOptionsInfo().AutoUpdates)
+                System.Diagnostics.Process.Start(CommonInfo.BlazeUpdaterPath, "-suppress");
+        }
+        #endregion
 
         #region Public Methods
         public void BuildIndex()
@@ -658,6 +676,22 @@ namespace Blaze.Interpreter
             {
                 _indexer_timer.Stop();
             }
+        }
+
+        public void SetAutomationTimer(bool on)
+        {
+            if (on && !_automation_timer.Enabled)
+                _automation_timer.Start();
+            else if (!on && _automation_timer.Enabled)
+                _automation_timer.Stop();
+        }
+
+        public void SetAutoUpdateTimer(bool on)
+        {
+            if (on && !_auto_update_timer.Enabled)
+                _auto_update_timer.Start();
+            else if (!on && _auto_update_timer.Enabled)
+                _auto_update_timer.Stop();
         }
         #endregion
 
