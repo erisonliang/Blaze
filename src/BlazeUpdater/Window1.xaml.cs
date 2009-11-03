@@ -29,7 +29,7 @@ namespace BlazeUpdater
         protected BackgroundWorker _backgroundWorker = null;
         protected double _fileSize;
         protected DateTime _beginning;
-        protected bool _completed = false;
+        protected bool _completed = true;
         protected DateTime _last_update = DateTime.Now;
 
         public Window1()
@@ -228,7 +228,7 @@ namespace BlazeUpdater
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            _completed = false;
         }
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)

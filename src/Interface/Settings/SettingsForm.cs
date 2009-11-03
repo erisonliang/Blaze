@@ -380,6 +380,7 @@ namespace Blaze
             _system_options_info = new SystemOptionsInfo(SettingsManager.Instance.GetSystemOptionsInfo());
             updateTimeNumericUpDown.Value = _system_options_info.UpdateTime;
             stopIndexingCheckBox.Checked = _system_options_info.StopAutoUpdateOnBattery;
+            autoUpdatesCheckBox.Checked = _system_options_info.AutoUpdates;
             //
 
             //
@@ -539,6 +540,7 @@ namespace Blaze
             _interface_info.NumberOfSuggestions = (int)suggestionsNumericUpDown.Value;
             _system_options_info.UpdateTime = (int)updateTimeNumericUpDown.Value;
             _system_options_info.StopAutoUpdateOnBattery = stopIndexingCheckBox.Checked;
+            _system_options_info.AutoUpdates = autoUpdatesCheckBox.Checked;
             _automation_options_info.IsMonitoringEnabled = yesAutomationRadioButton.Checked;
             _automation_options_info.StopAutoUpdateOnBattery = stopMonitoringCheckBox.Checked;
             List<List<string>> ext = new List<List<string>>();

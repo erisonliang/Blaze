@@ -99,6 +99,8 @@ namespace Blaze
             this.AutomatorLabel = new System.Windows.Forms.Label();
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
+            this.autoUpdatesGroupBox = new System.Windows.Forms.GroupBox();
+            this.autoUpdatesCheckBox = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.GeneralTab.SuspendLayout();
             this.automationGroupBox.SuspendLayout();
@@ -117,6 +119,7 @@ namespace Blaze
             this.AvailablePluginsGroupBox.SuspendLayout();
             this.AboutTab.SuspendLayout();
             this.AutomatorInfoGroupBox.SuspendLayout();
+            this.autoUpdatesGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -137,6 +140,7 @@ namespace Blaze
             // 
             // GeneralTab
             // 
+            this.GeneralTab.Controls.Add(this.autoUpdatesGroupBox);
             this.GeneralTab.Controls.Add(this.automationGroupBox);
             this.GeneralTab.Controls.Add(this.indexingGroupBox);
             this.GeneralTab.Controls.Add(this.interfaceGroupBox);
@@ -209,7 +213,7 @@ namespace Blaze
             this.indexingGroupBox.Controls.Add(this.manualUpdatesLabel);
             this.indexingGroupBox.Controls.Add(this.updateTimeNumericUpDown);
             this.indexingGroupBox.Controls.Add(this.updateTimeLabel);
-            this.indexingGroupBox.Location = new System.Drawing.Point(7, 164);
+            this.indexingGroupBox.Location = new System.Drawing.Point(7, 171);
             this.indexingGroupBox.Name = "indexingGroupBox";
             this.indexingGroupBox.Size = new System.Drawing.Size(376, 80);
             this.indexingGroupBox.TabIndex = 2;
@@ -246,6 +250,7 @@ namespace Blaze
             this.updateTimeNumericUpDown.Name = "updateTimeNumericUpDown";
             this.updateTimeNumericUpDown.Size = new System.Drawing.Size(40, 20);
             this.updateTimeNumericUpDown.TabIndex = 1;
+            this.updateTimeNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.updateTimeNumericUpDown.Value = new decimal(new int[] {
             1,
             0,
@@ -265,7 +270,7 @@ namespace Blaze
             // 
             this.interfaceGroupBox.Controls.Add(this.suggestionsNumericUpDown);
             this.interfaceGroupBox.Controls.Add(this.suggestionsLabel);
-            this.interfaceGroupBox.Location = new System.Drawing.Point(7, 101);
+            this.interfaceGroupBox.Location = new System.Drawing.Point(7, 107);
             this.interfaceGroupBox.Name = "interfaceGroupBox";
             this.interfaceGroupBox.Size = new System.Drawing.Size(182, 57);
             this.interfaceGroupBox.TabIndex = 1;
@@ -288,6 +293,7 @@ namespace Blaze
             this.suggestionsNumericUpDown.Name = "suggestionsNumericUpDown";
             this.suggestionsNumericUpDown.Size = new System.Drawing.Size(40, 20);
             this.suggestionsNumericUpDown.TabIndex = 1;
+            this.suggestionsNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.suggestionsNumericUpDown.Value = new decimal(new int[] {
             1,
             0,
@@ -313,7 +319,7 @@ namespace Blaze
             this.InteractionGroupBox.Controls.Add(this.ModifierComboBox);
             this.InteractionGroupBox.Location = new System.Drawing.Point(6, 6);
             this.InteractionGroupBox.Name = "InteractionGroupBox";
-            this.InteractionGroupBox.Size = new System.Drawing.Size(317, 89);
+            this.InteractionGroupBox.Size = new System.Drawing.Size(317, 96);
             this.InteractionGroupBox.TabIndex = 0;
             this.InteractionGroupBox.TabStop = false;
             this.InteractionGroupBox.Text = "Interaction";
@@ -809,6 +815,26 @@ namespace Blaze
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             // 
+            // autoUpdatesGroupBox
+            // 
+            this.autoUpdatesGroupBox.Controls.Add(this.autoUpdatesCheckBox);
+            this.autoUpdatesGroupBox.Location = new System.Drawing.Point(208, 107);
+            this.autoUpdatesGroupBox.Name = "autoUpdatesGroupBox";
+            this.autoUpdatesGroupBox.Size = new System.Drawing.Size(220, 57);
+            this.autoUpdatesGroupBox.TabIndex = 4;
+            this.autoUpdatesGroupBox.TabStop = false;
+            this.autoUpdatesGroupBox.Text = "Automatic Updates";
+            // 
+            // autoUpdatesCheckBox
+            // 
+            this.autoUpdatesCheckBox.AutoSize = true;
+            this.autoUpdatesCheckBox.Location = new System.Drawing.Point(13, 24);
+            this.autoUpdatesCheckBox.Name = "autoUpdatesCheckBox";
+            this.autoUpdatesCheckBox.Size = new System.Drawing.Size(200, 17);
+            this.autoUpdatesCheckBox.TabIndex = 0;
+            this.autoUpdatesCheckBox.Text = "Automatically check for new updates";
+            this.autoUpdatesCheckBox.UseVisualStyleBackColor = true;
+            // 
             // SettingsForm
             // 
             this.AcceptButton = this.okButton;
@@ -855,6 +881,8 @@ namespace Blaze
             this.AboutTab.PerformLayout();
             this.AutomatorInfoGroupBox.ResumeLayout(false);
             this.AutomatorInfoGroupBox.PerformLayout();
+            this.autoUpdatesGroupBox.ResumeLayout(false);
+            this.autoUpdatesGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -926,5 +954,7 @@ namespace Blaze
         private System.Windows.Forms.RadioButton yesAutomationRadioButton;
         private System.Windows.Forms.Label monitorLabel;
         private System.Windows.Forms.CheckBox stopMonitoringCheckBox;
+        private System.Windows.Forms.GroupBox autoUpdatesGroupBox;
+        private System.Windows.Forms.CheckBox autoUpdatesCheckBox;
     }
 }
