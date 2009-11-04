@@ -20,6 +20,7 @@ namespace BlazeUpdater
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            base.OnStartup(e);
             bool test = false;
             try
             {
@@ -55,6 +56,8 @@ namespace BlazeUpdater
                     if (MessageBox.Show("There is a new version of Blaze available. Would you like to download it now?", "Blaze Updater", MessageBoxButton.YesNo, MessageBoxImage.Question)
                         == MessageBoxResult.No)
                         this.Shutdown();
+                    else
+                        this.StartupUri = new Uri("Window1.xaml", UriKind.Relative);
                 }
                 else
                 {
@@ -65,11 +68,9 @@ namespace BlazeUpdater
                     }
                     this.Shutdown();
                 }
-                base.OnStartup(e);
             }
             else
             {
-                base.OnStartup(e);
                 this.Shutdown();
             }
         }

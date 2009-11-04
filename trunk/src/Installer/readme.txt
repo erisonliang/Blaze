@@ -15,6 +15,10 @@ Shift. If this happens, press each stuck key once and it will be fixed.
 
 VERSION HISTORY:
 
+(04/11/2009) - Blaze 0.5.2.1 beta
+
+* Fixed a bug which caused the updater to crash when exiting.
+
 (03/11/2009) - Blaze 0.5.2.0 beta
 
 * Fixed a bug concerning the base converter not correctly detecting hexadecimal values.
