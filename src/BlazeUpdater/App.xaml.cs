@@ -33,6 +33,10 @@ namespace BlazeUpdater
             if (test)
             {
                 _is_safe = true;
+                if (e.Args != null && e.Args.Count() > 0 && e.Args[0] == "-suppress")
+                {
+                    _suppress = true;
+                }
                 Version version_on_server = null;
                 try
                 {
@@ -45,11 +49,6 @@ namespace BlazeUpdater
                     this.Shutdown();
                 }
                 Version local_version = CommonInfo.BlazeVersion;
-
-                if (e.Args != null && e.Args.Count() > 0 && e.Args[0] == "-suppress")
-                {
-                    _suppress = true;
-                }
 
                 if (version_on_server > local_version)
                 {
