@@ -15,7 +15,7 @@ Shift. If this happens, press each stuck key once and it will be fixed.
 
 VERSION HISTORY:
 
-(04/11/2009) - Blaze 0.5.2.1 beta
+(04/11/2009) - Blaze 0.5.2.2 beta
 
 * Fixed a bug which caused the updater to crash when exiting.
 
