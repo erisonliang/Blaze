@@ -1,7 +1,7 @@
 <Window x:Class="BlazeUpdater.Window1"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Blaze Updater" Height="240" Width="300" AllowsTransparency="False" WindowStyle="ThreeDBorderWindow" Loaded="Window_Loaded" Name="mainWindow" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" Icon="file:///C:/Users/Gabriel/Documents/My Dropbox/Blaze/Code/SVN/trunk/src/Pictures/Skins/Blaze/blaze_big.ico">
+    Title="Blaze Updater" Height="240" Width="300" AllowsTransparency="False" WindowStyle="ThreeDBorderWindow" Loaded="Window_Loaded" Name="mainWindow" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" Icon="/BlazeUpdater;component/Resources/blaze_big.ico">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="144*" />
