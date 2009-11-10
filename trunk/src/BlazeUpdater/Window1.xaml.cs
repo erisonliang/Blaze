@@ -39,6 +39,7 @@ namespace BlazeUpdater
             expander1.Expanded += new RoutedEventHandler(expander1_Expanded);
             expander1.Collapsed += new RoutedEventHandler(expander1_Collapsed);
             expander1.IsExpanded = false;
+            //SystemCore.SystemAbstraction.WindowManagement.GlassExtender.GlassBackground(this);
             StartDownload();
         }
 
