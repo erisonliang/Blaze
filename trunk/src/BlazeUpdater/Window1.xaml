@@ -4,19 +4,25 @@
     Title="Blaze Updater" Height="240" Width="300" AllowsTransparency="False" WindowStyle="ThreeDBorderWindow" Loaded="Window_Loaded" Name="mainWindow" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" Icon="/BlazeUpdater;component/Resources/blaze_big.ico">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="144*" />
-            <ColumnDefinition Width="134*" />
+            <ColumnDefinition Width="103*" />
+            <ColumnDefinition Width="175*" />
             <ColumnDefinition Width="0*" />
         </Grid.ColumnDefinitions>
-        <Label Height="26" Margin="6,9,8,0" Name="label1" VerticalAlignment="Top" FontFamily="Segoe UI" Grid.ColumnSpan="2">Please wait while Blaze is being downloaded...</Label>
+        <Label Height="26" Margin="6,9,8,0" Name="label1" VerticalAlignment="Top" FontFamily="Segoe UI" Grid.ColumnSpan="2">
+            <Label.BitmapEffect>
+                <OuterGlowBitmapEffect GlowColor="White" GlowSize="10" />
+            </Label.BitmapEffect> Please wait while Blaze is being downloaded...</Label>
         <ProgressBar Margin="10.5,36,8,0" Name="progressBar1" Height="16" VerticalAlignment="Top" Grid.ColumnSpan="2" />
-        <Expander Header="Less details" Margin="8,61,8,0" Name="expander1" IsExpanded="True" Height="103" VerticalAlignment="Top" Grid.ColumnSpan="2">
+        <Expander Header="Less details" Margin="8,61,8,0" Name="expander1" IsExpanded="True" Height="103" VerticalAlignment="Top" Grid.ColumnSpan="2" BorderBrush="Black">
+            <Expander.BitmapEffect>
+                <OuterGlowBitmapEffect GlowColor="White" GlowSize="10" />
+            </Expander.BitmapEffect>
             <StackPanel Height="77" Name="stackPanel1" Width="257">
                 <Label Name="percentageLabel" Width="250" Height="27" HorizontalAlignment="Left" Margin="4,2">Progress:</Label>
                 <Label Name="speedLabel" Height="26" Width="250" HorizontalAlignment="Left" Margin="4,-4">Speed:</Label>
                 <Label Height="28" Name="timeRemainingLabel" Width="250" HorizontalAlignment="Left" Margin="4">Time Remaining:</Label>
             </StackPanel>
         </Expander>
-        <Button Height="23" Name="cancelButton" VerticalAlignment="Bottom" Margin="51,0,8,8" Click="cancelButton_Click" Grid.Column="1">Cancel</Button>
+        <Button Height="23" Name="cancelButton" VerticalAlignment="Bottom" Margin="0,0,8,8" Click="cancelButton_Click" Grid.Column="1" HorizontalAlignment="Right" Width="75">Cancel</Button>
     </Grid>
 </Window>

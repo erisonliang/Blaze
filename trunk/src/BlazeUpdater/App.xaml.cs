@@ -50,7 +50,7 @@ namespace BlazeUpdater
                 }
                 Version local_version = CommonInfo.BlazeVersion;
 
-                if (version_on_server > local_version)
+                if (version_on_server >= local_version)
                 {
                     if (MessageBox.Show("There is a new version of Blaze available. Would you like to download it now?", "Blaze Updater", MessageBoxButton.YesNo, MessageBoxImage.Question)
                         == MessageBoxResult.No)
