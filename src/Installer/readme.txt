@@ -1,4 +1,4 @@
- Blaze is an application that is being developed in the scope of a
+Blaze is an application that is being developed in the scope of a
 college project. As a matter of fact, it’s my Master thesis. The main
 goal is to develop an application that capable of automating the
 recurrent tasks that arise from the everyday usage. I’m having a lot
@@ -14,6 +14,10 @@ KNOWN ISSUES:
 Shift. If this happens, press each stuck key once and it will be fixed.
 
 VERSION HISTORY:
+
+(10/11/2009) - Blaze 0.5.2.3 beta
+
+* Fixed that annoying bug which caused auto-updates to complain about you not being connected to the internet.
 
 (04/11/2009) - Blaze 0.5.2.2 beta
 
