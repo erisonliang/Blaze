@@ -18,6 +18,9 @@ using System.IO;
 using Configurator;
 using System.Diagnostics;
 using SystemCore.SystemAbstraction;
+using Microsoft.WindowsAPICodePack;
+using Microsoft.WindowsAPICodePack.Shell;
+using Microsoft.WindowsAPICodePack.Taskbar;
 
 namespace BlazeUpdater
 {
@@ -33,6 +36,7 @@ namespace BlazeUpdater
         protected DateTime _last_update = DateTime.Now;
         protected Color _default_color;
         protected Color _expanded_color;
+        protected bool _is_windows_seven = false;
 
         public Window1()
         {
@@ -54,6 +58,8 @@ namespace BlazeUpdater
                 new_color.A = 100;
                 _expanded_color = new_color;
             }
+            if (Environment.OSVersion.Version.Major > 6)
+                _is_windows_seven = true;
             StartDownload();
         }
 
@@ -186,6 +192,8 @@ namespace BlazeUpdater
             double speed = downloaded / (DateTime.Now - _beginning).TotalSeconds;
             TimeSpan remainging = (speed == 0? TimeSpan.Zero : TimeSpan.FromSeconds(left / speed));
             progressBar1.Value = e.ProgressPercentage;
+            if (_is_windows_seven)
+                TaskbarManager.Instance.SetProgressValue(e.ProgressPercentage, 100);
             percentageLabel.Content = "Progress: " + e.ProgressPercentage.ToString() + "% (" + downloaded.ToString("#.#") + " out of " + _fileSize.ToString() + " KBytes)";
             if ((DateTime.Now - _last_update) >= TimeSpan.FromSeconds(.5))
             {
