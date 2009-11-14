@@ -60,7 +60,7 @@ namespace SystemCore.SystemAbstraction.WindowManagement
                 // If not glassing capabilities (Windows XP...), paint background white.
                 catch (DllNotFoundException)
                 {
-                    Application.Current.MainWindow.Background = System.Windows.Media.Brushes.White;
+                    win.Background = System.Windows.Media.Brushes.White;
                 }
             };
         }
@@ -82,6 +82,10 @@ namespace SystemCore.SystemAbstraction.WindowManagement
             public static extern int DwmExtendFrameIntoClientArea(
                 IntPtr hwnd,
                 ref MARGINS pMarInset);
+
+            [DllImport("dwmapi.dll")]
+            public static extern int DwmIsCompositionEnabled(ref int en);
+
 
         }
         #endregion
