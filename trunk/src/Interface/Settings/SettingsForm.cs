@@ -271,6 +271,7 @@ namespace Blaze
 
             // keys
             _keys.Add("Space", Keys.Space);
+            _keys.Add("Return", Keys.Return);
             _keys.Add("A", Keys.A);
             _keys.Add("B", Keys.B);
             _keys.Add("C", Keys.C);
