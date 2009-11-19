@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{80E8CF2C-F505-42F1-88A8-3AA019C0BC73}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ContextLib</RootNamespace>
+    <AssemblyName>ContextLib</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\Interface\bin\Debug\Plugins\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\Interface\bin\Release\Plugins\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\Interface\bin\Release\Plugins\ContextLib.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ManagedWifi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\ManagedWifi.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Algorithms\Diff\Diff.cs" />
+    <Compile Include="Algorithms\Suffixtree\SuffixTreeWalker.cs" />
+    <Compile Include="Apprentice.cs" />
+    <Compile Include="Assistant.cs" />
+    <Compile Include="DataContainers\Monitoring\FileOpDescriptor.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\ConstantFileDiffFunction.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\ConstantFileExtFunction.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\ConstantFileFunctionEx.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\ConstantTextFunction.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\FileCreateGeneralization.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\FileDeleteGeneralization.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\FileMoveGeneralization.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\FileRenameGeneralization.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\KeyGeneralization.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\ConstantFileFunction.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\Function.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\Generalization.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\MouseDragGeneralization.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\MouseGeneralization.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\SequentialCharFunction.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\SequentialIntFunction.cs" />
+    <Compile Include="DataContainers\Monitoring\Generalizations\TextGeneralization.cs" />
+    <Compile Include="DataContainers\Monitoring\HighLevel\FileMovedAction.cs" />
+    <Compile Include="DataContainers\Monitoring\MouseAction.cs" />
+    <Compile Include="DataContainers\Monitoring\HighLevel\MouseDragAction.cs" />
+    <Compile Include="DataContainers\Monitoring\HighLevel\MouseDoubleClickAction.cs" />
+    <Compile Include="DataContainers\Monitoring\HighLevel\KeyPressAction.cs" />
+    <Compile Include="DataContainers\Monitoring\HighLevel\MouseClickAction.cs" />
+    <Compile Include="DataContainers\Monitoring\HighLevel\TypeTextAction.cs" />
+    <Compile Include="DataContainers\Monitoring\KeyAction.cs" />
+    <Compile Include="DataContainers\Monitoring\LowLevel\TerminalAction.cs" />
+    <Compile Include="DataContainers\Monitoring\Suggestion.cs" />
+    <Compile Include="DataContainers\Monitoring\UserActionList.cs" />
+    <Compile Include="DataContainers\Monitoring\UserActionWindow.cs" />
+    <Compile Include="Algorithms\Suffixtree\Edge.cs" />
+    <Compile Include="DataContainers\Multimedia\Pair.cs" />
+    <Compile Include="MacroNamePicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MacroNamePicker.Designer.cs">
+      <DependentUpon>MacroNamePicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Algorithms\Suffixtree\Node.cs" />
+    <Compile Include="Observer.cs" />
+    <Compile Include="DataContainers\Devices\Processor.cs" />
+    <Compile Include="DataContainers\Devices\StorageDevice.cs" />
+    <Compile Include="DataContainers\Monitoring\HighLevel\FileRenamedAction.cs" />
+    <Compile Include="DataContainers\Monitoring\HighLevel\FileDeletedAction.cs" />
+    <Compile Include="DataContainers\Monitoring\HighLevel\FileCreatedAction.cs" />
+    <Compile Include="DataContainers\Monitoring\FileAction.cs" />
+    <Compile Include="DataContainers\Monitoring\LowLevel\MouseWheelSpinAction.cs" />
+    <Compile Include="DataContainers\Monitoring\LowLevel\MouseUpAction.cs" />
+    <Compile Include="DataContainers\Monitoring\LowLevel\KeyUpAction.cs" />
+    <Compile Include="DataContainers\Monitoring\LowLevel\KeyDownAction.cs" />
+    <Compile Include="DataContainers\Monitoring\LowLevel\MouseDownAction.cs" />
+    <Compile Include="DataContainers\Monitoring\UserAction.cs" />
+    <Compile Include="DataContainers\Monitoring\Macro.cs" />
+    <Compile Include="DataContainers\Multimedia\MultiLevelData.cs" />
+    <Compile Include="DataContainers\Devices\NetworkAdapter.cs" />
+    <Compile Include="DataContainers\Network\WirelessNetwork.cs" />
+    <Compile Include="DataContainers\Devices\VideoController.cs" />
+    <Compile Include="Algorithms\Suffixtree\Suffix.cs" />
+    <Compile Include="Algorithms\Suffixtree\SuffixTree.cs" />
+    <Compile Include="UserContext.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DataContainers\GUI\Window.cs" />
+    <Compile Include="DataContainers\Network\ConnectedWirelessNetwork.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Configurator\Configurator.csproj">
+      <Project>{1E842C5E-9B48-48F7-9C87-927ADD3807B1}</Project>
+      <Name>Configurator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Gma.UserActivityMonitor\Gma.UserActivityMonitor.csproj">
+      <Project>{F52AA97E-180A-40ED-8F2B-09080171D6C7}</Project>
+      <Name>Gma.UserActivityMonitor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SystemCore\SystemCore.csproj">
+      <Project>{CF005F91-D831-4643-AB04-2B6BDDA7C3A3}</Project>
+      <Name>SystemCore</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MacroNamePicker.resx">
+      <DependentUpon>MacroNamePicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="IWshRuntimeLibrary">
+      <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

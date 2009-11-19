@@ -1,0 +1,467 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{057D8BA7-9713-431D-8964-D4CB450E78B8}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Blaze</RootNamespace>
+    <AssemblyName>Blaze</AssemblyName>
+    <ManifestCertificateThumbprint>9F0A03DFC2A95E7C1CC70AC3A8C0E59BB0B5D4E4</ManifestCertificateThumbprint>
+    <ManifestKeyFile>Interface_TemporaryKey.pfx</ManifestKeyFile>
+    <GenerateManifests>true</GenerateManifests>
+    <SignManifests>false</SignManifests>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <ApplicationIcon>blaze_big.ico</ApplicationIcon>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <PublishUrl>C:\Documents and Settings\Gabriel\Desktop\Test\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Both|AnyCPU' ">
+    <OutputPath>bin\Both\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Both|x64' ">
+    <OutputPath>bin\x64\Both\</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Both|x86' ">
+    <OutputPath>bin\x86\Both\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="IronPython, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\IronPython\IronPython.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting, Version=0.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\IronPython\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.Core, Version=0.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\IronPython\Microsoft.Scripting.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Automation\AssistantButton.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\AssistantButton.Designer.cs">
+      <DependentUpon>AssistantButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\AssistantModifyWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\AssistantModifyWindow.Designer.cs">
+      <DependentUpon>AssistantModifyWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\AssistantWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\AssistantWindow.Designer.cs">
+      <DependentUpon>AssistantWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\ScriptNamePicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\ScriptNamePicker.Designer.cs">
+      <DependentUpon>ScriptNamePicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\RTFUtility.cs" />
+    <Compile Include="Automation\Wizard\WizardFilePicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardFilePicker.Designer.cs">
+      <DependentUpon>WizardFilePicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardTextPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardTextPicker.Designer.cs">
+      <DependentUpon>WizardTextPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardWheelSpinPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardWheelSpinPicker.Designer.cs">
+      <DependentUpon>WizardWheelSpinPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardPositionPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardPositionPicker.Designer.cs">
+      <DependentUpon>WizardPositionPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardClickPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardClickPicker.Designer.cs">
+      <DependentUpon>WizardClickPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardKeyPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardKeyPicker.Designer.cs">
+      <DependentUpon>WizardKeyPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardWindow.Designer.cs">
+      <DependentUpon>WizardWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardDelayPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardDelayPicker.Designer.cs">
+      <DependentUpon>WizardDelayPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardWindowPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardWindowPicker.Designer.cs">
+      <DependentUpon>WizardWindowPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardTypePicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardTypePicker.Designer.cs">
+      <DependentUpon>WizardTypePicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardWelcome.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Automation\Wizard\WizardWelcome.Designer.cs">
+      <DependentUpon>WizardWelcome.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Debug\DebugWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Debug\DebugWindow.Designer.cs">
+      <DependentUpon>DebugWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FileIndexer\FileIndexer.cs" />
+    <Compile Include="MainApplication.cs" />
+    <Compile Include="Interpreter\InterpreterEngine.cs" />
+    <Compile Include="Memoization\LookUpTable.cs" />
+    <Compile Include="Interpreter\MenuEngine.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\DirectoryPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Settings\DirectoryPicker.Designer.cs">
+      <DependentUpon>DirectoryPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Automation\AssistantButton.resx">
+      <DependentUpon>AssistantButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Automation\AssistantModifyWindow.resx">
+      <DependentUpon>AssistantModifyWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Automation\AssistantWindow.resx">
+      <DependentUpon>AssistantWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Automation\ScriptNamePicker.resx">
+      <DependentUpon>ScriptNamePicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Automation\Wizard\WizardFilePicker.resx">
+      <DependentUpon>WizardFilePicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Automation\Wizard\WizardTextPicker.resx">
+      <DependentUpon>WizardTextPicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Automation\Wizard\WizardWheelSpinPicker.resx">
+      <DependentUpon>WizardWheelSpinPicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Automation\Wizard\WizardPositionPicker.resx">
+      <DependentUpon>WizardPositionPicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Automation\Wizard\WizardClickPicker.resx">
+      <DependentUpon>WizardClickPicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Automation\Wizard\WizardKeyPicker.resx">
+      <DependentUpon>WizardKeyPicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Automation\Wizard\WizardWindow.resx">
+      <DependentUpon>WizardWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Automation\Wizard\WizardDelayPicker.resx">
+      <DependentUpon>WizardDelayPicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Automation\Wizard\WizardWindowPicker.resx">
+      <DependentUpon>WizardWindowPicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Automation\Wizard\WizardTypePicker.resx">
+      <DependentUpon>WizardTypePicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Automation\Wizard\WizardWelcome.resx">
+      <DependentUpon>WizardWelcome.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Debug\DebugWindow.resx">
+      <DependentUpon>DebugWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\DirectoryPicker.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DirectoryPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\SettingsForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\TypePicker.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TypePicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SuperListBox.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SuperListBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Settings\PluginCommandCache.cs" />
+    <Compile Include="Settings\SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Settings\SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\TypePicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Settings\TypePicker.Designer.cs">
+      <DependentUpon>TypePicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SuperListBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SuperListBox.Designer.cs">
+      <DependentUpon>SuperListBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SystemBrowsing\SystemBrowser.cs" />
+    <Compile Include="TextPrediction\Copy of TextPredictor.cs" />
+    <Compile Include="TextPrediction\TextPredictor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Configurator\Configurator.csproj">
+      <Project>{1E842C5E-9B48-48F7-9C87-927ADD3807B1}</Project>
+      <Name>Configurator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ContextLib\ContextLib.csproj">
+      <Project>{80E8CF2C-F505-42F1-88A8-3AA019C0BC73}</Project>
+      <Name>ContextLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Gma.UserActivityMonitor\Gma.UserActivityMonitor.csproj">
+      <Project>{F52AA97E-180A-40ED-8F2B-09080171D6C7}</Project>
+      <Name>Gma.UserActivityMonitor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SystemCore\SystemCore.csproj">
+      <Project>{CF005F91-D831-4643-AB04-2B6BDDA7C3A3}</Project>
+      <Name>SystemCore</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="clear.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="blaze_big.ico" />
+    <None Include="blaze_small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="blaze_med.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="script.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="folder.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="record.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="record_small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assistant.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assistant-small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="exit.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="continue.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="redo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="blaze_small_glow.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="IWshRuntimeLibrary">
+      <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
