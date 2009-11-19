@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using Configurator;
 using System.Threading;
+using System.Reflection;
 
 namespace BlazeUpdater
 {
@@ -48,7 +49,8 @@ namespace BlazeUpdater
                         MessageBox.Show("The server could not be reached. Please try again later.", "Blaze Updater", MessageBoxButton.OK, MessageBoxImage.Error);
                     this.Shutdown();
                 }
-                Version local_version = CommonInfo.BlazeVersion;
+                AssemblyName assemblyName = AssemblyName.GetAssemblyName(CommonInfo.BlazeExePath);
+                Version local_version = assemblyName.Version;
 
                 if (version_on_server > local_version)
                 {

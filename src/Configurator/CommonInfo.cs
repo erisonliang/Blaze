@@ -37,14 +37,14 @@ namespace Configurator
         public static string PythonPath = @"IronPython\ipy.exe";
         public static string UserConfigFile = UserFolder + @"user.ini";
         public static string IndexCacheFile = UserFolder + @"index.db";
-        public static string IndexerPath = @"BlazeIndexer.exe";
+        public static string BlazeIndexerPath = @".\BlazeIndexer.exe";
+        public static string BlazeUpdaterPath = @".\BlazeUpdater.exe";
+        public static string BlazeExePath = @".\Blaze.exe";
         public static string UserDesktop = Environment.GetEnvironmentVariable("USERPROFILE") + @"\Desktop";
         public static string UserHomeDrive = Environment.GetEnvironmentVariable("HOMEDRIVE");
         public static string BlazeWebsite = "http://blaze-wins.sourceforge.net/";
         public static string BlazeVersionUrl = (IsPortable ? "http://blaze-wins.sourceforge.net/latest-portable-version.php" : "http://blaze-wins.sourceforge.net/latest-version.php");
         public static string BlazeDownloadUrl = (IsPortable ? "http://blaze-wins.sourceforge.net/latest-portable-download.php" : "http://blaze-wins.sourceforge.net/latest-download.php");
         public static string BlazeTempPath = System.IO.Path.GetTempPath() + (IsPortable ? "Blaze Update.zip" : "Blaze Update.exe" );
-        public static Version BlazeVersion = new Version("0.5.2.3");
-        public static string BlazeUpdaterPath = @".\BlazeUpdater.exe";
     }
 }

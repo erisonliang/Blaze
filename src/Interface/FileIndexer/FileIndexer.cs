@@ -79,7 +79,7 @@ namespace Blaze.Indexer
             //_index = new Index();
 
             ProcessStartInfo info = new ProcessStartInfo();
-            info.FileName = Path.GetFullPath(CommonInfo.IndexerPath); ;
+            info.FileName = Path.GetFullPath(CommonInfo.BlazeIndexerPath); ;
             info.WorkingDirectory = Environment.CurrentDirectory;//Path.GetFullPath(CommonInfo.BinFolder);
             //Process.Start(info);
             Process proc = new Process();
