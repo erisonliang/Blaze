@@ -42,7 +42,6 @@ namespace Blaze.Interpreter
         private System.Timers.Timer _indexer_timer;
         private System.Timers.Timer _automation_timer;
         private System.Timers.Timer _auto_update_timer;
-        //private string[] _special_keywords;
         #endregion
 
         #region Accessors
@@ -60,8 +59,10 @@ namespace Blaze.Interpreter
             _indexer_timer = new System.Timers.Timer();
             _indexer_timer.Elapsed += new System.Timers.ElapsedEventHandler(_indexer_timer_Elapsed);
             _indexer_timer.AutoReset = true;
+            LoadIndex();
             if (SettingsManager.Instance.GetSystemOptionsInfo().UpdateTime > 0)
             {
+                BuildIndex();
                 _indexer_timer.Interval = 1000 * 60 * SettingsManager.Instance.GetSystemOptionsInfo().UpdateTime;
                 _indexer_timer.Start();
             }
@@ -77,6 +78,8 @@ namespace Blaze.Interpreter
             _auto_update_timer.Interval = 15000;
             _auto_update_timer.AutoReset = true;
             _auto_update_timer.Start();
+
+            _commandCache = new PluginCommandCache(30);
         }
         #endregion
 
@@ -219,29 +222,26 @@ namespace Blaze.Interpreter
             List<string> assisting_plugins = new List<string>();
             List<InterpreterPlugin> plugins = new List<InterpreterPlugin>(_plugins);
             plugins.Add(_menuEngine);
-            _commandCache = new PluginCommandCache(plugins);
-            plugins = null;
             bool filesystem_assisted = false;
             
             // take care of high priority commands
-            foreach (InterpreterPlugin plugin in _plugins)
+            foreach (InterpreterPlugin plugin in plugins)
             {
                 Command command = plugin.GetAssistingCommand(Command.PriorityType.High, text);
                 if (command != null)
                 {
                     InterpreterItem item = new InterpreterItem(plugin.GetItemName(command.Name, text, null),
                                                                 plugin.GetItemDescription(command.Name, text, null),
-                                                                OwnerType.Plugin,
                                                                 plugin.GetItemAutoComplete(command.Name, text, null),
-                                                                plugin.GetItemIcon(command.Name, text, null));
-                    item.OwnerId = plugin.Name;
+                                                                plugin.GetItemIcon(command.Name, text, null),
+                                                                InterpreterItem.OwnerType.Plugin,
+                                                                user_text);
                     item.CommandName = command.Name;
                     item.CommandTokens = null;
                     item.CommandUsage = plugin.GetUsage(command.Name, text, null);
-                    item.Text = text;
+                    item.PluginId = plugin.Name;
                     assisting_commands.Add(plugin.Name);
                     ret.Add(item);
-                    item = null;
                 }
             }
 
@@ -270,8 +270,12 @@ namespace Blaze.Interpreter
                         // file system
                         if (_systemBrowser.IsOwner(content) && paths.Contains(content))
                         {
-                            InterpreterItem item = new InterpreterItem(FileNameManipulator.GetFolderName(content), content, OwnerType.FileSystem, content, _systemBrowser.GetItemIcon(content));
-                            item.Type = ItemType.Learned;
+                            InterpreterItem item = new InterpreterItem(FileNameManipulator.GetFolderName(content),
+                                                                        content,
+                                                                        content,
+                                                                        _systemBrowser.GetItemIcon(content),
+                                                                        InterpreterItem.OwnerType.FileSystem,
+                                                                        user_text);
                             ret.Add(item);
                             paths.Remove(content);
                         }
@@ -309,7 +313,12 @@ namespace Blaze.Interpreter
 
                 foreach (string s in min_names)
                 {
-                    ret.Add(new InterpreterItem(FileNameManipulator.GetFolderName(s), s, OwnerType.FileSystem, s, _systemBrowser.GetItemIcon(s)));
+                    ret.Add(new InterpreterItem(FileNameManipulator.GetFolderName(s),
+                                                s,
+                                                s,
+                                                _systemBrowser.GetItemIcon(s),
+                                                InterpreterItem.OwnerType.FileSystem,
+                                                user_text));
                 }
 
                 // clean up
@@ -327,12 +336,24 @@ namespace Blaze.Interpreter
                 List<string> user_tokens = new List<string>(StringUtility.GenerateKeywords(user_text));
                 int user_tokens_size = user_tokens.Count;
 
-                Index index = new Index(_fileIndexer.RetrieveItems());
+                Index index = _fileIndexer.RetrieveItems();
+                //_commandCache.Update(plugins);
+                //index.Merge(_commandCache.Index);
+                if (!_fileIndexer.IsCacheMerged)
+                {
+                    Predictor.Instance.InvalidateCache();
+                }
+                if (_commandCache.NeedsUpdate() || !_fileIndexer.IsCacheMerged)
+                {
+                    _commandCache.Update(plugins);
+                    index.Merge(_commandCache.Index);
+                    _fileIndexer.IsCacheMerged = true;
+                }
                 //if (index.Names.Count == 0)
                 //    return ret;
-                List<string> names = new List<string>(index.Names);
-                Dictionary<string, List<string>> paths = new Dictionary<string, List<string>>(index.Paths);
-                Dictionary<string, List<string>> keywords = new Dictionary<string, List<string>>(index.Keywords);
+                //List<string> names = new List<string>(index.Names);
+                //Dictionary<string, List<string>> paths = new Dictionary<string, List<string>>(index.Paths);
+                //Dictionary<string, List<string>> keywords = new Dictionary<string, List<string>>(index.Keywords);
 
                 //// add blaze commands to index
                 //List<string> menu_options = new List<string>();
@@ -350,207 +371,202 @@ namespace Blaze.Interpreter
                 //}
 
                 // add plugin commands to index
-                names.AddRange(_commandCache.Index.Names);
-                foreach (KeyValuePair<string, List<string>> pair in _commandCache.Index.Paths)
-                    paths.Add(pair.Key, pair.Value);
-                foreach (KeyValuePair<string, List<string>> pair in _commandCache.Index.Keywords)
-                    keywords.Add(pair.Key, pair.Value);
+                //names.AddRange(_commandCache.Index.Names);
+                //foreach (KeyValuePair<string, List<string>> pair in _commandCache.Index.Paths)
+                //    paths.Add(pair.Key, pair.Value);
+                //foreach (KeyValuePair<string, List<string>> pair in _commandCache.Index.Keywords)
+                //    keywords.Add(pair.Key, pair.Value);
 
                 // take care of learned contents
-                LearnedContent lc = new LearnedContent(SettingsManager.Instance.GetLearnedContents());
-                List<string> lc_temp = new List<string>(lc.Keywords);
-                lc_temp.Reverse();
-                InterpreterPlugin ap;
-                foreach (string keyword in lc_temp)
-                {
-                    //if (StringUtility.WordContainsStr(keyword, user_text))
-                    //{
-                        string content = lc.Contents[keyword];
-                        // menu
-                        if (_menuEngine.IsOwner(UnprotectCommand(content)))
-                        {
-                            //if (StringUtility.WordContainsStr(keyword, user_text))
-                            //{
-                            //    string ucontent = UnprotectCommand(content);
-                            //    InterpreterItem item = new InterpreterItem(_menuEngine.GetItemName(ucontent, text, null),
-                            //                                                _menuEngine.GetItemDescription(ucontent, text, null),
-                            //                                                OwnerType.Menu,
-                            //                                                _menuEngine.GetItemAutoComplete(ucontent, text, null),
-                            //                                                _menuEngine.GetItemIcon(ucontent, text, null));
-                            //    item.Type = ItemType.Learned;
-                            //    ret.Add(item);
-                            //    names.Remove(content);
-                            //    paths.Remove(content);
-                            //    keywords.Remove(content);
-                            //}
-                            if (!keywords[content].Contains(keyword))
-                                keywords[content].Add(keyword);
-                        }
-                        else if ((ap = GetAssistingPlugin(UnprotectCommand(content), keyword, Command.PriorityType.Medium)) != null /*&& !assisting_plugins.Contains(ap.Name)*/)
-                        {
-                            string command_name = UnprotectCommand(content);
-                            Command command = ap.GetCommandByName(command_name);
-                            if (command != null && command.FitsPriority(Command.PriorityType.Medium) && !assisting_commands.Contains(command_name))
-                            {
+                //LearnedContent lc = new LearnedContent(SettingsManager.Instance.GetLearnedContents());
+                //List<string> lc_temp = new List<string>(lc.Keywords);
+                //lc_temp.Reverse();
+                //InterpreterPlugin ap;
+                //foreach (string keyword in lc_temp)
+                //{
+                //    //if (StringUtility.WordContainsStr(keyword, user_text))
+                //    //{
+                //        string content = lc.Contents[keyword];
+                //        // menu
+                //        if (_menuEngine.IsOwner(UnprotectCommand(content)))
+                //        {
+                //            //if (StringUtility.WordContainsStr(keyword, user_text))
+                //            //{
+                //            //    string ucontent = UnprotectCommand(content);
+                //            //    InterpreterItem item = new InterpreterItem(_menuEngine.GetItemName(ucontent, text, null),
+                //            //                                                _menuEngine.GetItemDescription(ucontent, text, null),
+                //            //                                                OwnerType.Menu,
+                //            //                                                _menuEngine.GetItemAutoComplete(ucontent, text, null),
+                //            //                                                _menuEngine.GetItemIcon(ucontent, text, null));
+                //            //    item.Type = ItemType.Learned;
+                //            //    ret.Add(item);
+                //            //    names.Remove(content);
+                //            //    paths.Remove(content);
+                //            //    keywords.Remove(content);
+                //            //}
+                //            //if (!keywords[content].Contains(keyword))
+                //            //    keywords[content].Add(keyword);
+                //        }
+                //        else if ((ap = GetAssistingPlugin(UnprotectCommand(content), keyword, Command.PriorityType.Medium)) != null /*&& !assisting_plugins.Contains(ap.Name)*/)
+                //        {
+                //            string command_name = UnprotectCommand(content);
+                //            Command command = ap.GetCommandByName(command_name);
+                //            if (command != null && command.FitsPriority(Command.PriorityType.Medium) && !assisting_commands.Contains(command_name))
+                //            {
 
-                                //InterpreterItem item = new InterpreterItem(ap.GetItemName(command_name, keyword, null),
-                                //                                            ap.GetItemDescription(command_name, keyword, null),
-                                //                                            OwnerType.Plugin,
-                                //                                            ap.GetItemAutoComplete(command_name, keyword, null),
-                                //                                            ap.GetItemIcon(command_name, keyword, null));
-                                //item.OwnerId = ap.Name;
-                                //item.CommandName = command_name;
-                                //item.CommandTokens = null;
-                                //item.Text = text;
-                                //assisting_commands.Add(command_name);
-                                //assisting_plugins.Add(ap.Name);
-                                //ret.Add(item);
-                                //item = null;
-                                if (!keywords[content].Contains(keyword))
-                                    keywords[content].Add(keyword);
-                            }
-                        }
-                        else if (File.Exists(content)) // indexer
-                        {
-                            if (StringUtility.WordContainsStr(keyword, user_text))
-                            {
-                                string name = FileNameManipulator.GetFileName(content);
-                                List<string> list;
-                                try
-                                {
-                                    list = paths[name];
-                                }
-                                catch (Exception)
-                                {
-                                    //SettingsManager.Instance.RemoveLearned(keyword, content);
-                                    continue;
-                                }
-                                for (int i = 0; i < list.Count; i++)
-                                {
-                                    InterpreterItem item = new InterpreterItem(name, list[i], OwnerType.Indexer, name, i, _fileIndexer.GetItemIcon(name, i));
-                                    item.Type = ItemType.Learned;
-                                    ret.Add(item);
-                                }
-                                names.Remove(name);
-                                paths.Remove(name);
-                                keywords.Remove(name);
-                            }
-                        }
-                        //else
-                        //{
-                        //    if (StringUtility.WordContainsStr(keyword, user_text))
-                        //    {
-                        //        SettingsManager.Instance.RemoveLearned(keyword, content);
-                        //    }
-                        //}
-                    //}
-                }
-                lc = null;
-                lc_temp = null;
-                ap = null;
+                //                //InterpreterItem item = new InterpreterItem(ap.GetItemName(command_name, keyword, null),
+                //                //                                            ap.GetItemDescription(command_name, keyword, null),
+                //                //                                            OwnerType.Plugin,
+                //                //                                            ap.GetItemAutoComplete(command_name, keyword, null),
+                //                //                                            ap.GetItemIcon(command_name, keyword, null));
+                //                //item.OwnerId = ap.Name;
+                //                //item.CommandName = command_name;
+                //                //item.CommandTokens = null;
+                //                //item.Text = text;
+                //                //assisting_commands.Add(command_name);
+                //                //assisting_plugins.Add(ap.Name);
+                //                //ret.Add(item);
+                //                //item = null;
+                //                //if (!keywords[content].Contains(keyword))
+                //                //    keywords[content].Add(keyword);
+                //            }
+                //        }
+                //        else if (File.Exists(content)) // indexer
+                //        {
+                //            if (StringUtility.WordContainsStr(keyword, user_text))
+                //            {
+                //                string name = FileNameManipulator.GetFileName(content);
+                //                List<string> list;
+                //                try
+                //                {
+                //                    list = paths[name];
+                //                }
+                //                catch (Exception)
+                //                {
+                //                    //SettingsManager.Instance.RemoveLearned(keyword, content);
+                //                    continue;
+                //                }
+                //                for (int i = 0; i < list.Count; i++)
+                //                {
+                //                    InterpreterItem item = new InterpreterItem(name, list[i], OwnerType.Indexer, name, i, _fileIndexer.GetItemIcon(name, i));
+                //                    item.Type = ItemType.Learned;
+                //                    ret.Add(item);
+                //                }
+                //                names.Remove(name);
+                //                paths.Remove(name);
+                //                keywords.Remove(name);
+                //            }
+                //        }
+                //        //else
+                //        //{
+                //        //    if (StringUtility.WordContainsStr(keyword, user_text))
+                //        //    {
+                //        //        SettingsManager.Instance.RemoveLearned(keyword, content);
+                //        //    }
+                //        //}
+                //    //}
+                //}
+                //lc = null;
+                //lc_temp = null;
+                //ap = null;
 
-                int names_size = names.Count;
-                int paths_size = paths.Count;
-                int keywords_size = keywords.Count;
+                //int names_size = names.Count;
+                //int paths_size = paths.Count;
+                //int keywords_size = keywords.Count;
 
-                Dictionary<string, double> distances = new Dictionary<string, double>();
-                Dictionary<string, string[]> tokens = new Dictionary<string, string[]>();
-                List<string> suited_names = new List<string>();
-                List<string> min_names = new List<string>();
-                List<string> visited = new List<string>();
+                //Dictionary<string, double> distances = new Dictionary<string, double>();
+                //Dictionary<string, string[]> tokens = new Dictionary<string, string[]>();
+                //List<string> suited_names = new List<string>();
+                //List<string> min_names = new List<string>();
+                //List<string> visited = new List<string>();
 
-                TextPredictor.Instance.PredictNamesAndDistance(user_text, user_tokens, names, keywords, ref suited_names, ref distances, ref tokens, true);
+                //TextPredictor.Instance.PredictNamesAndDistance(user_text, user_tokens, names, keywords, ref suited_names, ref distances, ref tokens, true);
 
-                int limit = SettingsManager.Instance.GetNumberOfSuggestions();
-                for (int num = 0; num < limit; num++)
-                {
-                    string min_name = string.Empty;
-                    for (int i = 0; i < suited_names.Count; i++)
-                    {
-                        if (visited.Contains(suited_names[i]))
-                        {
-                            continue;
-                        }
-                        else if (min_name == string.Empty)
-                        {
-                            min_name = suited_names[i];
-                        }
-                        else if (distances[min_name] > distances[suited_names[i]])
-                        {
-                            min_name = suited_names[i];
-                        }
-                        else if (distances[min_name] == distances[suited_names[i]])
-                        {
-                            if (min_name.Length > suited_names[i].Length)
-                                min_name = suited_names[i];
-                        }
-                    }
-                    if (min_name != string.Empty)
-                    {
-                        min_names.Add(min_name);
-                        visited.Add(min_name);
-                    }
-                }
+                //int limit = SettingsManager.Instance.GetNumberOfSuggestions();
+                //for (int num = 0; num < limit; num++)
+                //{
+                //    string min_name = string.Empty;
+                //    for (int i = 0; i < suited_names.Count; i++)
+                //    {
+                //        if (visited.Contains(suited_names[i]))
+                //        {
+                //            continue;
+                //        }
+                //        else if (min_name == string.Empty)
+                //        {
+                //            min_name = suited_names[i];
+                //        }
+                //        else if (distances[min_name] > distances[suited_names[i]])
+                //        {
+                //            min_name = suited_names[i];
+                //        }
+                //        else if (distances[min_name] == distances[suited_names[i]])
+                //        {
+                //            if (min_name.Length > suited_names[i].Length)
+                //                min_name = suited_names[i];
+                //        }
+                //    }
+                //    if (min_name != string.Empty)
+                //    {
+                //        min_names.Add(min_name);
+                //        visited.Add(min_name);
+                //    }
+                //}
 
-                foreach (string s in min_names)
+                Dictionary<IndexItem, List<string>> tokens = null;
+                IndexItem[] items = Predictor.Instance.GetBestItems(index, user_tokens, ref tokens);
+                // TODO
+                foreach (IndexItem i in items)
                 {
                     // take care of medium priority commands
+                    string command_name = i.Name;
+                    string[] item_tokens = tokens[i].ToArray();
+                    bool assisted_by_plugin = false;
                     foreach (InterpreterPlugin plugin in _plugins)
                     {
-                        string command_name = UnprotectCommand(s);
                         if (command_name == string.Empty)
                              continue;
                         Command command = plugin.GetCommandByName(command_name);
                         if (command != null && command.FitsPriority(Command.PriorityType.Medium) /*&& !assisting_plugins.Contains(plugin.Name)*/ && !assisting_commands.Contains(command_name))
                         {
-                            InterpreterItem item = new InterpreterItem(plugin.GetItemName(command_name, text, tokens[s]),
-                                                                        plugin.GetItemDescription(command_name, text, tokens[s]),
-                                                                        OwnerType.Plugin,
-                                                                        plugin.GetItemAutoComplete(command_name, text, tokens[s]),
-                                                                        plugin.GetItemIcon(command_name, text, tokens[s]));
-                            item.OwnerId = plugin.Name;
+                            InterpreterItem item = new InterpreterItem(plugin.GetItemName(command_name, text, item_tokens),
+                                                                        plugin.GetItemDescription(command_name, text, item_tokens),
+                                                                        plugin.GetItemAutoComplete(command_name, text, item_tokens),
+                                                                        plugin.GetItemIcon(command_name, text, item_tokens),
+                                                                        InterpreterItem.OwnerType.Plugin,
+                                                                        user_text);
                             item.CommandName = command_name;
-                            item.CommandTokens = tokens[s];
-                            item.CommandUsage = plugin.GetUsage(command.Name, text, tokens[s]);
-                            item.Text = text;
+                            item.CommandTokens = item_tokens;
+                            item.CommandUsage = plugin.GetUsage(command.Name, text, item_tokens);
+                            item.PluginId = plugin.Name;
                             assisting_commands.Add(command_name);
                             //assisting_plugins.Add(plugin.Name);
                             ret.Add(item);
-                            item = null;
+                            assisted_by_plugin = true;
                         }
                     }
-                    if (_menuEngine.IsOwner(UnprotectCommand(s)))
+                    if (!assisted_by_plugin)
                     {
-                        string ucontent = UnprotectCommand(s);
-                        InterpreterItem item = new InterpreterItem(_menuEngine.GetItemName(ucontent, text, tokens[s]),
-                                                    _menuEngine.GetItemDescription(ucontent, text, tokens[s]),
-                                                    OwnerType.Menu,
-                                                    _menuEngine.GetItemAutoComplete(ucontent, text, tokens[s]),
-                                                    _menuEngine.GetItemIcon(ucontent, text, tokens[s]));
-                        item.CommandName = ucontent;
-                        item.CommandTokens = tokens[s];
-                        item.CommandUsage = _menuEngine.GetUsage(ucontent, text, tokens[s]);
-                        item.Text = text;
-                        ret.Add(item);
-                        item = null;
-                    }
-                    else
-                    {
-                        List<string> list = paths[s];
-                        for (int i = 0; i < list.Count; i++)
-                            ret.Add(new InterpreterItem(s, list[i], OwnerType.Indexer, s, i, _fileIndexer.GetItemIcon(s, i)));
+                        if (_menuEngine.IsOwner(i.Name))
+                        {
+                            InterpreterItem item = new InterpreterItem(command_name,
+                                                                            _menuEngine.GetItemDescription(command_name, user_text, item_tokens),
+                                                                            command_name,
+                                                                            _menuEngine.GetItemIcon(command_name, text, item_tokens),
+                                                                            InterpreterItem.OwnerType.Menu,
+                                                                            user_text);
+                            item.CommandName = command_name;
+                            item.CommandTokens = item_tokens;
+                            item.CommandUsage = _menuEngine.GetUsage(command_name, text, item_tokens);
+                            ret.Add(item);
+                            item = null;
+                        }
+                        else
+                        {
+                            ret.Add(new InterpreterItem(i.Name, i.Path, i.Name, i.GetIcon(), InterpreterItem.OwnerType.Indexer, user_text));
+                        }
                     }
                 }
-
-                //clean up
-                user_tokens = null;
-                paths = null;
-                keywords = null;
-                names = null;
-                distances = null;
-                suited_names = null;
-                min_names = null;
-                visited = null;
             }
 
             // take care of low priority commands
@@ -561,14 +577,14 @@ namespace Blaze.Interpreter
                 {
                     InterpreterItem item = new InterpreterItem(plugin.GetItemName(command.Name, text, null),
                                                                 plugin.GetItemDescription(command.Name, text, null),
-                                                                OwnerType.Plugin,
                                                                 plugin.GetItemAutoComplete(command.Name, text, null),
-                                                                plugin.GetItemIcon(command.Name, text, null));
-                    item.OwnerId = plugin.Name;
+                                                                plugin.GetItemIcon(command.Name, text, null),
+                                                                InterpreterItem.OwnerType.Plugin,
+                                                                user_text);
                     item.CommandName = command.Name;
                     item.CommandTokens = null;
                     item.CommandUsage = plugin.GetUsage(command.Name, text, null);
-                    item.Text = text;
+                    item.PluginId = plugin.Name;
                     assisting_commands.Add(command.Name);
                     //assisting_plugins.Add(plugin.Name);
                     ret.Add(item);
@@ -601,28 +617,28 @@ namespace Blaze.Interpreter
             //MessageBox.Show(Clipboard.GetText());
             //MessageBox.Show("Selected text: " + UserContext.Instance.RetrieveSelectedText());
             item.Text = ReplaceSpecialKeywords(item.Text, item.CommandTokens);
-            switch (item.OwnerType)
+            switch (item.Type)
             {
-                case OwnerType.Indexer:
+                case InterpreterItem.OwnerType.Indexer:
                     //StoreKeywords(cmd, item);
                     _fileIndexer.Execute(item, modifiers);
                     _parent.HideAutomator();
                     break;
-                case OwnerType.FileSystem:
+                case InterpreterItem.OwnerType.FileSystem:
                     //StoreKeywords(cmd, item);
                     _systemBrowser.Execute(item, modifiers);
                     _parent.HideAutomator();
                     break;
-                case OwnerType.Menu:
+                case InterpreterItem.OwnerType.Menu:
                     //StoreKeywords(cmd, item);
                     if (_menuEngine.Execute(item, modifiers))
                         _parent.HideAutomator();
                     break;
-                case OwnerType.Plugin:
+                case InterpreterItem.OwnerType.Plugin:
                     StoreKeywords(cmd, item);
                     foreach (InterpreterPlugin plugin in _plugins)
                     {
-                        if (plugin.Name == item.OwnerId)
+                        if (plugin.Name == item.PluginId)
                         {
                             if (plugin.Execute(item, modifiers))
                                 _parent.HideAutomator();
@@ -701,17 +717,17 @@ namespace Blaze.Interpreter
             string str = cmd.ToLower();
             //if (str != item.AutoComplete.ToLower())
             //{
-            if (item.OwnerType == OwnerType.Indexer)
+            if (item.Type == InterpreterItem.OwnerType.Indexer)
             {
                 if (str != item.Desciption.ToLower())
                     SettingsManager.Instance.AddLearned(str, item.Desciption);
             }
-            else if (item.OwnerType == OwnerType.Menu)
+            else if (item.Type == InterpreterItem.OwnerType.Menu)
             {
                 //SettingsManager.Instance.AddLearned(str, ProtectCommand(item.Name));
                 //SettingsManager.Instance.AddLearned(item.Text, Command.ProtectCommand(item.CommandName)); // StringUtility.ArrayToStr(item.CommandTokens), item.CommandName
             }
-            else if (item.OwnerType == OwnerType.Plugin)
+            else if (item.Type == InterpreterItem.OwnerType.Plugin)
             {
                 //InterpreterPlugin p = _plugins.Find(delegate(InterpreterPlugin plugin) { return plugin.Name == item.OwnerId; });
                 //Command command = p.GetCommand(item);

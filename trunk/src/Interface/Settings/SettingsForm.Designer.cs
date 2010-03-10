@@ -36,6 +36,8 @@ namespace Blaze
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.GeneralTab = new System.Windows.Forms.TabPage();
+            this.autoUpdatesGroupBox = new System.Windows.Forms.GroupBox();
+            this.autoUpdatesCheckBox = new System.Windows.Forms.CheckBox();
             this.automationGroupBox = new System.Windows.Forms.GroupBox();
             this.stopMonitoringCheckBox = new System.Windows.Forms.CheckBox();
             this.noAutomationRadioButton = new System.Windows.Forms.RadioButton();
@@ -83,6 +85,7 @@ namespace Blaze
             this.AvailablePluginsGroupBox = new System.Windows.Forms.GroupBox();
             this.PluginsListBox = new System.Windows.Forms.CheckedListBox();
             this.AboutTab = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
             this.HomePageLink = new System.Windows.Forms.LinkLabel();
             this.HomePageLabel = new System.Windows.Forms.Label();
             this.ThanksToLabel = new System.Windows.Forms.Label();
@@ -91,7 +94,7 @@ namespace Blaze
             this.IndexedItemsEditableLabel = new System.Windows.Forms.Label();
             this.StartTimeEditableLabel = new System.Windows.Forms.Label();
             this.MemoryEditableLabel = new System.Windows.Forms.Label();
-            this.IndexingTimeLabel = new System.Windows.Forms.Label();
+            this.IndexingDuratiomLabel = new System.Windows.Forms.Label();
             this.StartTimeLabel = new System.Windows.Forms.Label();
             this.IndexedItemsLabel = new System.Windows.Forms.Label();
             this.MemoryLabel = new System.Windows.Forms.Label();
@@ -99,10 +102,11 @@ namespace Blaze
             this.AutomatorLabel = new System.Windows.Forms.Label();
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.autoUpdatesGroupBox = new System.Windows.Forms.GroupBox();
-            this.autoUpdatesCheckBox = new System.Windows.Forms.CheckBox();
+            this.LastIndexLabel = new System.Windows.Forms.Label();
+            this.LastIndexEditableLabel = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.GeneralTab.SuspendLayout();
+            this.autoUpdatesGroupBox.SuspendLayout();
             this.automationGroupBox.SuspendLayout();
             this.indexingGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updateTimeNumericUpDown)).BeginInit();
@@ -119,7 +123,6 @@ namespace Blaze
             this.AvailablePluginsGroupBox.SuspendLayout();
             this.AboutTab.SuspendLayout();
             this.AutomatorInfoGroupBox.SuspendLayout();
-            this.autoUpdatesGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -152,6 +155,26 @@ namespace Blaze
             this.GeneralTab.TabIndex = 3;
             this.GeneralTab.Text = "General";
             this.GeneralTab.UseVisualStyleBackColor = true;
+            // 
+            // autoUpdatesGroupBox
+            // 
+            this.autoUpdatesGroupBox.Controls.Add(this.autoUpdatesCheckBox);
+            this.autoUpdatesGroupBox.Location = new System.Drawing.Point(208, 107);
+            this.autoUpdatesGroupBox.Name = "autoUpdatesGroupBox";
+            this.autoUpdatesGroupBox.Size = new System.Drawing.Size(220, 57);
+            this.autoUpdatesGroupBox.TabIndex = 4;
+            this.autoUpdatesGroupBox.TabStop = false;
+            this.autoUpdatesGroupBox.Text = "Automatic Updates";
+            // 
+            // autoUpdatesCheckBox
+            // 
+            this.autoUpdatesCheckBox.AutoSize = true;
+            this.autoUpdatesCheckBox.Location = new System.Drawing.Point(13, 24);
+            this.autoUpdatesCheckBox.Name = "autoUpdatesCheckBox";
+            this.autoUpdatesCheckBox.Size = new System.Drawing.Size(200, 17);
+            this.autoUpdatesCheckBox.TabIndex = 0;
+            this.autoUpdatesCheckBox.Text = "Automatically check for new updates";
+            this.autoUpdatesCheckBox.UseVisualStyleBackColor = true;
             // 
             // automationGroupBox
             // 
@@ -643,6 +666,7 @@ namespace Blaze
             // 
             // AboutTab
             // 
+            this.AboutTab.Controls.Add(this.label2);
             this.AboutTab.Controls.Add(this.HomePageLink);
             this.AboutTab.Controls.Add(this.HomePageLabel);
             this.AboutTab.Controls.Add(this.ThanksToLabel);
@@ -657,10 +681,19 @@ namespace Blaze
             this.AboutTab.Text = "About";
             this.AboutTab.UseVisualStyleBackColor = true;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(327, 236);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(160, 13);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Copyright © 2009 Gabriel Barata";
+            // 
             // HomePageLink
             // 
             this.HomePageLink.AutoSize = true;
-            this.HomePageLink.Location = new System.Drawing.Point(179, 149);
+            this.HomePageLink.Location = new System.Drawing.Point(179, 127);
             this.HomePageLink.Name = "HomePageLink";
             this.HomePageLink.Size = new System.Drawing.Size(169, 13);
             this.HomePageLink.TabIndex = 5;
@@ -670,7 +703,7 @@ namespace Blaze
             // HomePageLabel
             // 
             this.HomePageLabel.AutoSize = true;
-            this.HomePageLabel.Location = new System.Drawing.Point(75, 149);
+            this.HomePageLabel.Location = new System.Drawing.Point(75, 127);
             this.HomePageLabel.Name = "HomePageLabel";
             this.HomePageLabel.Size = new System.Drawing.Size(106, 13);
             this.HomePageLabel.TabIndex = 4;
@@ -687,17 +720,19 @@ namespace Blaze
             // 
             // AutomatorInfoGroupBox
             // 
+            this.AutomatorInfoGroupBox.Controls.Add(this.LastIndexEditableLabel);
             this.AutomatorInfoGroupBox.Controls.Add(this.IndexingTimeEditableLabel);
+            this.AutomatorInfoGroupBox.Controls.Add(this.LastIndexLabel);
             this.AutomatorInfoGroupBox.Controls.Add(this.IndexedItemsEditableLabel);
             this.AutomatorInfoGroupBox.Controls.Add(this.StartTimeEditableLabel);
             this.AutomatorInfoGroupBox.Controls.Add(this.MemoryEditableLabel);
-            this.AutomatorInfoGroupBox.Controls.Add(this.IndexingTimeLabel);
+            this.AutomatorInfoGroupBox.Controls.Add(this.IndexingDuratiomLabel);
             this.AutomatorInfoGroupBox.Controls.Add(this.StartTimeLabel);
             this.AutomatorInfoGroupBox.Controls.Add(this.IndexedItemsLabel);
             this.AutomatorInfoGroupBox.Controls.Add(this.MemoryLabel);
-            this.AutomatorInfoGroupBox.Location = new System.Drawing.Point(6, 176);
+            this.AutomatorInfoGroupBox.Location = new System.Drawing.Point(6, 152);
             this.AutomatorInfoGroupBox.Name = "AutomatorInfoGroupBox";
-            this.AutomatorInfoGroupBox.Size = new System.Drawing.Size(234, 105);
+            this.AutomatorInfoGroupBox.Size = new System.Drawing.Size(234, 129);
             this.AutomatorInfoGroupBox.TabIndex = 2;
             this.AutomatorInfoGroupBox.TabStop = false;
             this.AutomatorInfoGroupBox.Text = "Info";
@@ -705,16 +740,16 @@ namespace Blaze
             // IndexingTimeEditableLabel
             // 
             this.IndexingTimeEditableLabel.AutoSize = true;
-            this.IndexingTimeEditableLabel.Location = new System.Drawing.Point(88, 83);
+            this.IndexingTimeEditableLabel.Location = new System.Drawing.Point(97, 83);
             this.IndexingTimeEditableLabel.Name = "IndexingTimeEditableLabel";
-            this.IndexingTimeEditableLabel.Size = new System.Drawing.Size(30, 13);
+            this.IndexingTimeEditableLabel.Size = new System.Drawing.Size(47, 13);
             this.IndexingTimeEditableLabel.TabIndex = 7;
-            this.IndexingTimeEditableLabel.Text = "Time";
+            this.IndexingTimeEditableLabel.Text = "Duration";
             // 
             // IndexedItemsEditableLabel
             // 
             this.IndexedItemsEditableLabel.AutoSize = true;
-            this.IndexedItemsEditableLabel.Location = new System.Drawing.Point(88, 60);
+            this.IndexedItemsEditableLabel.Location = new System.Drawing.Point(97, 106);
             this.IndexedItemsEditableLabel.Name = "IndexedItemsEditableLabel";
             this.IndexedItemsEditableLabel.Size = new System.Drawing.Size(32, 13);
             this.IndexedItemsEditableLabel.TabIndex = 6;
@@ -723,7 +758,7 @@ namespace Blaze
             // StartTimeEditableLabel
             // 
             this.StartTimeEditableLabel.AutoSize = true;
-            this.StartTimeEditableLabel.Location = new System.Drawing.Point(88, 38);
+            this.StartTimeEditableLabel.Location = new System.Drawing.Point(97, 38);
             this.StartTimeEditableLabel.Name = "StartTimeEditableLabel";
             this.StartTimeEditableLabel.Size = new System.Drawing.Size(30, 13);
             this.StartTimeEditableLabel.TabIndex = 5;
@@ -732,20 +767,20 @@ namespace Blaze
             // MemoryEditableLabel
             // 
             this.MemoryEditableLabel.AutoSize = true;
-            this.MemoryEditableLabel.Location = new System.Drawing.Point(88, 16);
+            this.MemoryEditableLabel.Location = new System.Drawing.Point(97, 16);
             this.MemoryEditableLabel.Name = "MemoryEditableLabel";
             this.MemoryEditableLabel.Size = new System.Drawing.Size(44, 13);
             this.MemoryEditableLabel.TabIndex = 4;
             this.MemoryEditableLabel.Text = "Memory";
             // 
-            // IndexingTimeLabel
+            // IndexingDuratiomLabel
             // 
-            this.IndexingTimeLabel.AutoSize = true;
-            this.IndexingTimeLabel.Location = new System.Drawing.Point(6, 83);
-            this.IndexingTimeLabel.Name = "IndexingTimeLabel";
-            this.IndexingTimeLabel.Size = new System.Drawing.Size(76, 13);
-            this.IndexingTimeLabel.TabIndex = 3;
-            this.IndexingTimeLabel.Text = "Indexing Time:";
+            this.IndexingDuratiomLabel.AutoSize = true;
+            this.IndexingDuratiomLabel.Location = new System.Drawing.Point(6, 83);
+            this.IndexingDuratiomLabel.Name = "IndexingDuratiomLabel";
+            this.IndexingDuratiomLabel.Size = new System.Drawing.Size(93, 13);
+            this.IndexingDuratiomLabel.TabIndex = 3;
+            this.IndexingDuratiomLabel.Text = "Indexing Duration:";
             // 
             // StartTimeLabel
             // 
@@ -759,7 +794,7 @@ namespace Blaze
             // IndexedItemsLabel
             // 
             this.IndexedItemsLabel.AutoSize = true;
-            this.IndexedItemsLabel.Location = new System.Drawing.Point(6, 60);
+            this.IndexedItemsLabel.Location = new System.Drawing.Point(6, 106);
             this.IndexedItemsLabel.Name = "IndexedItemsLabel";
             this.IndexedItemsLabel.Size = new System.Drawing.Size(76, 13);
             this.IndexedItemsLabel.TabIndex = 3;
@@ -815,25 +850,23 @@ namespace Blaze
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             // 
-            // autoUpdatesGroupBox
+            // LastIndexLabel
             // 
-            this.autoUpdatesGroupBox.Controls.Add(this.autoUpdatesCheckBox);
-            this.autoUpdatesGroupBox.Location = new System.Drawing.Point(208, 107);
-            this.autoUpdatesGroupBox.Name = "autoUpdatesGroupBox";
-            this.autoUpdatesGroupBox.Size = new System.Drawing.Size(220, 57);
-            this.autoUpdatesGroupBox.TabIndex = 4;
-            this.autoUpdatesGroupBox.TabStop = false;
-            this.autoUpdatesGroupBox.Text = "Automatic Updates";
+            this.LastIndexLabel.AutoSize = true;
+            this.LastIndexLabel.Location = new System.Drawing.Point(6, 61);
+            this.LastIndexLabel.Name = "LastIndexLabel";
+            this.LastIndexLabel.Size = new System.Drawing.Size(73, 13);
+            this.LastIndexLabel.TabIndex = 8;
+            this.LastIndexLabel.Text = "Last Indexing:";
             // 
-            // autoUpdatesCheckBox
+            // LastIndexEditableLabel
             // 
-            this.autoUpdatesCheckBox.AutoSize = true;
-            this.autoUpdatesCheckBox.Location = new System.Drawing.Point(13, 24);
-            this.autoUpdatesCheckBox.Name = "autoUpdatesCheckBox";
-            this.autoUpdatesCheckBox.Size = new System.Drawing.Size(200, 17);
-            this.autoUpdatesCheckBox.TabIndex = 0;
-            this.autoUpdatesCheckBox.Text = "Automatically check for new updates";
-            this.autoUpdatesCheckBox.UseVisualStyleBackColor = true;
+            this.LastIndexEditableLabel.AutoSize = true;
+            this.LastIndexEditableLabel.Location = new System.Drawing.Point(97, 61);
+            this.LastIndexEditableLabel.Name = "LastIndexEditableLabel";
+            this.LastIndexEditableLabel.Size = new System.Drawing.Size(58, 13);
+            this.LastIndexEditableLabel.TabIndex = 9;
+            this.LastIndexEditableLabel.Text = "Liast Index";
             // 
             // SettingsForm
             // 
@@ -857,6 +890,8 @@ namespace Blaze
             this.Load += new System.EventHandler(this.SettingsForm_Load);
             this.tabControl.ResumeLayout(false);
             this.GeneralTab.ResumeLayout(false);
+            this.autoUpdatesGroupBox.ResumeLayout(false);
+            this.autoUpdatesGroupBox.PerformLayout();
             this.automationGroupBox.ResumeLayout(false);
             this.automationGroupBox.PerformLayout();
             this.indexingGroupBox.ResumeLayout(false);
@@ -881,8 +916,6 @@ namespace Blaze
             this.AboutTab.PerformLayout();
             this.AutomatorInfoGroupBox.ResumeLayout(false);
             this.AutomatorInfoGroupBox.PerformLayout();
-            this.autoUpdatesGroupBox.ResumeLayout(false);
-            this.autoUpdatesGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -928,7 +961,7 @@ namespace Blaze
         private System.Windows.Forms.Label AutomatorDescriptionLabel;
         private System.Windows.Forms.GroupBox AutomatorInfoGroupBox;
         private System.Windows.Forms.Label MemoryEditableLabel;
-        private System.Windows.Forms.Label IndexingTimeLabel;
+        private System.Windows.Forms.Label IndexingDuratiomLabel;
         private System.Windows.Forms.Label StartTimeLabel;
         private System.Windows.Forms.Label IndexedItemsLabel;
         private System.Windows.Forms.Label MemoryLabel;
@@ -956,5 +989,8 @@ namespace Blaze
         private System.Windows.Forms.CheckBox stopMonitoringCheckBox;
         private System.Windows.Forms.GroupBox autoUpdatesGroupBox;
         private System.Windows.Forms.CheckBox autoUpdatesCheckBox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label LastIndexLabel;
+        private System.Windows.Forms.Label LastIndexEditableLabel;
     }
 }

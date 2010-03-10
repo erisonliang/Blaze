@@ -58,7 +58,7 @@ namespace BlazeUpdater
                 new_color.A = 100;
                 _expanded_color = new_color;
             }
-            if (Environment.OSVersion.Version.Major > 6)
+            if (Environment.OSVersion.Version.Major >= 6 && Environment.OSVersion.Version.Minor > 0)
                 _is_windows_seven = true;
             StartDownload();
         }

@@ -451,8 +451,10 @@ namespace Blaze
             Process proc = Process.GetCurrentProcess();
             MemoryEditableLabel.Text = (proc.PrivateMemorySize64 / 1024).ToString() + " kilobytes";
             StartTimeEditableLabel.Text = proc.StartTime.ToString();
-            IndexingTimeEditableLabel.Text = SettingsManager.Instance.GetIndexingTime().ToString();
+            TimeSpan indexing_time = SettingsManager.Instance.GetIndexingTime();
+            IndexingTimeEditableLabel.Text = string.Format("{0:00}h {1:00}m {2:00}s {3:000}ms", indexing_time.TotalHours, indexing_time.Minutes, indexing_time.Seconds, indexing_time.Milliseconds);
             IndexedItemsEditableLabel.Text = SettingsManager.Instance.GetNumberOfIndexedItems().ToString() + " items";
+            LastIndexEditableLabel.Text = SettingsManager.Instance.GetLastIndexBuild().ToString();
             proc.Dispose();
         }
 

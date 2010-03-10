@@ -234,7 +234,7 @@ namespace Blaze.TextPrediction
 
         private int CalcNonFittedWordDistance(string word1, string word2)
         {
-            return LevenshteinMeasurer.Instance.GetDistance(word2, word1);
+            return EditDistanceMeasurer.LevenshteinDistance(word2, word1);
         }
 
         #endregion
