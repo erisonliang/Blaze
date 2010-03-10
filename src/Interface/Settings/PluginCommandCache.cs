@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using SystemCore.CommonTypes;
+using System;
 
 namespace SystemCore.Settings
 {
@@ -22,6 +23,8 @@ namespace SystemCore.Settings
     {
         #region Properties
         private Index _index;
+        private DateTime _last_modified;
+        private TimeSpan _time_to_refresh;
         #endregion
 
         #region Accessors
@@ -29,21 +32,34 @@ namespace SystemCore.Settings
         #endregion
 
         #region Constructors
-        public PluginCommandCache(List<InterpreterPlugin> plugins)
+        public PluginCommandCache(int time_to_refresh)
         {
             _index = new Index();
+            _time_to_refresh = TimeSpan.FromSeconds((double)time_to_refresh);
+        }
+        #endregion
+
+        #region Public Methods
+        public void Update(List<InterpreterPlugin> plugins)
+        {
+            _index.Clear();
             foreach (InterpreterPlugin plugin in plugins)
             {
                 foreach (Command command in plugin.Commands)
                 {
-                    string name = command.ProtectedName;
-                    List<string> keywords = new List<string>(command.Keywords);
-                    _index.Names.Add(name);
-                    _index.Paths.Add(name, new List<string>());
-                    _index.Keywords.Add(name, keywords);
-                    _index.Icons.Add(name, new List<System.Drawing.Image>());
+                    if (command.FitsPriority(Command.PriorityType.Medium))
+                        _index.AddItemByName(command.Name);
                 }
             }
+            _last_modified = DateTime.Now;
+        }
+
+        public bool NeedsUpdate()
+        {
+            if (DateTime.Now - _last_modified >= _time_to_refresh)
+                return true;
+            else
+                return false;
         }
         #endregion
     }

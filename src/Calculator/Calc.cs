@@ -184,7 +184,7 @@ namespace Calculator
             fixed_input = fixed_input.Replace(".", CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator);
             fixed_input = fixed_input.Replace(",", CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator);
             expr.Parse(fixed_input);
-            return expr.Eval().ToString();
+            return string.Format("{0:0.##}", expr.Eval());
         }
 
          private string ConvertBase(string input)

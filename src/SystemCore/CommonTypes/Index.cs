@@ -16,6 +16,12 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Drawing;
+using System.Collections;
+using System.Drawing.Imaging;
+using System.Security.Cryptography;
+using System.IO;
+using System.Linq;
 
 namespace SystemCore.CommonTypes
 {
@@ -23,111 +29,337 @@ namespace SystemCore.CommonTypes
     public class Index : ISerializable
     {
         #region Properties
-        private List<string> _names;
-        private Dictionary<string, List<string>> _paths;
-        private Dictionary<string, List<string>> _keywords;
-        private Dictionary<string, List<System.Drawing.Image>> _icons;
+        private Dictionary<string, List<IndexItem>> _dictionary; // < keyword . < items > 
+        private Dictionary<string, Bitmap> _icons; // < iconHash . icon >
+        private List<IndexItem> _items; // < path . item >
         private bool _is_disposed = false;
+        private bool _is_building = false;
+        private MD5CryptoServiceProvider _md5; // hasher
+        private SystemCore.CommonTypes.BKTree<string> _tree;
+
+        // benchmark data
+        DateTime _info_build_started;
+        DateTime _info_build_finished;
+        TimeSpan _info_build_duration;
+        int _info_item_count = 0;
+        int _info_keyword_count = 0;
+        int _info_icon_count = 0;
         #endregion
 
         #region Accessors
-        public List<string> Names
+        public Dictionary<string, List<IndexItem>> Dictionary
         {
-            get { return _names; }
-            set { _names = value; }
+            get { return _dictionary; }
         }
-        public Dictionary<string, List<string>> Paths
-        {
-            get { return _paths; }
-            set { _paths = value; }
-        }
-        public Dictionary<string, List<string>> Keywords
-        {
-            get { return _keywords; }
-            set { _keywords = value; }
-        }
-        public Dictionary<string, List<System.Drawing.Image>> Icons
+        public Dictionary<string, Bitmap> Icons
         {
             get { return _icons; }
-            set { _icons = value; }
+        }
+        public List<IndexItem> Items
+        {
+            get { return _items; }
         }
         public bool IsDisposed
         {
             get { return _is_disposed; }
         }
+        public BKTree<string> Tree {
+            get { return _tree; }
+        }
+
+        public DateTime InfoBuildStarted { get { return _info_build_started; } }
+        public DateTime InfoBuildFinished { get { return _info_build_finished; } }
+        public TimeSpan InfoBuildDuration { get { return _info_build_duration; } }
+        public int InfoItemCount { get { return _info_item_count; } }
+        public int InfoKeywordCount { get { return _info_keyword_count; } }
+        public int InfoIconCount { get { return _info_icon_count; } }
         #endregion
 
         #region Constructors
         public Index()
         {
-            _names = new List<string>();
-            _paths = new Dictionary<string, List<string>>();
-            _keywords = new Dictionary<string, List<string>>();
-            _icons = new Dictionary<string, List<System.Drawing.Image>>();
-        }
-
-        public Index(Index index)
-        {
-            _names = new List<string>(index.Names);
-            _paths = new Dictionary<string, List<string>>(index.Paths);
-            _keywords = new Dictionary<string, List<string>>(index.Keywords);
-            _icons = index.Icons;
-            //_icons = new Dictionary<string, List<System.Drawing.Icon>>();
-            //foreach (KeyValuePair<string, List<System.Drawing.Icon>> pair in index.Icons)
-            //{
-            //    _icons.Add(pair.Key, new List<System.Drawing.Icon>());
-            //    foreach (System.Drawing.Icon icon in pair.Value)
-            //        _icons[pair.Key].Add((System.Drawing.Icon)icon.Clone());
-            //}
+            _dictionary = new Dictionary<string, List<IndexItem>>();
+            _icons = new Dictionary<string, Bitmap>();
+            _items = new List<IndexItem>();
+            _md5 = new MD5CryptoServiceProvider();
+            _tree = new BKTree<string>(delegate(string a, string b)
+                {
+                        return (ushort)SystemCore.SystemAbstraction.StringUtilities.EditDistanceMeasurer.DamerauLevenshteinDistance(a, b);
+                });
         }
 
         public Index(SerializationInfo info, StreamingContext context)
         {
-            _names = (List<string>)info.GetValue("Names", typeof(List<string>));
-            _paths = (Dictionary<string, List<string>>)info.GetValue("Paths", typeof(Dictionary<string, List<string>>));
-            _keywords = (Dictionary<string, List<string>>)info.GetValue("Keywords", typeof(Dictionary<string, List<string>>));
-            _icons = (Dictionary<string, List<System.Drawing.Image>>)info.GetValue("Icons", typeof(Dictionary<string, List<System.Drawing.Image>>));
+            _dictionary = (Dictionary<string, List<IndexItem>>)info.GetValue("Dictionary", typeof(Dictionary<string, List<IndexItem>>));
+            _icons = (Dictionary<string, Bitmap>)info.GetValue("Icons", typeof(Dictionary<string, Bitmap>));
+            _items = (List<IndexItem>)info.GetValue("Items", typeof(List<IndexItem>));
+            _md5 = new MD5CryptoServiceProvider();
+            _tree = (BKTree<string>)info.GetValue("Tree", typeof(BKTree<string>));
+            _info_build_started = (DateTime)info.GetValue("InfoBuildStarted", typeof(DateTime));
+            _info_build_finished = (DateTime)info.GetValue("InfoBuildFinished", typeof(DateTime));
+            _info_build_duration = (TimeSpan)info.GetValue("InfoBuildDuration", typeof(TimeSpan));
+            _info_item_count = (int)info.GetValue("InfoItemCount", typeof(int));
+            _info_keyword_count = (int)info.GetValue("InfoKeywordCount", typeof(int));
+            _info_icon_count = (int)info.GetValue("InfoIconCount", typeof(int));
         }
 
         ~Index()
         {
+            if (_is_building)
+                FinishBuilding();
             //Dispose();
         }
         #endregion
 
         #region Public Methods
+        public IndexItemSearchResult[] GetBestMatches(string key, ushort n_results, ushort max_error)
+        {
+            List<string> keys = new List<string>();
+            Dictionary<string, ushort> errors = new Dictionary<string, ushort>();
+
+            errors = _tree.Query(key, max_error);
+            foreach (KeyValuePair<string, ushort> pair in errors)
+                keys.Add(pair.Key);
+
+            ushort error;
+            foreach (string token in _dictionary.Keys)
+            {
+                if (token.Length >= key.Length &&
+                    SystemCore.SystemAbstraction.StringUtilities.StringUtility.WordContainsStr(token, key))
+                {
+                    error = (ushort)((2-((token.Length+key.Length)/(double)token.Length))*2);
+                    if (!errors.ContainsKey(token))
+                    {
+                        keys.Add(token);
+                        errors.Add(token, error);
+                    }
+                    else if (errors[token] > error)
+                        errors[token] = error;
+                }
+            }
+
+            keys.Sort(delegate(string x, string y)
+            {
+                return errors[x].CompareTo(errors[y]);
+            });
+            List<IndexItemSearchResult> ret = GenerateSearchResult(keys, errors, n_results);
+            return ret.ToArray();
+        }
+
+        public void AddEntry(string key, string name, int n_tokens, string path, Bitmap icon)
+        {
+            string hashed_icon = HashBmp(icon);
+            IndexItem new_item = new IndexItem(this, name, path, hashed_icon, (short)n_tokens);
+            if (!_items.Contains(new_item))
+            {
+                _items.Add(new_item);
+                _info_item_count++;
+                // add a new icon if it doesn't already exist
+                if (!_icons.ContainsKey(hashed_icon))
+                {
+                    _icons.Add(hashed_icon, icon);
+                    _info_icon_count++;
+                }
+            }
+            // add a new keyword if needed
+            if (!_dictionary.ContainsKey(key))
+            {
+                _dictionary.Add(key, new List<IndexItem>());
+                _info_keyword_count++;
+            }
+            // bind the items to the keyword
+            if (!_dictionary[key].Contains(new_item))
+                _dictionary[key].Add(new_item);
+            _tree.Add(key);
+        }
+
+        public void AddItemByName(string name, string path, Bitmap icon)
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                string[] keywords = SystemCore.SystemAbstraction.StringUtilities.StringUtility.GenerateKeywords(name);
+                foreach (string keyword in keywords)
+                    AddEntry(keyword, name, keywords.Length, path, icon);
+            }
+        }
+
+        public void AddItemByName(string name)
+        {
+            AddItemByName(name, string.Empty, null);
+        }
+
+        public Bitmap GetItemIcon(IndexItem item)
+        {
+            try
+            {
+                return _icons[item.IconId];
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public bool ContainsItem(IndexItem item)
+        {
+            return _items.Contains(item);
+        }
+
+        public void Merge(Index index)
+        {
+            foreach (KeyValuePair<string, List<IndexItem>> pair in index.Dictionary)
+            {
+                string key = pair.Key;
+                List<IndexItem> items = pair.Value;
+                if (_dictionary.ContainsKey(key))
+                {
+                    _dictionary[key].AddRange(items);
+                }
+                else
+                {
+                    _dictionary.Add(key, items);
+                }
+
+                _tree.Add(key);
+            }
+
+            foreach (KeyValuePair<string, Bitmap> de in index.Icons)
+            {
+                if (!_icons.ContainsKey(de.Key))
+                {
+                    _icons.Add(de.Key, de.Value);
+                }
+            }
+
+            foreach (IndexItem item in index.Items)
+            {
+                _items.Add(new IndexItem(item));
+            }
+        }
+
+        public void Clear()
+        {
+            _dictionary.Clear();
+            _icons.Clear();
+            _items.Clear();
+            _tree = new BKTree<string>(delegate(string a, string b)
+                {
+                        return (ushort)SystemCore.SystemAbstraction.StringUtilities.EditDistanceMeasurer.DamerauLevenshteinDistance(a, b);
+                });
+        }
+
         public void Dispose()
         {
             if (!IsDisposed)
             {
-                foreach (string name in _names)
+                foreach (KeyValuePair<string,Bitmap> icon in _icons)
                 {
-                    foreach (System.Drawing.Image icon in _icons[name])
+                    try
                     {
-                        try
-                        {
-                            icon.Dispose();
-                        }
-                        catch
-                        {
+                        icon.Value.Dispose();
+                    }
+                    catch
+                    {
 
-                        }
                     }
                 }
-                _names = null;
-                _paths = null;
-                _keywords = null;
+                _dictionary = null;
                 _icons = null;
-                _is_disposed = true;
             }
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Names", Names);
-            info.AddValue("Paths", Paths);
-            info.AddValue("Keywords", Keywords);
+            info.AddValue("Dictionary", Dictionary);
             info.AddValue("Icons", Icons);
+            info.AddValue("Items", Items);
+            info.AddValue("Tree", Tree);
+            info.AddValue("InfoBuildStarted", InfoBuildStarted);
+            info.AddValue("InfoBuildFinished", InfoBuildFinished);
+            info.AddValue("InfoBuildDuration", InfoBuildDuration);
+            info.AddValue("InfoIconCount", InfoIconCount);
+            info.AddValue("InfoItemCount", InfoItemCount);
+            info.AddValue("InfoKeywordCount", InfoKeywordCount);
+        }
+
+        public void StartBuilding()
+        {
+            if (!_is_building)
+            {
+                _is_building = true;
+                _info_build_started = DateTime.Now;
+            }
+        }
+
+        public void FinishBuilding()
+        {
+            if (_is_building)
+            {
+                _info_build_finished = DateTime.Now;
+                _info_build_duration = _info_build_finished - _info_build_started;
+                _is_building = false;
+            }
+        }
+        #endregion
+
+        #region Private Methods
+        private List<IndexItemSearchResult> GenerateSearchResult(List<string> keys, Dictionary<string, ushort> errors, int max_items)
+        {
+            int count = 0;
+            HashSet<IndexItemSearchResult> ret = new HashSet<IndexItemSearchResult>();
+            foreach (string k in keys)
+            {
+                foreach (IndexItem item in _dictionary[k])
+                {
+                    IndexItemSearchResult result = new IndexItemSearchResult(item, (short)errors[k]);
+                    if (count < max_items)
+                    {
+                        if (ret.Add(result))
+                            count++;
+                    }
+                    else
+                        return ret.ToList();
+                }
+            }
+            return ret.ToList();
+        }
+
+        private string HashBmp(Bitmap bmp)
+        {
+            if (bmp == null)
+                return string.Empty;
+            byte[] bytes = BmpToBytes(bmp);
+            byte[] hash = _md5.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
+        }
+
+        private byte[] BmpToBytes(Bitmap bmp)
+        {
+            MemoryStream ms = new MemoryStream();
+            try
+            {
+                bmp.Save(ms, ImageFormat.Jpeg);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("Could not hash icon.");
+            }
+
+            // read to end
+            byte[] bmpBytes = ms.GetBuffer();
+            //bmp.Dispose();
+            ms.Close();
+
+            return bmpBytes;
+        }
+
+        private Image BytesToImg(byte[] bmpBytes)
+        {
+            MemoryStream ms = new MemoryStream(bmpBytes);
+            Image img = Image.FromStream(ms);
+            // Do NOT close the stream!
+
+            return img;
         }
         #endregion
     }

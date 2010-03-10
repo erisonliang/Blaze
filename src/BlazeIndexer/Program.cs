@@ -15,32 +15,51 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using SystemCore.SystemAbstraction.FileHandling;
+using System.Threading;
+using Configurator;
 
 namespace BlazeIndexer
 {
     static class Program
     {
+        static Mutex mutex = new Mutex(true, CommonInfo.GUID + "-indexer");
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
+        [STAThread]
         static void Main()
         {
+            bool test = false;
             try
             {
-                Indexer indexer = new Indexer();
-                indexer.LoadPlugins();
-                indexer.BuildIndex();
-                indexer.SaveIndex();
-                indexer.Clean();
+                test = mutex.WaitOne(TimeSpan.Zero, true);
             }
-            catch (Exception e)
+            catch
             {
-                SystemCore.SystemAbstraction.FileHandling.Logger logger = new Logger("BlazeIndexer_error_dump.log");
-                logger.WriteLine(e.ToString());
-                System.Windows.Forms.MessageBox.Show(
-                    "BlazeIndexer has crashed: " + Environment.NewLine + Environment.NewLine + e.ToString(), "Error",
-                    System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-                logger = null;
+                test = true;
+            }
+            if (test)
+            {
+                try
+                {
+                    Indexer indexer = new Indexer();
+                    indexer.LoadPlugins();
+                    indexer.BuildIndex();
+                    indexer.SaveIndex();
+                    indexer.Clean();
+                    mutex.ReleaseMutex();
+                    mutex.Close();
+                }
+                catch (Exception e)
+                {
+                    SystemCore.SystemAbstraction.FileHandling.Logger logger = new Logger("BlazeIndexer_error_dump.log");
+                    logger.WriteLine(e.ToString());
+                    System.Windows.Forms.MessageBox.Show(
+                        "BlazeIndexer has crashed: " + Environment.NewLine + Environment.NewLine + e.ToString(), "Error",
+                        System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                    logger = null;
+                }
             }
         }
     }

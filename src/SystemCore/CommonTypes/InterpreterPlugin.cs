@@ -164,7 +164,7 @@ namespace SystemCore.CommonTypes
             return null;
         }
 
-        public virtual Image GetItemIcon(string cmd, string text, string[] tokens)
+        public virtual Bitmap GetItemIcon(string cmd, string text, string[] tokens)
         {
             Command command = GetCommandByName(cmd);
             if (command != null)

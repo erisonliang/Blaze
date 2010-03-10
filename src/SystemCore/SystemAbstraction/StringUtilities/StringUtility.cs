@@ -39,8 +39,8 @@ namespace SystemCore.SystemAbstraction.StringUtilities
 
         public static int WordContainsStrMeasure(string word, string str)
         {
-            string s = word.ToLower();
-            string t = str.ToLower();
+            string s = word;//word.ToLower();
+            string t = str;//str.ToLower();
             string temp = s;
             int len = t.Length;
             int first = 0;
@@ -56,7 +56,7 @@ namespace SystemCore.SystemAbstraction.StringUtilities
                     }
                     else
                     {
-                        measure += index * 3 ;
+                        measure += index * 1;
                     }
                     temp = temp.Substring(index + 1);
                 }
@@ -335,7 +335,10 @@ namespace SystemCore.SystemAbstraction.StringUtilities
 
         public static string ApplyEllipsis(string str, int max_len)
         {
-            if (str.Length > max_len - 3)
+            int trim = max_len - 3;
+            if (trim <= 0)
+                return string.Empty;
+            else if (str.Length > trim)
                 return str.Substring(0, max_len - 3) + "...";
             else
                 return str;
