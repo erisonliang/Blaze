@@ -118,60 +118,43 @@ namespace Blaze.Interpreter
         #region Public Methods
         public void BuildIndex()
         {
-            //while (true)
-            //{
-                // initialize
-                Thread build_index = new Thread(new ThreadStart(delegate()
+            Thread build_index = new Thread(new ThreadStart(delegate()
+            {
+                Mutex mutex = new Mutex(false, CommonInfo.GUID + "-rebuild-index");
+                try
                 {
-                    Mutex mutex = new Mutex(false, CommonInfo.GUID + "-rebuild-index");
-                    try
+                    if (mutex.WaitOne(TimeSpan.Zero, true))
                     {
-                        if (mutex.WaitOne(TimeSpan.Zero, true))
-                        {
-                            //_fileIndexer.LoadIndex();
-                            //_parent.SetIndexing(true);
-                            _fileIndexer.BuildIndex();
-                            //_parent.SetIndexing(false);
-                            //_fileIndexer.SaveIndex();
-                            mutex.ReleaseMutex();
-                            mutex.Close();
-                        }
-                    }
-                    catch (Exception e)
-                    {
+                        _fileIndexer.BuildIndex();
+                        mutex.ReleaseMutex();
                         mutex.Close();
-                        MessageBox.Show("build index error: "+e.Message);
-                    }
-                }));
-                //build_index.SetApartmentState(ApartmentState.STA);
-                //build_index.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-                build_index.Start();
-                //_fileIndexer.BuildIndex();
-
-                // initialize menu
-                Thread init_menu = new Thread(new ThreadStart(delegate() { _menuEngine.OnBuild(); }));
-                init_menu.Start();
-
-                // initialize plugins
-                foreach (Plugin plugin in _plugins)
-                {
-                    if (plugin.Type == PluginType.Interpreter)
-                    {
-                        Thread init_plugin = new Thread(new ThreadStart(delegate() { ((InterpreterPlugin)plugin).OnBuild(); }));
-                        init_plugin.Start();
                     }
                 }
-            //}
+                catch (Exception e)
+                {
+                    mutex.Close();
+                    MessageBox.Show("build index error: "+e.Message);
+                }
+            }));
+            build_index.Start();
+
+            // initialize menu
+            Thread init_menu = new Thread(new ThreadStart(delegate() { _menuEngine.OnBuild(); }));
+            init_menu.Start();
+
+            // initialize plugins
+            foreach (Plugin plugin in _plugins)
+            {
+                if (plugin.Type == PluginType.Interpreter)
+                {
+                    Thread init_plugin = new Thread(new ThreadStart(delegate() { ((InterpreterPlugin)plugin).OnBuild(); }));
+                    init_plugin.Start();
+                }
+            }
         }
 
         public void LoadIndex()
         {
-            //Thread build_index = new Thread(new ThreadStart(delegate()
-            //{
-                
-            //}));
-            //build_index.Start();
-
             Mutex mutex = new Mutex(false, CommonInfo.GUID + "-rebuild-index");
             try
             {
@@ -191,12 +174,6 @@ namespace Blaze.Interpreter
 
         public void UnloadIndex()
         {
-            //Thread build_index = new Thread(new ThreadStart(delegate()
-            //{
-                
-            //}));
-            //build_index.Start();
-
             Mutex mutex = new Mutex(false, CommonInfo.GUID + "-rebuild-index");
             try
             {
@@ -540,7 +517,6 @@ namespace Blaze.Interpreter
                             item.CommandUsage = plugin.GetUsage(command.Name, text, item_tokens);
                             item.PluginId = plugin.Name;
                             assisting_commands.Add(command_name);
-                            //assisting_plugins.Add(plugin.Name);
                             ret.Add(item);
                             assisted_by_plugin = true;
                         }
@@ -586,12 +562,10 @@ namespace Blaze.Interpreter
                     item.CommandUsage = plugin.GetUsage(command.Name, text, null);
                     item.PluginId = plugin.Name;
                     assisting_commands.Add(command.Name);
-                    //assisting_plugins.Add(plugin.Name);
                     ret.Add(item);
                     item = null;
                 }
             }
-            //ret.Add(new InterpreterItem(_webEngine.GetItemName(user_text), _webEngine.GetItemDescription(user_text), OwnerType.Web, _webEngine.GetItemAutoComplete(user_text), _webEngine.GetItemIconPtr(user_text)));
 
             user_text = null;
             assisting_commands = null;
@@ -601,36 +575,18 @@ namespace Blaze.Interpreter
         public void Execute(string cmd, InterpreterItem item, Keys modifiers)
         {
             StoreKeywords(cmd, item);
-            //string[] tiles = EnumDesktopWindowsDemo.GetDesktopWindowsCaptions();
-            //WindowUtility.Instance.Refresh();
-            //List<VWindow> windows = WindowUtility.Instance.Windows();
-            //StreamWriter writer = new StreamWriter("log.txt");
-            //for (int i = 1; i <= windows.Count; i++)
-            //{
-            //    writer.WriteLine("{0}) {1}", i,windows[i-1].GetTitle());
-            //    writer.WriteLine("Selected text: {0}", windows[i - 1].GetSelectedText());
-            //}
-            //writer.Close();
-            //WindowUtility.Instance.SendStringToWindow(WindowUtility.Instance.GetTopWindow().Handle, "foca");
-            //MessageBox.Show("edit: " + WindowUtility.Instance.GetText(WindowUtility.Instance.GetTopWindow()));
-            //WindowUtility.Instance.SendCtrlCharToWindow(WindowUtility.Instance.GetTopWindow().Handle, 'c');
-            //MessageBox.Show(Clipboard.GetText());
-            //MessageBox.Show("Selected text: " + UserContext.Instance.RetrieveSelectedText());
             item.Text = ReplaceSpecialKeywords(item.Text, item.CommandTokens);
             switch (item.Type)
             {
                 case InterpreterItem.OwnerType.Indexer:
-                    //StoreKeywords(cmd, item);
                     _fileIndexer.Execute(item, modifiers);
                     _parent.HideAutomator();
                     break;
                 case InterpreterItem.OwnerType.FileSystem:
-                    //StoreKeywords(cmd, item);
                     _systemBrowser.Execute(item, modifiers);
                     _parent.HideAutomator();
                     break;
                 case InterpreterItem.OwnerType.Menu:
-                    //StoreKeywords(cmd, item);
                     if (_menuEngine.Execute(item, modifiers))
                         _parent.HideAutomator();
                     break;
@@ -649,16 +605,6 @@ namespace Blaze.Interpreter
                 default:
                     break;
             }
-            //Clipboard.SetData(DataFormats.Html, HtmlFragment.));
-            //HtmlFragment.CopyToClipboard(WindowUtility.Instance.GetContent(WindowUtility.Instance.GetTopWindow()));
-            //Clipboard.SetText(WindowUtility.Instance.GetContent(WindowUtility.Instance.GetTopWindow()), TextDataFormat.Html);
-            //string files = string.Empty;
-            //string[] list = WindowUtility.Instance.GetTopWindow().GetSelectedContet();
-            //foreach (string file in list)
-            //    files += file + ";";
-            //MessageBox.Show(WindowUtility.Instance.GetTopWindow().GetUrl());
-            //MessageBox.Show(files);
-            //Clipboard.SetData(DataFormats.Html, Clipboard.GetText());
         }
 
         public void LoadPlugins(List<Plugin> plugins)
@@ -677,7 +623,6 @@ namespace Blaze.Interpreter
             }
             _fileIndexer.LoadPlugins(indexerPlugins);
             _plugins = interpreterPlugins;
-            //_commandCache = new PluginCommandCache(_plugins);
         }
 
         public void SetUpdateTimerInterval(int minutes)
