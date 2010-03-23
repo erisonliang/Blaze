@@ -89,13 +89,13 @@ namespace Prompt
             LoadDefaultCommands();
             List<PromptCommand> prompt_commands = new List<PromptCommand>();
             List<string> prompt_command_names = new List<string>();
-            List<string> categories = INIManipulator.GetCategories(CommonInfo.UserConfigFile);
+            List<string> categories = INIManipulator.GetCategories(CommonInfo.ConfigFile);
             if (categories.Count > 0)
             {
                 string category = Name;
                 if (categories.Contains(category))
                 {
-                    List<string> keys = INIManipulator.GetKeys(CommonInfo.UserConfigFile, category);
+                    List<string> keys = INIManipulator.GetKeys(CommonInfo.ConfigFile, category);
                     int key_len = keys.Count;
                     if (key_len > 1)
                     {
@@ -106,9 +106,9 @@ namespace Prompt
                             string arguments;
                             try
                             {
-                                name = INIManipulator.GetValue(CommonInfo.UserConfigFile, category, keys[i], "");
-                                path = INIManipulator.GetValue(CommonInfo.UserConfigFile, category, keys[i + 1], "");
-                                arguments = INIManipulator.GetValue(CommonInfo.UserConfigFile, category, keys[i + 2], "");
+                                name = INIManipulator.GetValue(CommonInfo.ConfigFile, category, keys[i], "");
+                                path = INIManipulator.GetValue(CommonInfo.ConfigFile, category, keys[i + 1], "");
+                                arguments = INIManipulator.GetValue(CommonInfo.ConfigFile, category, keys[i + 2], "");
                                 prompt_command_names.Add(name);
                                 prompt_commands.Add(new PromptCommand(name, path, arguments));
                             }
@@ -140,13 +140,13 @@ namespace Prompt
         {
             string category = Name;
             int len = _prompt_command_names.Count;
-            INIManipulator.DeleteCategory(CommonInfo.UserConfigFile, category);
+            INIManipulator.DeleteCategory(CommonInfo.ConfigFile, category);
             for (int i = 0; i < len; i++)
             {
                 int pos = i + 1;
-                INIManipulator.WriteValue(CommonInfo.UserConfigFile, category, pos.ToString() + "\\name", _pompt_commands[i].Name);
-                INIManipulator.WriteValue(CommonInfo.UserConfigFile, category, pos.ToString() + "\\path", _pompt_commands[i].Path);
-                INIManipulator.WriteValue(CommonInfo.UserConfigFile, category, pos.ToString() + "\\arguments", _pompt_commands[i].Arguments);
+                INIManipulator.WriteValue(CommonInfo.ConfigFile, category, pos.ToString() + "\\name", _pompt_commands[i].Name);
+                INIManipulator.WriteValue(CommonInfo.ConfigFile, category, pos.ToString() + "\\path", _pompt_commands[i].Path);
+                INIManipulator.WriteValue(CommonInfo.ConfigFile, category, pos.ToString() + "\\arguments", _pompt_commands[i].Arguments);
             }
         }
         //public override bool IsOwner(string cmd)

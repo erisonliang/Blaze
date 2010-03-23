@@ -14,15 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
+using SystemCore.CommonTypes;
+using System;
+using System.Runtime.Serialization;
 
 namespace SystemCore.Settings
 {
+    [Serializable]
     public class LearnedContent
     {
         #region Properties
-        private static int _capacity = 30;
+        private static int _capacity = 24;
         private Queue<string> _keywords;
-        private Dictionary<string, string> _contents;
+        private Dictionary<string, InterpreterItem.OwnerType> _types;
+        private Dictionary<string, string> _distinguisher;
         #endregion
 
         #region Accessors
@@ -32,61 +37,59 @@ namespace SystemCore.Settings
             set { _keywords = value; }
         }
 
-        public Dictionary<string, string> Contents
+        public Dictionary<string, InterpreterItem.OwnerType> Types
         {
-            get { return _contents; }
-            set { _contents = value; }
+            get { return _types; }
+            set { _types = value; }
+        }
+
+        public Dictionary<string, string> Distinguishers
+        {
+            get { return _distinguisher; }
+            set { _distinguisher = value; }
         }
         #endregion
 
         #region Constructors
         public LearnedContent()
         {
-            _keywords = new Queue<string>(30);
-            _contents = new Dictionary<string, string>(30);
+            _keywords = new Queue<string>(_capacity);
+            _types = new Dictionary<string, InterpreterItem.OwnerType>(_capacity);
+            _distinguisher = new Dictionary<string, string>(_capacity);
         }
 
         public LearnedContent(LearnedContent content)
         {
             _keywords = new Queue<string>(content.Keywords);
-            _contents = new Dictionary<string,string>(content.Contents);
+            _types = new Dictionary<string, InterpreterItem.OwnerType>(content.Types);
+            _distinguisher = new Dictionary<string,string>(content.Distinguishers);
+        }
+
+        public LearnedContent(SerializationInfo info, StreamingContext context)
+        {
+            _keywords = (Queue<string>)info.GetValue("Keywords", typeof(Queue<string>));
+            _types = (Dictionary<string, InterpreterItem.OwnerType>)info.GetValue("Types", typeof(Dictionary<string, InterpreterItem.OwnerType>));
+            _distinguisher = (Dictionary<string, string>)info.GetValue("Distinguishers", typeof(Dictionary<string, string>));
         }
         #endregion
 
         #region Public Methods
-        public void AddKeyword(string keyword, string content)
+        public void AddKeyword(string keyword,  InterpreterItem.OwnerType type, string content)
         {
-            //string delete = string.Empty;
-            //foreach (KeyValuePair<string, List<string>> pair in _contents)
-            //{
-            //    if (pair.Value.Contains(content))
-            //    {
-            //        if (pair.Key == keyword)
-            //        {
-            //            return;
-            //        }
-            //        else
-            //        {
-            //            pair.Value.Remove(content);
-            //            if (pair.Value.Count == 0)
-            //                delete = pair.Key;
-            //        }
-            //    }
-            //}
-            //if (delete != string.Empty)
-            //{
-            //    _keywords.Remove(delete);
-            //    _contents.Remove(delete);
-            //}
-            if (!_contents.ContainsKey(keyword))
+            if (!_distinguisher.ContainsKey(keyword))
             {
-                if (!_contents.ContainsValue(content))
-                if (_keywords.Count == _capacity)
+                if (!_distinguisher.ContainsValue(content))
                 {
-                    _contents.Remove(_keywords.Dequeue());
+                    if (_keywords.Count == _capacity)
+                    {
+                        string to_remove = _keywords.Dequeue();
+                        _distinguisher.Remove(to_remove);
+                        _types.Remove(to_remove);
+                    }
+                    _keywords.Enqueue(keyword);
+                    _distinguisher.Add(keyword, content);
+                    _types.Add(keyword, type);
                 }
-                _keywords.Enqueue(keyword);
-                _contents.Add(keyword, content);
             }
             else
             {
@@ -94,22 +97,49 @@ namespace SystemCore.Settings
                 temp.Remove(keyword);
                 _keywords = new Queue<string>(temp.ToArray());
                 _keywords.Enqueue(keyword);
-                _contents[keyword] = content;
+                _distinguisher[keyword] = content;
+                _types[keyword] = type;
                 temp = null;
             }
-            //delete = null;
         }
 
         public void RemoveKeyword(string keyword, string content)
         {
-            if (_contents.ContainsKey(keyword))
+            if (_distinguisher.ContainsKey(keyword))
             {
                 List<string> temp = new List<string>(_keywords.ToArray());
                 temp.Remove(keyword);
                 _keywords = new Queue<string>(temp.ToArray());
-                _contents.Remove(keyword);
+                _distinguisher.Remove(keyword);
+                _types.Remove(keyword);
                 temp = null;
             }
+        }
+
+        public string[] GetSortedKeywords(string text)
+        {
+            List<string> accepted_tokens = new List<string>();
+            Dictionary<string, int> weights = new Dictionary<string, int>();
+            foreach (string token in _keywords)
+            {
+                if (SystemCore.SystemAbstraction.StringUtilities.StringUtility.WordContainsStr(token, text))
+                {
+                    accepted_tokens.Add(token);
+                    weights.Add(token, token.Length);
+                }
+            }
+            accepted_tokens.Sort(delegate(string a, string b)
+            {
+                return weights[b].CompareTo(weights[a]);
+            });
+            return accepted_tokens.ToArray();
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Keywords", Keywords);
+            info.AddValue("Types", Types);
+            info.AddValue("Distinguishers", Distinguishers);
         }
         #endregion
     }
