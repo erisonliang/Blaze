@@ -15,6 +15,13 @@ Shift. If this happens, press each stuck key once and it will be fixed.
 
 VERSION HISTORY:
 
+(23/03/2010) - Blaze 0.5.6.3 beta
+
+* Blaze is again able to learn user preferred commands.
+* Fixed a few bugs which caused the calculator to crash.
+* Text prediction system was improved.
+* Even better support for non English operating systems.
+
 (09/03/2010) - Blaze 0.5.6.0 beta
 
 * Indexing process greatly improved: Blaze now uses much less memory and looks up for indexed items much faster. Tested with 30 thousand items.

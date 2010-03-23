@@ -236,30 +236,30 @@ namespace Blaze.Interpreter
                 paths.Sort();
 
                 // take care of learned contents
-                LearnedContent lc = new LearnedContent(SettingsManager.Instance.GetLearnedContents());
-                List<string> lc_temp = new List<string>(lc.Keywords);
-                lc_temp.Reverse();
-                foreach (string keyword in lc_temp)
-                {
-                    if (StringUtility.WordContainsStr(keyword, user_text))
-                    {
-                        string content = lc.Contents[keyword];
-                        // file system
-                        if (_systemBrowser.IsOwner(content) && paths.Contains(content))
-                        {
-                            InterpreterItem item = new InterpreterItem(FileNameManipulator.GetFolderName(content),
-                                                                        content,
-                                                                        content,
-                                                                        _systemBrowser.GetItemIcon(content),
-                                                                        InterpreterItem.OwnerType.FileSystem,
-                                                                        user_text);
-                            ret.Add(item);
-                            paths.Remove(content);
-                        }
-                    }
-                }
-                lc = null;
-                lc_temp = null;
+                //LearnedContent lc = new LearnedContent(SettingsManager.Instance.GetLearnedContents());
+                //List<string> lc_temp = new List<string>(lc.Keywords);
+                //lc_temp.Reverse();
+                //foreach (string keyword in lc_temp)
+                //{
+                //    if (StringUtility.WordContainsStr(keyword, user_text))
+                //    {
+                //        string content = lc.Distinguishers[keyword];
+                //        // file system
+                //        if (_systemBrowser.IsOwner(content) && paths.Contains(content))
+                //        {
+                //            InterpreterItem item = new InterpreterItem(FileNameManipulator.GetFolderName(content),
+                //                                                        content,
+                //                                                        content,
+                //                                                        _systemBrowser.GetItemIcon(content),
+                //                                                        InterpreterItem.OwnerType.FileSystem,
+                //                                                        user_text);
+                //            ret.Add(item);
+                //            paths.Remove(content);
+                //        }
+                //    }
+                //}
+                //lc = null;
+                //lc_temp = null;
 
                 Dictionary<string, List<string>> keywords = new Dictionary<string, List<string>>();
                 foreach (string s in paths)
@@ -567,6 +567,36 @@ namespace Blaze.Interpreter
                 }
             }
 
+            LearnedContent lc = SettingsManager.Instance.GetLearnedContents();
+            int pos = 0;
+            foreach (string token in lc.GetSortedKeywords(user_text))
+            {
+                int curr_pos = -1;
+                string distinguisher = lc.Distinguishers[token];
+                switch (lc.Types[token])
+                {
+                    case InterpreterItem.OwnerType.Indexer:
+                        curr_pos = ret.FindIndex(delegate(InterpreterItem a)
+                        {
+                            return a.Desciption == distinguisher;
+                        });
+                        break;
+                    default:
+                        curr_pos = ret.FindIndex(delegate(InterpreterItem a)
+                        {
+                            return a.Name == distinguisher;
+                        });
+                        break;
+                }
+                if (curr_pos != -1)
+                {
+                    InterpreterItem to_insert = ret[curr_pos];
+                    ret.RemoveAt(curr_pos);
+                    ret.Insert(0, to_insert);
+                    pos++;
+                }
+            }
+
             user_text = null;
             assisting_commands = null;
             return ret;
@@ -664,13 +694,14 @@ namespace Blaze.Interpreter
             //{
             if (item.Type == InterpreterItem.OwnerType.Indexer)
             {
-                if (str != item.Desciption.ToLower())
-                    SettingsManager.Instance.AddLearned(str, item.Desciption);
+                //if (str != item.Desciption.ToLower())
+                SettingsManager.Instance.AddLearned(str, item.Type, item.Desciption);
             }
             else if (item.Type == InterpreterItem.OwnerType.Menu)
             {
                 //SettingsManager.Instance.AddLearned(str, ProtectCommand(item.Name));
                 //SettingsManager.Instance.AddLearned(item.Text, Command.ProtectCommand(item.CommandName)); // StringUtility.ArrayToStr(item.CommandTokens), item.CommandName
+                SettingsManager.Instance.AddLearned(str, item.Type, item.Name);
             }
             else if (item.Type == InterpreterItem.OwnerType.Plugin)
             {
@@ -684,6 +715,7 @@ namespace Blaze.Interpreter
                 //    SettingsManager.Instance.AddLearned(item.Text, command.ProtectedName);
                 //else if (command.FitsPriority(Command.PriorityType.Medium))
                 //    SettingsManager.Instance.AddLearned(BuildCommandParameters(item.Text, item.CommandTokens), command.ProtectedName);
+                SettingsManager.Instance.AddLearned(str, item.Type, item.Name);
             }
             //else
             //{

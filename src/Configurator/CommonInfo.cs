@@ -35,8 +35,9 @@ namespace Configurator
         public static string PythonLibFolder = @"IronPython\Lib\";
         public static string PythonSitePackagesFolder = @"IronPython\site-packages\";
         public static string PythonPath = @"IronPython\ipy.exe";
-        public static string UserConfigFile = UserFolder + @"user.ini";
+        public static string ConfigFile = UserFolder + @"user.ini";
         public static string IndexCacheFile = UserFolder + @"index.db";
+        public static string CmdCacheFile = UserFolder + @"cmd.db";
         public static string BlazeIndexerPath = @".\BlazeIndexer.exe";
         public static string BlazeUpdaterPath = @".\BlazeUpdater.exe";
         public static string BlazeExePath = @".\Blaze.exe";
