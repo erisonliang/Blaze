@@ -38,19 +38,11 @@ namespace Configurator
         private Config()
         {
             _dir = CommonInfo.UserFolder;
-            _file = CommonInfo.UserConfigFile;
+            _file = CommonInfo.ConfigFile;
         }
         #endregion
 
         #region Public Methods
-        public void SetBaseNewDir(string dir)
-        {
-            //_file = dir;
-            //if (_file[_file.Length - 1] != '\\')
-            //    _file += '\\';
-            //_dir = _file + _dir;
-        }
-
         public void Clear()
         {
             CreateUserDir();

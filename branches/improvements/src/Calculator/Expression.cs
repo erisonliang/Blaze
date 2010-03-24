@@ -97,6 +97,10 @@ namespace Calculator
             {
                 if (operand != null)
                     _elements.Add(operand);
+                else if (_elements.Count == 0 || _elements[_elements.Count - 1].ElementType != ElementType.Operand)
+                {
+                    _elements.Add(new Operand(0));
+                }
                 _elements.Add(new Parenthesis(par_type));
                 string new_input = input.Substring(i + 1).Trim();
 
@@ -147,6 +151,10 @@ namespace Calculator
             }
             else
             {
+                //if (_elements.Count == 0 || _elements[_elements.Count - 1].ElementType != ElementType.Operand)
+                //{
+                //    _elements.Add(new Operand(0));
+                //}
                 _elements.Add(operand);
                 _elements.Add(opr);
                 string new_input = input.Substring(i + 1).Trim();
@@ -176,6 +184,27 @@ namespace Calculator
                             _elements.Add(new Operand(0));
                         _elements.Add(new Parenthesis(par_type));
                         new_input = input.Substring(i + 2).Trim();
+
+                        if (new_input != string.Empty)
+                        {
+                            op_type = GetOpType(new_input[0]);
+                            par_type = GetParType(new_input[0]);
+                            if (par_type != ParenthesisType.None)
+                            {
+                                Parse(new_input);
+                            }
+                            else if (op_type != OperatorType.None)
+                            {
+                                _elements.Add(new Operator(op_type));
+                                new_input = input.Substring(i + 2);
+                                Parse(new_input);
+                            }
+                            else
+                            {
+                                _elements.Add(new Operator(OperatorType.Multiply));
+                                Parse(new_input);
+                            }
+                        }
                     }
                     if (new_input != string.Empty)
                     {
