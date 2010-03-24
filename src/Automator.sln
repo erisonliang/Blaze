@@ -47,8 +47,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazeUpdater", "BlazeUpdate
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Putty", "Putty\Putty.csproj", "{0C22CD17-C781-4CF9-871D-9606AF72B56D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tst", "Tst\Tst.csproj", "{CA7B16B7-B998-4E24-B292-46DA3F84F97A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
