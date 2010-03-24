@@ -710,21 +710,6 @@ namespace Blaze.Interpreter
                 _auto_update_timer.Stop();
         }
 
-        public void SetAutomationTimer(bool on)
-        {
-            if (on && !_automation_timer.Enabled)
-                _automation_timer.Start();
-            else if (!on && _automation_timer.Enabled)
-                _automation_timer.Stop();
-        }
-
-        public void SetAutoUpdateTimer(bool on)
-        {
-            if (on && !_auto_update_timer.Enabled)
-                _auto_update_timer.Start();
-            else if (!on && _auto_update_timer.Enabled)
-                _auto_update_timer.Stop();
-        }
         #endregion
 
         #region Private Methods
