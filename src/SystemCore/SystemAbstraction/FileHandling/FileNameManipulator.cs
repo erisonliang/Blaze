@@ -89,6 +89,13 @@ namespace SystemCore.SystemAbstraction.FileHandling
 
             return relativePath.ToString();
         }
+
+        public static string GetSpecialFolderPath(CSIDL_PROGRAMS prog)
+        {
+            StringBuilder path = new StringBuilder(260);
+            Win32.SHGetSpecialFolderPath(IntPtr.Zero, path, (int)prog, false);
+            return path.ToString();
+        }
         #endregion
     }
 }

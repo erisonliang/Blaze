@@ -24,6 +24,7 @@ using SystemCore.SystemAbstraction.FileHandling;
 using SystemCore.SystemAbstraction.ImageHandling;
 using SystemCore.SystemAbstraction.StringUtilities;
 using Configurator;
+using System.Drawing;
 
 namespace BlazeIndexer
 {
@@ -92,6 +93,7 @@ namespace BlazeIndexer
             Dictionary<string, bool> includeDirectories = info.IncludeDirectories;
             Dictionary<string, bool> indexSubdirectories = info.IndexSubdirectories;
 
+            _index.StartBuilding();
             for (int i = 0; i < directories.Count; i++)
             {
                 string directory = directories[i];
@@ -114,7 +116,6 @@ namespace BlazeIndexer
                 }
                 catch (Exception)
                 {
-                    //_logger.WriteLine("Could not index file: {0}", e.Message);
                     fullpathes = new List<string>();
                 }
 
@@ -124,161 +125,38 @@ namespace BlazeIndexer
                     string name = FileNameManipulator.GetFileName(Directory.Exists(path)
                                        ? Path.GetDirectoryName(path)
                                        : path);
-                    //System.Text.StringBuilder buff = new System.Text.StringBuilder();
-                    //System.Text.StringBuilder fname = new System.Text.StringBuilder();
-                    //SystemCore.SystemAbstraction.Win32.GetFullPathName(path, 1024, out buff, out fname);
-                    //System.Windows.Forms.MessageBox.Show("path: " + buff + Environment.NewLine + "fname: " + fname);
-
-                        //FileNameManipulator.GetFileName(path);
-
-                    //FileInfo finfo = new FileInfo(path);
-                    //if (finfo.Extension.ToLower() == ".lnk")
-                    //{
-                    //    string new_path = MsiShortcutParser.ParseShortcut(path);
-                    //    if (new_path == null)
-                    //    {
-                    //        try
-                    //        {
-                    //            IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
-                    //            IWshRuntimeLibrary.IWshShortcut link = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(path);
-                    //            if (Directory.Exists(link.TargetPath))
-                    //            {
-                    //                new_path = link.TargetPath;
-                    //            }
-                    //            else if (File.Exists(link.TargetPath))
-                    //            {
-                    //                new_path = link.TargetPath;
-                    //            }
-                    //            else
-                    //            {
-                    //                new_path = path;
-                    //            }
-                    //            if (File.Exists(link.IconLocation))
-                    //            {
-                    //                icon_path = link.IconLocation;
-                    //            }
-                    //        }
-                    //        catch
-                    //        {
-                    //            new_path = path;
-                    //            icon_path = path;
-                    //        }
-                    //    }
-                    //    else
-                    //    {
-                    //        icon_path = new_path;
-                    //    }
-                    //    path = new_path;
-                    //}
-
-                    if (_index.Paths.ContainsKey(name))
+                    Bitmap icon = null;
+                    try
                     {
-                        System.Drawing.Image icon = null;
-                        try
-                        {
-                            icon = IconManager.RetrieveIcon(path).ToBitmap();
-                        }
-                        catch (Exception)
-                        {
-                            continue;
-                        }
-                        if (icon == null)
-                            continue;
-                        
-                        _index.Paths[name].Add(path);
-                        _index.Icons[name].Add(icon);
-
-                        List<string> list_keywords = new List<string>();
-                        foreach (IndexerPlugin plugin in assistingPlugins)
-                        {
-                            string[] tmp_keywords = plugin.GetFileKeywords(path);
-                            foreach (string key in tmp_keywords)
-                                list_keywords.AddRange(StringUtility.GenerateKeywords(key, true));
-                        }
-                        _index.Keywords[name].AddRange(list_keywords.Distinct());
+                        icon = IconManager.RetrieveIcon(path).ToBitmap();
                     }
-                    else
+                    catch (Exception)
                     {
-                        System.Drawing.Image icon = null;
-                        try
-                        {
-                            icon = IconManager.RetrieveIcon(path).ToBitmap();
-                        }
-                        catch (Exception)
-                        {
-                            continue;
-                        }
-                        if (icon == null)
-                            continue;
-
-                        List<string> newpath = new List<string>();
-                        newpath.Add(path);
-                        _index.Names.Add(name);
-                        _index.Paths.Add(name, newpath);
-                        _index.Icons.Add(name, new List<System.Drawing.Image>(new System.Drawing.Image[] { icon }));
-
-                        List<string> list_keywords = new List<string>(StringUtility.GenerateKeywords(name, true));
-                            //name.Split(new char[] { ' ', '_', '-', '(', ')', '[', ']', '{', '}' }, StringSplitOptions.RemoveEmptyEntries);
-                        //int len = keywords.Length;
-                        //for (int k = 0; k < len; k++)
-                        //    keywords[k] = keywords[k].ToLower();
-
-                        //List<string> list_keywords = new List<string>();
-
-                        //string small_name = string.Empty;
-                        //foreach (string token in list_tokens)
-                        //{
-                        //    small_name += token[0];
-                        //}
-                        //list_keywords.Add(small_name);
-
-                        foreach (IndexerPlugin plugin in assistingPlugins)
-                        {
-                            string[] tmp_keywords = plugin.GetFileKeywords(path);
-                            foreach (string key in tmp_keywords)
-                                list_keywords.AddRange(StringUtility.GenerateKeywords(key, true));
-                                    //key.Split(new char[] { ' ', '_', '-', '(', ')', '[', ']', '{', '}' }, StringSplitOptions.RemoveEmptyEntries));
-                        }
-
-                        //bool can_remove_possible_indefinite_article = false;
-                        ////bool can_remove_possible_preposition = false;
-                        ////bool can_remove_possible_definite_article = false;
-                        //if (list_keywords.FindAll(delegate(string s) { return s.Length > 1; }).Count > 0)
-                        //    can_remove_possible_indefinite_article = true;
-                        ////if (list_keywords.FindAll(delegate(string s) { return s.Length > 2; }).Count > 2)
-                        ////    can_remove_possible_preposition = true;
-                        ////if (list_keywords.FindAll(delegate(string s) { return s.Length > 3; }).Count > 6)
-                        ////    can_remove_possible_preposition = true;
-                        //list_keywords.RemoveAll(delegate(string s)
-                        //{
-                        //    if (s.Trim() == string.Empty)
-                        //        return true;
-                        //    else if (s.Length == 1 && can_remove_possible_indefinite_article && Char.IsLetter(s[0]))
-                        //        return true;
-                        //    //else if (s.Length == 2 && can_remove_possible_preposition)
-                        //    //    return true;
-                        //    //else if (s.Length == 3 && can_remove_possible_definite_article)
-                        //    //    return true;
-                        //    else
-                        //        return false;
-                        //});
-                        ////list_keywords.Find(delegate(string s)
-                        ////{
-                        ////    return s.Length > 1;
-                        ////});
-                        //for (int k = 0; k < list_keywords.Count; k++)
-                        //{
-                        //    list_keywords[k] = list_keywords[k].ToLower();
-                        //}
-                        //_index.Tokens.Add(name, list_tokens);
-                        _index.Keywords.Add(name, list_keywords.Distinct().ToList());
+                        continue;
                     }
-                    //_logger.WriteLine("Added to inverted index <{0} . {1}>", name, path);
+                    if (icon == null)
+                        continue;
+
+                    List<string> list_keywords = new List<string>(StringUtility.GenerateKeywords(name, true));
+                    foreach (string key in list_keywords)
+                    {
+                        _index.AddEntry(key, name, list_keywords.Count, path, icon);
+                    }
+                    list_keywords.Clear();
+                    foreach (IndexerPlugin plugin in assistingPlugins)
+                    {
+                        string[] tmp_keywords = plugin.GetFileKeywords(path);
+                        foreach (string key in tmp_keywords)
+                            list_keywords.AddRange(StringUtility.GenerateKeywords(key, true));
+                    }
+                    foreach (string key in list_keywords)
+                    {
+                        _index.AddEntry(key, name, list_keywords.Count, path, icon);
+                    }
                 }
             }
-            //_logger.WriteLine("Indexed {0} files.", _index.Paths.Count);
 
-            _index.Names.Sort();
+            _index.FinishBuilding();
 
             // clean up
             directories = null;

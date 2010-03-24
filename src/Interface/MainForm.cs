@@ -124,9 +124,9 @@ namespace Blaze
             LoadPlugins();
 
             // Load index
-            _interpreter.LoadIndex();
+            //_interpreter.LoadIndex();
             // Build forward index
-            _interpreter.BuildIndex();
+            //_interpreter.BuildIndex();
 
             // Do stuff when user types
             TextInput.TextChanged += new EventHandler(TextInput_TextChanged);
@@ -835,8 +835,8 @@ namespace Blaze
                     _tooltip_content = _items[index].CommandUsage;
                     _tooltip.Show(usage, TextBox, new Point(0, 21));
                 }
-                else if (_items[index].OwnerType == OwnerType.FileSystem ||
-                            _items[index].OwnerType == OwnerType.Indexer)
+                else if (_items[index].Type == InterpreterItem.OwnerType.FileSystem ||
+                            _items[index].Type == InterpreterItem.OwnerType.Indexer)
                 {
                     _tooltip_content = null;
                     _tooltip.Show("Path: " + _items[index].Desciption, TextBox, new Point(0, 21));
@@ -1134,17 +1134,17 @@ namespace Blaze
                 {
                     InterpreterItem item = _items[_superListBox.ListBox.SelectedIndex];
                     string compare;
-                    OwnerType type;
-                    switch (item.OwnerType)
+                    InterpreterItem.OwnerType type;
+                    switch (item.Type)
                     {
-                        case OwnerType.FileSystem:
+                        case SystemCore.CommonTypes.InterpreterItem.OwnerType.FileSystem:
                             compare = item.Desciption;
-                            type = OwnerType.FileSystem;
+                            type = InterpreterItem.OwnerType.FileSystem;
                             break;
                         default:
                             //compare = item.Name;
                             compare = ProcessAutoComplete(_items[_superListBox.ListBox.SelectedIndex]);
-                            type = OwnerType.Unspecified;
+                            type = InterpreterItem.OwnerType.Indexer;
                             break;
                     }
 
@@ -1152,7 +1152,7 @@ namespace Blaze
                     {
                         if (compare == TextInput.Text) // if text doesn't need to be auto-completed
                         {
-                            if (type == OwnerType.FileSystem) // if its filesystem path, auto-complete with the next path
+                            if (type == InterpreterItem.OwnerType.FileSystem) // if its filesystem path, auto-complete with the next path
                             {
                                 int newpos = _superListBox.ListBox.SelectedIndex + 1;
                                 if (newpos >= _superListBox.ListBox.Items.Count)
@@ -1196,7 +1196,7 @@ namespace Blaze
 
         private string ProcessAutoComplete(InterpreterItem item)
         {
-            if (item.OwnerType == OwnerType.Indexer)
+            if (item.Type == InterpreterItem.OwnerType.Indexer)
             {
                 //IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
                 //IWshRuntimeLibrary.IWshShortcut link = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(item.Desciption);

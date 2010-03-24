@@ -14,32 +14,42 @@ namespace SystemCore.SystemAbstraction.FileHandling
         {
             DirectoryInfo root = new DirectoryInfo(dir_path);
             List<string> items = new List<string>();
+            bool index_all_files = false;
+            //if (extensions.Contains(".*"))
+            //    return SearchFullNames(dir_path, recursive, include_dirs, relative_path);
             if (extensions.Contains(".*"))
-                return SearchFullNames(dir_path, recursive, include_dirs, relative_path);
-            foreach (FileInfo file in root.GetFiles())
+                index_all_files = true;
+            try
             {
-                if (extensions.Contains(file.Extension.ToLower()))
+                foreach (FileInfo file in root.GetFiles())
                 {
-                    items.Add(relative_path ?
-                        FileNameManipulator.RelativePath(file.FullName, Environment.CurrentDirectory)
-                        : file.FullName);
+                    if (index_all_files || extensions.Contains(file.Extension.ToLower()))
+                    {
+                        items.Add(relative_path ?
+                            FileNameManipulator.RelativePath(file.FullName, Environment.CurrentDirectory)
+                            : file.FullName);
+                    }
+                }
+                if (include_dirs)
+                {
+                    foreach (DirectoryInfo dir in root.GetDirectories())
+                    {
+                        items.Add(relative_path ?
+                            FileNameManipulator.RelativePath(dir.FullName + "\\", Environment.CurrentDirectory)
+                            : dir.FullName + "\\");
+                    }
+                }
+                if (recursive)
+                {
+                    foreach (DirectoryInfo directory in root.GetDirectories())
+                    {
+                        items.AddRange(SearchFullNames(directory.FullName, extensions, recursive, include_dirs, relative_path));
+                    }
                 }
             }
-            if (include_dirs)
+            catch
             {
-                foreach (DirectoryInfo dir in root.GetDirectories())
-                {
-                    items.Add(relative_path ?
-                        FileNameManipulator.RelativePath(dir.FullName + "\\", Environment.CurrentDirectory)
-                        : dir.FullName + "\\");
-                }
-            }
-            if (recursive)
-            {
-                foreach (DirectoryInfo directory in root.GetDirectories())
-                {
-                    items.AddRange(SearchFullNames(directory.FullName, extensions, recursive, include_dirs, relative_path));
-                }
+
             }
             return items.ToArray();
         }

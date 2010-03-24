@@ -138,10 +138,10 @@ namespace Blaze.SystemBrowsing
             return _index;
         }
 
-        public Image GetItemIcon(string item)
+        public Bitmap GetItemIcon(string item)
         {
             if (_index.Contains(item))
-                return IconManager.Instance.GetIcon(item);
+                return (Bitmap)IconManager.Instance.GetIcon(item);
             else
                 return null;
         }

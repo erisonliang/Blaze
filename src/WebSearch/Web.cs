@@ -450,7 +450,7 @@ namespace WebSearch
                 {
                     if (StringUtility.WordContainsWord(text[i], token))
                     {
-                        int dist = LevenshteinMeasurer.Instance.GetDistance(text[i], token);
+                        int dist = EditDistanceMeasurer.LevenshteinDistance(text[i], token);
                         if (dist < min)
                         {
                             min = dist;
