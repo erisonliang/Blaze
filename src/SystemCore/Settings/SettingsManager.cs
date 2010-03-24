@@ -22,13 +22,15 @@ using SystemCore.CommonTypes;
 using SystemCore.SystemAbstraction;
 using SystemCore.SystemAbstraction.FileHandling;
 using Configurator;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SystemCore.Settings
 {
     public class SettingsManager
     {
         #region Properties
-        private string _path;
+        private string _config_file;
+        private string _cmd_cache;
         private static readonly SettingsManager _instance = new SettingsManager();
         private DirInfo _directories = null;
         private HotKey _hotkey = null;
@@ -50,7 +52,8 @@ namespace SystemCore.Settings
         #region Constructors
         private SettingsManager()
         {
-            _path = Config.Instance.File;
+            _config_file = CommonInfo.ConfigFile;
+            _cmd_cache = CommonInfo.CmdCacheFile;
             Config.Instance.Configure();
         }
         #endregion
@@ -72,13 +75,13 @@ namespace SystemCore.Settings
                 Dictionary<string, bool> indexSubdirectories = new Dictionary<string, bool>();
                 Dictionary<string, bool> includeDirectories = new Dictionary<string, bool>();
                 Dictionary<string, List<string>> plugins = new Dictionary<string, List<string>>();
-                List<string> categories = INIManipulator.GetCategories(_path);
+                List<string> categories = INIManipulator.GetCategories(_config_file);
                 if (categories.Count > 0)
                 {
                     string category = "indexer";
                     if (categories.Contains(category))
                     {
-                        List<string> keys = INIManipulator.GetKeys(_path, category);
+                        List<string> keys = INIManipulator.GetKeys(_config_file, category);
                         int key_len = keys.Count;
                         if (key_len > 0)
                         {
@@ -91,11 +94,11 @@ namespace SystemCore.Settings
                                 string[] plugs;
                                 try
                                 {
-                                    name = INIManipulator.GetValue(_path, category, keys[i], "");
-                                    exts = StrToArray(INIManipulator.GetValue(_path, category, keys[i + 1], ".lnk"));
-                                    Boolean.TryParse(INIManipulator.GetValue(_path, category, keys[i + 2], "false"), out incdir);
-                                    Boolean.TryParse(INIManipulator.GetValue(_path, category, keys[i + 3], "false"), out subdir);
-                                    plugs = StrToArray(INIManipulator.GetValue(_path, category, keys[i + 4], ""));
+                                    name = INIManipulator.GetValue(_config_file, category, keys[i], "");
+                                    exts = StrToArray(INIManipulator.GetValue(_config_file, category, keys[i + 1], ".lnk"));
+                                    Boolean.TryParse(INIManipulator.GetValue(_config_file, category, keys[i + 2], "false"), out incdir);
+                                    Boolean.TryParse(INIManipulator.GetValue(_config_file, category, keys[i + 3], "false"), out subdir);
+                                    plugs = StrToArray(INIManipulator.GetValue(_config_file, category, keys[i + 4], ""));
                                 }
                                 catch (Exception)
                                 {
@@ -126,16 +129,16 @@ namespace SystemCore.Settings
             Dictionary<string, List<string>> dirPlugins = dirs.Plugins;
             string category = "indexer";
             int len = directories.Count;
-            INIManipulator.DeleteCategory(_path, category);
+            INIManipulator.DeleteCategory(_config_file, category);
             for (int i = 0; i < len; i++)
             {
                 string dir = directories[i];
                 int pos = i + 1;
-                INIManipulator.WriteValue(_path, category, pos.ToString() + "\\name", dir);
-                INIManipulator.WriteValue(_path, category, pos.ToString() + "\\extensions", ArrayToStr(extensions[dir].ToArray()));
-                INIManipulator.WriteValue(_path, category, pos.ToString() + "\\includeDirectories", includeDirectories[dir].ToString());
-                INIManipulator.WriteValue(_path, category, pos.ToString() + "\\indexSubdirectories", indexSubdirectories[dir].ToString());
-                INIManipulator.WriteValue(_path, category, pos.ToString() + "\\plugins", ArrayToStr(dirPlugins[dir].ToArray()));
+                INIManipulator.WriteValue(_config_file, category, pos.ToString() + "\\name", dir);
+                INIManipulator.WriteValue(_config_file, category, pos.ToString() + "\\extensions", ArrayToStr(extensions[dir].ToArray()));
+                INIManipulator.WriteValue(_config_file, category, pos.ToString() + "\\includeDirectories", includeDirectories[dir].ToString());
+                INIManipulator.WriteValue(_config_file, category, pos.ToString() + "\\indexSubdirectories", indexSubdirectories[dir].ToString());
+                INIManipulator.WriteValue(_config_file, category, pos.ToString() + "\\plugins", ArrayToStr(dirPlugins[dir].ToArray()));
             }
         }
 
@@ -148,7 +151,7 @@ namespace SystemCore.Settings
                 bool ctrl = true;
                 bool shift = false;
                 bool win = false;
-                List<string> categories = INIManipulator.GetCategories(_path);
+                List<string> categories = INIManipulator.GetCategories(_config_file);
                 if (categories.Count > 0)
                 {
                     string category = "interaction";
@@ -159,26 +162,26 @@ namespace SystemCore.Settings
                     string hotkeyModifierWin = "hotkeyModifierWin";
                     if (categories.Contains(category))
                     {
-                        List<string> keys = INIManipulator.GetKeys(_path, category);
+                        List<string> keys = INIManipulator.GetKeys(_config_file, category);
                         if (keys.Contains(hotkeyMainkey))
                         {
-                            Int32.TryParse(INIManipulator.GetValue(_path, category, hotkeyMainkey, "32"), out key);
+                            Int32.TryParse(INIManipulator.GetValue(_config_file, category, hotkeyMainkey, "32"), out key);
                         }
                         if (keys.Contains(hotkeyModifierAlt))
                         {
-                            Boolean.TryParse(INIManipulator.GetValue(_path, category, hotkeyModifierAlt, "true"), out alt);
+                            Boolean.TryParse(INIManipulator.GetValue(_config_file, category, hotkeyModifierAlt, "true"), out alt);
                         }
                         if (keys.Contains(hotkeyModifierCtrl))
                         {
-                            Boolean.TryParse(INIManipulator.GetValue(_path, category, hotkeyModifierCtrl, "true"), out ctrl);
+                            Boolean.TryParse(INIManipulator.GetValue(_config_file, category, hotkeyModifierCtrl, "true"), out ctrl);
                         }
                         if (keys.Contains(hotkeyModifierShift))
                         {
-                            Boolean.TryParse(INIManipulator.GetValue(_path, category, hotkeyModifierShift, "false"), out shift);
+                            Boolean.TryParse(INIManipulator.GetValue(_config_file, category, hotkeyModifierShift, "false"), out shift);
                         }
                         if (keys.Contains(hotkeyModifierWin))
                         {
-                            Boolean.TryParse(INIManipulator.GetValue(_path, category, hotkeyModifierWin, "false"), out win);
+                            Boolean.TryParse(INIManipulator.GetValue(_config_file, category, hotkeyModifierWin, "false"), out win);
                         }
                     }
                 }
@@ -192,17 +195,17 @@ namespace SystemCore.Settings
             if (_ahotkey == null)
             {
                 int key = 20;
-                List<string> categories = INIManipulator.GetCategories(_path);
+                List<string> categories = INIManipulator.GetCategories(_config_file);
                 if (categories.Count > 0)
                 {
                     string category = "interaction";
                     string hotkeyAssistantkey = "hotkeyAssistantkey";
                     if (categories.Contains(category))
                     {
-                        List<string> keys = INIManipulator.GetKeys(_path, category);
+                        List<string> keys = INIManipulator.GetKeys(_config_file, category);
                         if (keys.Contains(hotkeyAssistantkey))
                         {
-                            Int32.TryParse(INIManipulator.GetValue(_path, category, hotkeyAssistantkey, "20"), out key);
+                            Int32.TryParse(INIManipulator.GetValue(_config_file, category, hotkeyAssistantkey, "20"), out key);
                         }
                     }
                 }
@@ -221,11 +224,11 @@ namespace SystemCore.Settings
             string hotkeyModifierCtrl = "hotkeyModifierCtrl";
             string hotkeyModifierShift = "hotkeyModifierShift";
             string hotkeyModifierWin = "hotkeyModifierWin";
-            INIManipulator.WriteValue(_path, category, hotkeyMainkey, key.Key.ToString());
-            INIManipulator.WriteValue(_path, category, hotkeyModifierAlt, key.IsAlt.ToString());
-            INIManipulator.WriteValue(_path, category, hotkeyModifierCtrl, key.IsCtrl.ToString());
-            INIManipulator.WriteValue(_path, category, hotkeyModifierShift, key.IsShift.ToString());
-            INIManipulator.WriteValue(_path, category, hotkeyModifierWin, key.IsWin.ToString());
+            INIManipulator.WriteValue(_config_file, category, hotkeyMainkey, key.Key.ToString());
+            INIManipulator.WriteValue(_config_file, category, hotkeyModifierAlt, key.IsAlt.ToString());
+            INIManipulator.WriteValue(_config_file, category, hotkeyModifierCtrl, key.IsCtrl.ToString());
+            INIManipulator.WriteValue(_config_file, category, hotkeyModifierShift, key.IsShift.ToString());
+            INIManipulator.WriteValue(_config_file, category, hotkeyModifierWin, key.IsWin.ToString());
             category = null;
             hotkeyMainkey = null;
             hotkeyModifierAlt = null;
@@ -240,7 +243,7 @@ namespace SystemCore.Settings
             _ahotkey = key;
             string category = "interaction";
             string hotkeyAssistantkey = "hotkeyAssistantkey";
-            INIManipulator.WriteValue(_path, category, hotkeyAssistantkey, key.Key.ToString());
+            INIManipulator.WriteValue(_config_file, category, hotkeyAssistantkey, key.Key.ToString());
             category = null;
             hotkeyAssistantkey = null;
         }
@@ -249,48 +252,77 @@ namespace SystemCore.Settings
         {
             if (_learned_contents == null)
             {
-                LearnedContent learned_content = new LearnedContent();
-                List<string> categories = INIManipulator.GetCategories(_path);
-                if (categories.Count > 0)
+                if (File.Exists(_cmd_cache))
                 {
-                    string category = "learned";
-                    if (categories.Contains(category))
+                    Stream streamRead = File.OpenRead(_cmd_cache);
+                    BinaryFormatter binaryRead = new BinaryFormatter();
+                    try
                     {
-                        List<string> keys = INIManipulator.GetKeys(_path, category);
-                        int key_len = keys.Count;
-                        for (int i = 0; i < key_len; i++)
-                        {
-                            string name = keys[i];
-                            string val = INIManipulator.GetValue(_path, category, name, string.Empty);
-                            //string[] vals = StrToArray(INIManipulator.GetValue(_path, category, name, string.Empty));
-                            learned_content.AddKeyword(name, val);
-                        }
-                        keys = null;
+                        _learned_contents = (LearnedContent)binaryRead.Deserialize(streamRead);
+                    }
+                    catch
+                    {
+                        _learned_contents = new LearnedContent();
+                    }
+                    finally
+                    {
+                        streamRead.Close();
+                        streamRead.Dispose();
+                        binaryRead = null;
                     }
                 }
-                categories = null;
-                _learned_contents = learned_content;
+                else
+                {
+                    _learned_contents = new LearnedContent();
+                }
+            //    LearnedContent learned_content = new LearnedContent();
+            //    List<string> categories = INIManipulator.GetCategories(_path);
+            //    if (categories.Count > 0)
+            //    {
+            //        string category = "learned";
+            //        if (categories.Contains(category))
+            //        {
+            //            List<string> keys = INIManipulator.GetKeys(_path, category);
+            //            int key_len = keys.Count;
+            //            for (int i = 0; i < key_len; i++)
+            //            {
+            //                string name = keys[i];
+            //                string val = INIManipulator.GetValue(_path, category, name, string.Empty);
+            //                learned_content.AddKeyword(name, val);
+            //            }
+            //            keys = null;
+            //        }
+            //    }
+            //    categories = null;
+            //    _learned_contents = learned_content;
             }
             return _learned_contents;
+
         }
 
         public void SaveLearned(LearnedContent learned)
         {
             _learned_contents = null;
             _learned_contents = learned;
-            string category = "learned";
-            INIManipulator.DeleteCategory(_path, category);
-            foreach (string keyword in learned.Keywords)
-            {
-                INIManipulator.WriteValue(_path, category, keyword, learned.Contents[keyword]); //ArrayToStr(learned.Contents[keyword].ToArray())
-            }
+            //string category = "learned";
+            //INIManipulator.DeleteCategory(_config_file, category);
+            //foreach (string keyword in learned.Keywords)
+            //{
+            //    INIManipulator.WriteValue(_config_file, category, keyword, learned.Distinguishers[keyword]); //ArrayToStr(learned.Contents[keyword].ToArray())
+            //}
+            Stream streamWrite = File.Create(_cmd_cache);
+            BinaryFormatter binaryWrite = new BinaryFormatter();
+            binaryWrite.Serialize(streamWrite, _learned_contents);
+            streamWrite.Close();
+            streamWrite.Dispose();
+            binaryWrite = null;
         }
 
-        public void AddLearned(string cmd, string content)
+        public void AddLearned(string cmd, InterpreterItem.OwnerType type, string content)
         {
             if (_learned_contents == null)
                 _learned_contents = new LearnedContent();
-            _learned_contents.AddKeyword(cmd, content);
+            _learned_contents.AddKeyword(cmd, type, content);
             SaveLearned(_learned_contents);
         }
 
@@ -314,19 +346,19 @@ namespace SystemCore.Settings
             if (_plugin_info == null)
             {
                 PluginInfo plugin_info = new PluginInfo();
-                List<string> categories = INIManipulator.GetCategories(_path);
+                List<string> categories = INIManipulator.GetCategories(_config_file);
                 if (categories.Count > 0)
                 {
                     string category = "plugins";
                     if (categories.Contains(category))
                     {
-                        List<string> keys = INIManipulator.GetKeys(_path, category);
+                        List<string> keys = INIManipulator.GetKeys(_config_file, category);
                         int key_len = keys.Count;
                         for (int i = 0; i < key_len; i++)
                         {
                             string name = keys[i];
                             bool val = false;
-                            Boolean.TryParse(INIManipulator.GetValue(_path, category, name, "false"), out val);
+                            Boolean.TryParse(INIManipulator.GetValue(_config_file, category, name, "false"), out val);
                             plugin_info.Names.Add(name);
                             plugin_info.Enabled.Add(name, val);
                         }
@@ -343,10 +375,10 @@ namespace SystemCore.Settings
         {
             _plugin_info = info;
             string category = "plugins";
-            INIManipulator.DeleteCategory(_path, category);
+            INIManipulator.DeleteCategory(_config_file, category);
             foreach (string plugin in info.Names)
             {
-                INIManipulator.WriteValue(_path, category, plugin, info.Enabled[plugin].ToString());
+                INIManipulator.WriteValue(_config_file, category, plugin, info.Enabled[plugin].ToString());
             }
         }
 
@@ -375,13 +407,13 @@ namespace SystemCore.Settings
             {
                 int number_of_suggestions = 10;
                 Point location = new Point(-1, -1);
-                List<string> categories = INIManipulator.GetCategories(_path);
+                List<string> categories = INIManipulator.GetCategories(_config_file);
                 if (categories.Count > 0)
                 {
                     string category = "interface";
                     if (categories.Contains(category))
                     {
-                        List<string> keys = INIManipulator.GetKeys(_path, category);
+                        List<string> keys = INIManipulator.GetKeys(_config_file, category);
                         if (keys.Count > 0)
                         {
                             string number_of_suggestions_name = "suggestions";
@@ -389,13 +421,13 @@ namespace SystemCore.Settings
                             string location_y_name = "location_y";
                             if (keys.Contains(number_of_suggestions_name))
                             {
-                                Int32.TryParse(INIManipulator.GetValue(_path, category, number_of_suggestions_name, "10"), out number_of_suggestions);
+                                Int32.TryParse(INIManipulator.GetValue(_config_file, category, number_of_suggestions_name, "10"), out number_of_suggestions);
                             }
                             if (keys.Contains(location_x_name) && keys.Contains(location_y_name))
                             {
                                 int x, y;
-                                Int32.TryParse(INIManipulator.GetValue(_path, category, location_x_name, "-1"), out x);
-                                Int32.TryParse(INIManipulator.GetValue(_path, category, location_y_name, "-1"), out y);
+                                Int32.TryParse(INIManipulator.GetValue(_config_file, category, location_x_name, "-1"), out x);
+                                Int32.TryParse(INIManipulator.GetValue(_config_file, category, location_y_name, "-1"), out y);
                                 location.X = x;
                                 location.Y = y;
                             }
@@ -411,9 +443,9 @@ namespace SystemCore.Settings
         {
             _interface_info = info;
             string category = "interface";
-            INIManipulator.WriteValue(_path, category, "suggestions", info.NumberOfSuggestions.ToString());
-            INIManipulator.WriteValue(_path, category, "location_x", info.WindowLocation.X.ToString());
-            INIManipulator.WriteValue(_path, category, "location_y", info.WindowLocation.Y.ToString());
+            INIManipulator.WriteValue(_config_file, category, "suggestions", info.NumberOfSuggestions.ToString());
+            INIManipulator.WriteValue(_config_file, category, "location_x", info.WindowLocation.X.ToString());
+            INIManipulator.WriteValue(_config_file, category, "location_y", info.WindowLocation.Y.ToString());
         }
 
         public void SaveInterfaceInfo()
@@ -437,13 +469,13 @@ namespace SystemCore.Settings
                 int update_time = 20;
                 bool stop_auto_update = true;
                 bool auto_update = true;
-                List<string> categories = INIManipulator.GetCategories(_path);
+                List<string> categories = INIManipulator.GetCategories(_config_file);
                 if (categories.Count > 0)
                 {
                     string category = "system";
                     if (categories.Contains(category))
                     {
-                        List<string> keys = INIManipulator.GetKeys(_path, category);
+                        List<string> keys = INIManipulator.GetKeys(_config_file, category);
                         if (keys.Count > 0)
                         {
                             string update_time_name = "updateTime";
@@ -451,15 +483,15 @@ namespace SystemCore.Settings
                             string auto_update_name = "autoUpdate";
                             if (keys.Contains(update_time_name))
                             {
-                                Int32.TryParse(INIManipulator.GetValue(_path, category, update_time_name, "20"), out update_time);
+                                Int32.TryParse(INIManipulator.GetValue(_config_file, category, update_time_name, "20"), out update_time);
                             }
                             if (keys.Contains(stop_auto_update_name))
                             {
-                                Boolean.TryParse(INIManipulator.GetValue(_path, category, stop_auto_update_name, "true"), out stop_auto_update);
+                                Boolean.TryParse(INIManipulator.GetValue(_config_file, category, stop_auto_update_name, "true"), out stop_auto_update);
                             }
                             if (keys.Contains(auto_update_name))
                             {
-                                Boolean.TryParse(INIManipulator.GetValue(_path, category, auto_update_name, "true"), out auto_update);
+                                Boolean.TryParse(INIManipulator.GetValue(_config_file, category, auto_update_name, "true"), out auto_update);
                             }
                         }
                     }
@@ -473,9 +505,9 @@ namespace SystemCore.Settings
         {
             _system_options_info = info;
             string category = "system";
-            INIManipulator.WriteValue(_path, category, "updateTime", info.UpdateTime.ToString());
-            INIManipulator.WriteValue(_path, category, "stopAutoUpdateOnBattery", info.StopAutoUpdateOnBattery.ToString());
-            INIManipulator.WriteValue(_path, category, "autoUpdate", info.AutoUpdates.ToString());
+            INIManipulator.WriteValue(_config_file, category, "updateTime", info.UpdateTime.ToString());
+            INIManipulator.WriteValue(_config_file, category, "stopAutoUpdateOnBattery", info.StopAutoUpdateOnBattery.ToString());
+            INIManipulator.WriteValue(_config_file, category, "autoUpdate", info.AutoUpdates.ToString());
         }
 
         public AutomationOptionsInfo GetAutomationOptionsInfo()
@@ -484,24 +516,24 @@ namespace SystemCore.Settings
             {
                 bool is_monitoring = true;
                 bool stop_monitoring = true;
-                List<string> categories = INIManipulator.GetCategories(_path);
+                List<string> categories = INIManipulator.GetCategories(_config_file);
                 if (categories.Count > 0)
                 {
                     string category = "automation";
                     if (categories.Contains(category))
                     {
-                        List<string> keys = INIManipulator.GetKeys(_path, category);
+                        List<string> keys = INIManipulator.GetKeys(_config_file, category);
                         if (keys.Count > 0)
                         {
                             string is_monitoring_name = "monitoringEnabled";
                             string stop_monitoring_name = "stopMonitoringOnBattery";
                             if (keys.Contains(is_monitoring_name))
                             {
-                                Boolean.TryParse(INIManipulator.GetValue(_path, category, is_monitoring_name, "true"), out is_monitoring);
+                                Boolean.TryParse(INIManipulator.GetValue(_config_file, category, is_monitoring_name, "true"), out is_monitoring);
                             }
                             if (keys.Contains(stop_monitoring_name))
                             {
-                                Boolean.TryParse(INIManipulator.GetValue(_path, category, stop_monitoring_name, "true"), out stop_monitoring);
+                                Boolean.TryParse(INIManipulator.GetValue(_config_file, category, stop_monitoring_name, "true"), out stop_monitoring);
                             }
                         }
                     }
@@ -515,8 +547,8 @@ namespace SystemCore.Settings
         {
             _automation_options_info = info;
             string category = "automation";
-            INIManipulator.WriteValue(_path, category, "monitoringEnabled", info.IsMonitoringEnabled.ToString());
-            INIManipulator.WriteValue(_path, category, "stopMonitoringOnBattery", info.StopAutoUpdateOnBattery.ToString());
+            INIManipulator.WriteValue(_config_file, category, "monitoringEnabled", info.IsMonitoringEnabled.ToString());
+            INIManipulator.WriteValue(_config_file, category, "stopMonitoringOnBattery", info.StopAutoUpdateOnBattery.ToString());
         }
 
         public TimeSpan GetIndexingTime()
