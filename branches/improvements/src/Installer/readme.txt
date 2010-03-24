@@ -15,6 +15,11 @@ Shift. If this happens, press each stuck key once and it will be fixed.
 
 VERSION HISTORY:
 
+(09/03/2010) - Blaze 0.5.6.0 beta
+
+* Indexing process greatly improved: Blaze now uses much less memory and looks up for indexed items much faster. Tested with 30 thousand items.
+* Fixed other minor bugs.
+
 (10/11/2009) - Blaze 0.5.2.3 beta
 
 * Fixed that annoying bug which caused auto-updates to complain about you not being connected to the internet.

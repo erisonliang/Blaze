@@ -37,6 +37,7 @@ namespace SystemCore.Settings
         private PluginInfo _plugin_info = null;
         private TimeSpan _indexing_time;
         private int _indexed_items = 0;
+        private DateTime _last_index_build;
         private InterfaceInfo _interface_info = null;
         private SystemOptionsInfo _system_options_info = null;
         private AutomationOptionsInfo _automation_options_info = null;
@@ -526,6 +527,16 @@ namespace SystemCore.Settings
         public void SetIndexingTime(TimeSpan indexing)
         {
             _indexing_time = indexing;
+        }
+
+        public DateTime GetLastIndexBuild()
+        {
+            return _last_index_build;
+        }
+
+        public void SetLastIndexBuild(DateTime last_time)
+        {
+            _last_index_build = last_time;
         }
 
         public int GetNumberOfIndexedItems()

@@ -184,7 +184,74 @@ namespace Calculator
             fixed_input = fixed_input.Replace(".", CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator);
             fixed_input = fixed_input.Replace(",", CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator);
             expr.Parse(fixed_input);
-            return expr.Eval().ToString();
+            return string.Format("{0:0.##}", expr.Eval());
+        }
+
+         private string ConvertBase(string input)
+        {
+            int index = input.LastIndexOf("to");
+            if (index == -1)
+                index = input.LastIndexOf(">");
+            if (index == -1)
+            {
+                string val = _regex_base_value.Match(input).Value;
+                string base_str = _regex_base.Match(input).Value;
+                int origin = 0;
+                string final = string.Empty;
+                if (base_str == "dec")
+                {
+                    origin = Convert.ToInt32(val, 10);
+                    final = Convert.ToString(origin, 16) + " hex";
+                }
+                else
+                {
+                    if (base_str == "hex")
+                        origin = Convert.ToInt32(val, 16);
+                    else if (base_str == "oct")
+                        origin = Convert.ToInt32(val, 8);
+                    else if (base_str == "bin")
+                        origin = Convert.ToInt32(val, 2);
+                    final = Convert.ToString(origin, 10) + " dec";
+                }
+                return final;
+            }
+            else
+            {
+                string temp_input = input.Replace("to", string.Empty).Replace(">", string.Empty);
+                string left_input = temp_input.Substring(0, index);
+                string right_input = temp_input.Substring(index);
+
+                string val = _regex_base_value.Match(left_input).Value;
+                string origin_base = _regex_base.Match(left_input).Value;
+                string destination_base;
+                int origin = 0;
+                string final = string.Empty;
+
+                if (origin_base == "dec")
+                {
+                    destination_base = (right_input.Trim().Length > 0 ? _regex_base.Match(right_input).Value : "hex");
+                    origin = Convert.ToInt32(val, 10);
+                }
+                else
+                {
+                    destination_base = (right_input.Trim().Length > 0 ? _regex_base.Match(right_input).Value : "dec");
+                    if (origin_base == "hex")
+                        origin = Convert.ToInt32(val, 16);
+                    else if (origin_base == "oct")
+                        origin = Convert.ToInt32(val, 8);
+                    else if (origin_base == "bin")
+                        origin = Convert.ToInt32(val, 2);
+                }
+                if (destination_base == "dec")
+                    final = Convert.ToString(origin, 10) + " dec";
+                else if (destination_base == "hex")
+                    final = Convert.ToString(origin, 16) + " hex";
+                else if (destination_base == "oct")
+                    final = Convert.ToString(origin, 8) + " oct";
+                else if (destination_base == "bin")
+                    final = Convert.ToString(origin, 2) + " bin";
+                return final;
+            }
         }
 
          private string ConvertBase(string input)

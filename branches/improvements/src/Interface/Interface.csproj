@@ -227,8 +227,8 @@
       <DependentUpon>DebugWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="FileIndexer\FileIndexer.cs" />
-    <Compile Include="MainApplication.cs" />
     <Compile Include="Interpreter\InterpreterEngine.cs" />
+    <Compile Include="MainApplication.cs" />
     <Compile Include="Memoization\LookUpTable.cs" />
     <Compile Include="Interpreter\MenuEngine.cs" />
     <Compile Include="MainForm.cs">
@@ -237,6 +237,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings\PluginCommandCache.cs" />
     <Compile Include="Settings\DirectoryPicker.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -348,7 +349,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Settings\PluginCommandCache.cs" />
     <Compile Include="Settings\SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -368,7 +368,8 @@
       <DependentUpon>SuperListBox.cs</DependentUpon>
     </Compile>
     <Compile Include="SystemBrowsing\SystemBrowser.cs" />
-    <Compile Include="TextPrediction\Copy of TextPredictor.cs" />
+    <Compile Include="TextPrediction\Predictor.cs" />
+    <Compile Include="TextPrediction\PredictorCache.cs" />
     <Compile Include="TextPrediction\TextPredictor.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -220,7 +220,7 @@ namespace SystemCore.CommonTypes
         /// </summary>
         /// <param name="parameters">A string containing the parameters, provided by the user.</param>
         /// <returns>Most appropriated icon.</returns>
-        public delegate System.Drawing.Image IconDelegate(string parameters);
+        public delegate System.Drawing.Bitmap IconDelegate(string parameters);
         /// <summary>
         /// A delegate method that returns the command usage, according to the specified parameters.
         /// </summary>
@@ -334,7 +334,7 @@ namespace SystemCore.CommonTypes
             return _auto_complete_delegate(parameters);
         }
 
-        public System.Drawing.Image GetIcon(string parameters)
+        public System.Drawing.Bitmap GetIcon(string parameters)
         {
             return _icon_delegate(parameters);
         }
