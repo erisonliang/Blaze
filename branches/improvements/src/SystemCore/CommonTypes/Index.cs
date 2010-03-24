@@ -127,7 +127,7 @@ namespace SystemCore.CommonTypes
                 if (token.Length >= key.Length &&
                     SystemCore.SystemAbstraction.StringUtilities.StringUtility.WordContainsStr(token, key))
                 {
-                    error = (ushort)((2-((token.Length+key.Length)/(double)token.Length))*2);
+                    error = (ushort)Math.Round(((2-((token.Length+key.Length)/(double)token.Length))*2));
                     if (!errors.ContainsKey(token))
                     {
                         keys.Add(token);

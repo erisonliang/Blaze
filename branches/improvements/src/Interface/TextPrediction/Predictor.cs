@@ -108,11 +108,11 @@ namespace Blaze.TextPrediction
                 }
                 non_command_items = aux;
             }
+
+            if (non_command_items == null)
+                non_command_items = new List<IndexItemSearchResult>();
             List<IndexItemSearchResult> command_items = command_items_dic.Values.ToList();
-            //foreach (IndexItemSearchResult result in command_items)
-            //{
-            //    tokens[result.Result] = user_tokens;
-            //}
+
             List<IndexItemSearchResult> items = Enumerable.Union(non_command_items, command_items).ToList();
             if (items != null)
             {
