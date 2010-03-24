@@ -1,9 +1,0 @@
-D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\Configurator\obj\Debug\ResolveAssemblyReference.cache
-D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\Configurator\bin\Debug\AutomatorConfigurator.exe
-D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\Configurator\bin\Debug\AutomatorConfigurator.pdb
-D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\Configurator\bin\Release\AutomatorConfigurator.exe
-D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\Configurator\bin\Release\AutomatorConfigurator.pdb
-D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\Interface\bin\Debug\ConfigLib.dll
-D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\Interface\bin\Debug\ConfigLib.pdb
-D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\Configurator\obj\Debug\ConfigLib.dll
-D:\Escola & Trabalho\Mestrado\Automator\SVN\trunk\src\Configurator\obj\Debug\ConfigLib.pdb
