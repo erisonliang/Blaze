@@ -10,6 +10,7 @@ namespace SystemCore.CommonTypes
         #region Properties
         public IndexItem Result { get; set; }
         public short Error { get; set; }
+        public bool IsLearned { get; set; }
         #endregion
 
         #region Constructors
@@ -17,6 +18,14 @@ namespace SystemCore.CommonTypes
         {
             Result = result;
             Error = error;
+            IsLearned = false;
+        }
+
+        public IndexItemSearchResult(IndexItem result, short error, bool is_learned)
+        {
+            Result = result;
+            Error = error;
+            IsLearned = is_learned;
         }
         #endregion
 
@@ -43,7 +52,11 @@ namespace SystemCore.CommonTypes
             IndexItemSearchResult result = obj as IndexItemSearchResult;
             int eval = this.Error.CompareTo(result.Error);
             if (eval == 0)
-                eval = this.Result.NTokens.CompareTo(result.Result.NTokens);
+            {
+                eval = result.IsLearned.CompareTo(this.IsLearned);
+                if (eval == 0)
+                    eval = this.Result.NTokens.CompareTo(result.Result.NTokens);
+            }
             return eval;
         }
         #endregion

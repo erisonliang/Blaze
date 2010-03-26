@@ -115,6 +115,7 @@
     <Compile Include="Settings\DirInfo.cs" />
     <Compile Include="Settings\InterfaceInfo.cs" />
     <Compile Include="Settings\LearnedContent.cs" />
+    <Compile Include="Settings\LearnedItem.cs" />
     <Compile Include="Settings\PluginInfo.cs" />
     <Compile Include="Settings\PluginLoader.cs" />
     <Compile Include="Settings\SettingsManager.cs" />

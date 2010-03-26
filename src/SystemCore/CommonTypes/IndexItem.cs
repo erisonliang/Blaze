@@ -15,6 +15,7 @@ namespace SystemCore.CommonTypes
         private string _path; // optional (only used if Type == Indexer)
         private string _icon_id;
         private short _n_tokens;
+        private bool _is_command;
         #endregion
 
         #region Accessors
@@ -22,6 +23,7 @@ namespace SystemCore.CommonTypes
         public string Path { get { return _path; } }
         public string IconId { get { return _icon_id; } }
         public short NTokens { get { return _n_tokens; } }
+        public bool IsCommand { get { return _is_command; } }
         #endregion
 
         #region Constructors
@@ -32,15 +34,17 @@ namespace SystemCore.CommonTypes
             _path = string.Empty;
             _icon_id = string.Empty;
             _n_tokens = 0;
+            _is_command = false;
         }
 
-        public IndexItem(Index parent, string name, string path, string icon_id, short n_tokens)
+        public IndexItem(Index parent, string name, string path, string icon_id, short n_tokens, bool is_command)
         {
             _parent = parent;
             _name = name;
             _path = path;
             _icon_id = icon_id;
             _n_tokens = n_tokens;
+            _is_command = is_command;
         }
 
         public IndexItem(IndexItem item)
@@ -50,6 +54,7 @@ namespace SystemCore.CommonTypes
             _path = item._path;
             _icon_id = item._icon_id;
             _n_tokens = item._n_tokens;
+            _is_command = item._is_command;
         }
         #endregion
 
