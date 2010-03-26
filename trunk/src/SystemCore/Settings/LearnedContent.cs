@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using SystemCore.CommonTypes;
 using System;
 using System.Runtime.Serialization;
+using System.Linq;
 
 namespace SystemCore.Settings
 {
@@ -25,102 +26,85 @@ namespace SystemCore.Settings
     {
         #region Properties
         private static int _capacity = 24;
-        private Queue<string> _keywords;
-        private Dictionary<string, InterpreterItem.OwnerType> _types;
-        private Dictionary<string, string> _distinguisher;
+        private List<LearnedItem> _items;
+        private Dictionary<string, LearnedItem> _keyword_to_item;
         #endregion
 
         #region Accessors
-        public Queue<string> Keywords
+        public List<LearnedItem> LearnedItems
         {
-            get { return _keywords; }
-            set { _keywords = value; }
+            get { return _items; }
         }
 
-        public Dictionary<string, InterpreterItem.OwnerType> Types
+        public Dictionary<string, LearnedItem> KeywordToItem
         {
-            get { return _types; }
-            set { _types = value; }
-        }
-
-        public Dictionary<string, string> Distinguishers
-        {
-            get { return _distinguisher; }
-            set { _distinguisher = value; }
+            get { return _keyword_to_item; }
         }
         #endregion
 
         #region Constructors
         public LearnedContent()
         {
-            _keywords = new Queue<string>(_capacity);
-            _types = new Dictionary<string, InterpreterItem.OwnerType>(_capacity);
-            _distinguisher = new Dictionary<string, string>(_capacity);
+            _items = new List<LearnedItem>(_capacity);
+            _keyword_to_item = new Dictionary<string, LearnedItem>(_capacity);
         }
 
         public LearnedContent(LearnedContent content)
         {
-            _keywords = new Queue<string>(content.Keywords);
-            _types = new Dictionary<string, InterpreterItem.OwnerType>(content.Types);
-            _distinguisher = new Dictionary<string,string>(content.Distinguishers);
+            _items = new List<LearnedItem>(content.LearnedItems);
+            _keyword_to_item = new Dictionary<string, LearnedItem>(content._keyword_to_item);
         }
 
         public LearnedContent(SerializationInfo info, StreamingContext context)
         {
-            _keywords = (Queue<string>)info.GetValue("Keywords", typeof(Queue<string>));
-            _types = (Dictionary<string, InterpreterItem.OwnerType>)info.GetValue("Types", typeof(Dictionary<string, InterpreterItem.OwnerType>));
-            _distinguisher = (Dictionary<string, string>)info.GetValue("Distinguishers", typeof(Dictionary<string, string>));
+            _items = (List<LearnedItem>)info.GetValue("LearnedItems", typeof(List<LearnedItem>));
+            _keyword_to_item = (Dictionary<string, LearnedItem>)info.GetValue("KeywordToItem", typeof(Dictionary<string, LearnedItem>));
         }
         #endregion
 
         #region Public Methods
-        public void AddKeyword(string keyword,  InterpreterItem.OwnerType type, string content)
+        public void AddKeyword(string keyword,  InterpreterItem.OwnerType type, string content, string[] tokens)
         {
-            if (!_distinguisher.ContainsKey(keyword))
+            string[] f_tokens = (tokens == null ? new string[0] : tokens);
+            if (!_keyword_to_item.ContainsKey(keyword))
             {
-                if (!_distinguisher.ContainsValue(content))
+                if (_items.Count == _capacity)
                 {
-                    if (_keywords.Count == _capacity)
-                    {
-                        string to_remove = _keywords.Dequeue();
-                        _distinguisher.Remove(to_remove);
-                        _types.Remove(to_remove);
-                    }
-                    _keywords.Enqueue(keyword);
-                    _distinguisher.Add(keyword, content);
-                    _types.Add(keyword, type);
+                    _items.RemoveAt(0);
                 }
+                LearnedItem li = new LearnedItem(keyword, type, content, f_tokens);
+                _items.Add(li);
+                _keyword_to_item.Add(keyword, li);
             }
             else
             {
-                List<string> temp = new List<string>(_keywords.ToArray());
-                temp.Remove(keyword);
-                _keywords = new Queue<string>(temp.ToArray());
-                _keywords.Enqueue(keyword);
-                _distinguisher[keyword] = content;
-                _types[keyword] = type;
-                temp = null;
+                _items.RemoveAll(delegate(LearnedItem i)
+                {
+                    return i.Keyword == keyword;
+                });
+                LearnedItem li = new LearnedItem(keyword, type, content, f_tokens);
+                _items.Add(li);
+                _keyword_to_item[keyword] = li;
             }
         }
 
         public void RemoveKeyword(string keyword, string content)
         {
-            if (_distinguisher.ContainsKey(keyword))
+            if (_keyword_to_item.ContainsKey(keyword))
             {
-                List<string> temp = new List<string>(_keywords.ToArray());
-                temp.Remove(keyword);
-                _keywords = new Queue<string>(temp.ToArray());
-                _distinguisher.Remove(keyword);
-                _types.Remove(keyword);
-                temp = null;
+                _items.RemoveAll(delegate(LearnedItem i)
+                {
+                    return i.Keyword == keyword && i.Distinguisher == content;
+                });
+                _keyword_to_item.Remove(keyword);
             }
         }
 
-        public string[] GetSortedKeywords(string text)
+        public LearnedItem[] GetSortedItems(string text)
         {
             List<string> accepted_tokens = new List<string>();
             Dictionary<string, int> weights = new Dictionary<string, int>();
-            foreach (string token in _keywords)
+            foreach (string token in _keyword_to_item.Keys)
             {
                 if (SystemCore.SystemAbstraction.StringUtilities.StringUtility.WordContainsStr(token, text))
                 {
@@ -130,16 +114,18 @@ namespace SystemCore.Settings
             }
             accepted_tokens.Sort(delegate(string a, string b)
             {
-                return weights[b].CompareTo(weights[a]);
+                return weights[a].CompareTo(weights[b]);
             });
-            return accepted_tokens.ToArray();
+            List<LearnedItem> ret = new List<LearnedItem>();
+            foreach (string token in accepted_tokens)
+                ret.Add(_keyword_to_item[token]);
+            return ret.ToArray();
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Keywords", Keywords);
-            info.AddValue("Types", Types);
-            info.AddValue("Distinguishers", Distinguishers);
+            info.AddValue("LearnedItems", LearnedItems);
+            info.AddValue("KeywordToItem", KeywordToItem);
         }
         #endregion
     }

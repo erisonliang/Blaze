@@ -48,7 +48,7 @@ namespace SystemCore.Settings
                 foreach (Command command in plugin.Commands)
                 {
                     if (command.FitsPriority(Command.PriorityType.Medium))
-                        _index.AddItemByName(command.Name);
+                        _index.AddItemByName(command.Name, plugin.Name, true);
                 }
             }
             _last_modified = DateTime.Now;

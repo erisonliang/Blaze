@@ -310,7 +310,7 @@ namespace Blaze.Interpreter
             }
             if (!filesystem_assisted)
             {
-                List<string> user_tokens = new List<string>(StringUtility.GenerateKeywords(user_text));
+                List<string> user_tokens = new List<string>(StringUtility.GenerateKeywords(user_text, true, false));
                 int user_tokens_size = user_tokens.Count;
 
                 Index index = _fileIndexer.RetrieveItems();
@@ -491,7 +491,8 @@ namespace Blaze.Interpreter
                 //}
 
                 Dictionary<IndexItem, List<string>> tokens = null;
-                IndexItem[] items = Predictor.Instance.GetBestItems(index, user_tokens, ref tokens);
+                LearnedContent learned_commands = SettingsManager.Instance.GetLearnedContents();
+                IndexItem[] items = Predictor.Instance.GetBestItems(index, user_text, user_tokens, ref tokens, learned_commands);
                 // TODO
                 foreach (IndexItem i in items)
                 {
@@ -567,35 +568,35 @@ namespace Blaze.Interpreter
                 }
             }
 
-            LearnedContent lc = SettingsManager.Instance.GetLearnedContents();
-            int pos = 0;
-            foreach (string token in lc.GetSortedKeywords(user_text))
-            {
-                int curr_pos = -1;
-                string distinguisher = lc.Distinguishers[token];
-                switch (lc.Types[token])
-                {
-                    case InterpreterItem.OwnerType.Indexer:
-                        curr_pos = ret.FindIndex(delegate(InterpreterItem a)
-                        {
-                            return a.Desciption == distinguisher;
-                        });
-                        break;
-                    default:
-                        curr_pos = ret.FindIndex(delegate(InterpreterItem a)
-                        {
-                            return a.Name == distinguisher;
-                        });
-                        break;
-                }
-                if (curr_pos != -1)
-                {
-                    InterpreterItem to_insert = ret[curr_pos];
-                    ret.RemoveAt(curr_pos);
-                    ret.Insert(0, to_insert);
-                    pos++;
-                }
-            }
+            //LearnedContent lc = SettingsManager.Instance.GetLearnedContents();
+            //int pos = 0;
+            //foreach (string token in lc.GetSortedKeywords(user_text))
+            //{
+            //    int curr_pos = -1;
+            //    string distinguisher = lc.Distinguishers[token];
+            //    switch (lc.Types[token])
+            //    {
+            //        case InterpreterItem.OwnerType.Indexer:
+            //            curr_pos = ret.FindIndex(delegate(InterpreterItem a)
+            //            {
+            //                return a.Desciption == distinguisher;
+            //            });
+            //            break;
+            //        default:
+            //            curr_pos = ret.FindIndex(delegate(InterpreterItem a)
+            //            {
+            //                return a.Name == distinguisher;
+            //            });
+            //            break;
+            //    }
+            //    if (curr_pos != -1)
+            //    {
+            //        InterpreterItem to_insert = ret[curr_pos];
+            //        ret.RemoveAt(curr_pos);
+            //        ret.Insert(0, to_insert);
+            //        pos++;
+            //    }
+            //}
 
             user_text = null;
             assisting_commands = null;
@@ -695,13 +696,13 @@ namespace Blaze.Interpreter
             if (item.Type == InterpreterItem.OwnerType.Indexer)
             {
                 //if (str != item.Desciption.ToLower())
-                SettingsManager.Instance.AddLearned(str, item.Type, item.Desciption);
+                SettingsManager.Instance.AddLearned(str, item.Type, item.Desciption, item.CommandTokens);
             }
             else if (item.Type == InterpreterItem.OwnerType.Menu)
             {
                 //SettingsManager.Instance.AddLearned(str, ProtectCommand(item.Name));
                 //SettingsManager.Instance.AddLearned(item.Text, Command.ProtectCommand(item.CommandName)); // StringUtility.ArrayToStr(item.CommandTokens), item.CommandName
-                SettingsManager.Instance.AddLearned(str, item.Type, item.Name);
+                SettingsManager.Instance.AddLearned(StringUtility.ArrayToStr(item.CommandTokens, false), item.Type, item.Name, item.CommandTokens);
             }
             else if (item.Type == InterpreterItem.OwnerType.Plugin)
             {
@@ -715,7 +716,7 @@ namespace Blaze.Interpreter
                 //    SettingsManager.Instance.AddLearned(item.Text, command.ProtectedName);
                 //else if (command.FitsPriority(Command.PriorityType.Medium))
                 //    SettingsManager.Instance.AddLearned(BuildCommandParameters(item.Text, item.CommandTokens), command.ProtectedName);
-                SettingsManager.Instance.AddLearned(str, item.Type, item.Name);
+                SettingsManager.Instance.AddLearned(StringUtility.ArrayToStr(item.CommandTokens, false), item.Type, item.Name, item.CommandTokens);
             }
             //else
             //{
