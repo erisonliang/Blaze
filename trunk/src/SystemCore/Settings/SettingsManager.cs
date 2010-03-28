@@ -259,6 +259,8 @@ namespace SystemCore.Settings
                     try
                     {
                         _learned_contents = (LearnedContent)binaryRead.Deserialize(streamRead);
+                        if (_learned_contents.KeywordToItem == null || _learned_contents.LearnedItems == null)
+                            _learned_contents = new LearnedContent();
                     }
                     catch
                     {
