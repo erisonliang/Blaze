@@ -781,7 +781,7 @@ namespace Blaze
                 }
                 catch (ArgumentException)
                 {
-                    RecoverIcon(_items[index].Desciption, IconBox);
+                    for (int i = 0; i < 8 && RecoverIcon(_items[index].Desciption, IconBox) == false; i++) ;
                 }
                 NameDisplay.Text = _items[index].Name;
                 CustomLabel.Text = _items[index].Desciption;
@@ -800,16 +800,17 @@ namespace Blaze
             //}
         }
 
-        void RecoverIcon(string path, PictureBox box)
+        bool RecoverIcon(string path, PictureBox box)
         {
             try
             {
                 box.Image = IconManager.Instance.GetIcon(path);
                 box.Refresh();
+                return true;
             }
             catch (ArgumentException)
             {
-                RecoverIcon(path, box);
+                return false;
             }
         }
 
