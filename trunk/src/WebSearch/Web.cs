@@ -117,165 +117,7 @@ namespace WebSearch
 
         #region Public Methods
 
-        //public override void OnBuild()
-        //{
-            
-        //}
-
-        //public override bool IsOwner(string cmd)
-        //{
-        //    return base.IsOwner(cmd) || CompIsOwner(cmd); //_search_engine_names.Contains(item)
-        //}
-
-        //public override string GetItemName(string cmd, string item)
-        //{
-        //    if (base.IsOwner(item))
-        //    {
-        //        return item;
-        //    }
-        //    else if (cmd == _add_command.Name)
-        //    {
-        //        return _add_command.Name;
-        //    }
-        //    else
-        //    {
-        //        SearchEngine engine = AssistingSearchEngine(cmd);
-        //        if (engine != null)
-        //        {
-        //            string term = RetrieveSearchQuery(cmd, item);
-        //            if (term == string.Empty) // no search term
-        //            {
-        //                return engine.Name;
-        //            }
-        //            else
-        //            {
-        //                return engine.Name + " " + term;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return item;
-        //        }
-        //    }
-        //}
-
-        //public override string GetItemDescription(string cmd, string item)
-        //{
-        //    if (base.IsOwner(item))
-        //    {
-        //        return "Browse to " + item;
-        //    }
-        //    else if (cmd == _add_command.Name)
-        //    {
-        //        return _add_command.Description;
-        //    }
-        //    else 
-        //    {
-        //        SearchEngine engine = AssistingSearchEngine(cmd);
-        //        if (engine != null)
-        //        {
-        //            string term = RetrieveSearchQuery(cmd, item);
-        //            if (term == string.Empty || engine.SearchQuery == string.Empty) // no search term or no search query was specified
-        //            {
-        //                return "Go to " + engine.Name + " web page.";
-        //            }
-        //            else
-        //            {
-        //                return "Search for " + term + " on " + engine.Name;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return "Search for " + item + " on " + _search_engines[_favorite_engine].Name;
-        //        }
-        //    }
-        //}
-
-        //public override string GetItemAutoComplete(string cmd, string item)
-        //{
-        //    if (base.IsOwner(item))
-        //    {
-        //        return item;
-        //    }
-        //    else if (cmd == _add_command.Name)
-        //    {
-        //        return _add_command.Name;
-        //    }
-        //    else
-        //    {
-        //        SearchEngine engine = AssistingSearchEngine(cmd);
-        //        if (engine != null)
-        //        {
-        //            string term = RetrieveSearchQuery(cmd, item);
-        //            if (term == string.Empty) // no search term
-        //            {
-        //                return engine.Name;
-        //            }
-        //            else
-        //            {
-        //                return engine.Name + " " + term;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return item;
-        //        }
-        //    }
-        //}
-
-        //public override bool Execute(InterpreterItem item)
-        //{
-        //    if (base.IsOwner(item.AutoComplete))
-        //    {
-        //        System.Diagnostics.Process.Start(FixUrl(item.AutoComplete));
-        //    }
-        //    else if (item.CommandName == _add_command.Name)
-        //    {
-        //        EnginePicker ep = new EnginePicker(this);
-        //        if (ep.ShowDialog() == DialogResult.OK)
-        //            SaveSettings();
-        //        ep.Dispose();
-        //    }
-        //    else
-        //    {
-        //        SearchEngine engine = AssistingSearchEngine(item.CommandName);
-        //        try
-        //        {
-        //            if (engine != null)
-        //            {
-        //                string term = RetrieveSearchQuery(item.CommandName, item.AutoComplete);
-        //                if (term == string.Empty) // no search term
-        //                {
-        //                    System.Diagnostics.Process.Start(engine.Url);
-        //                }
-        //                else
-        //                {
-        //                    System.Diagnostics.Process.Start(engine.GetSearchQuery(term));
-        //                }
-        //            }
-        //            else
-        //            {
-        //                System.Diagnostics.Process.Start(_search_engines[_favorite_engine].GetSearchQuery(item.AutoComplete));
-        //            }
-        //        }
-        //        catch
-        //        {
-
-        //        }
-        //    }
-        //    return true;
-        //}
-
-        //public override Icon GetItemIcon(string cmd, string item)
-        //{
-        //    if (base.IsOwner(item))
-        //        return _browser_icon;
-        //    else if (cmd == _add_command.Name)
-        //        return _add_icon;
-        //    else
-        //        return _search_icon;
-        //}
-
+        
         public override void Configure()
         {
             ConfigDialog cd = new ConfigDialog(this);
@@ -285,23 +127,7 @@ namespace WebSearch
             }
             cd.Dispose();
         }
-
-        //public override Command GetCommand(InterpreterItem item)
-        //{
-        //    SearchEngine engine;
-        //    if (item.CommandName == _add_command.Name)
-        //        return _add_command;
-        //    else if ((engine = AssistingSearchEngine(item.CommandName)) != null)
-        //    {
-        //        foreach (Command cmd in _commands)
-        //            if (cmd.Name == engine.Name)
-        //                return cmd;
-        //        return null;
-        //    }
-        //    else
-        //        return null;
-        //}
-
+       
         public void LoadSettings()
         {
             LoadDefaultEngines();
@@ -339,81 +165,11 @@ namespace WebSearch
                 }
                 reader.Dispose();
             }
-            //List<string> categories = INIManipulator.GetCategories(CommonInfo.UserConfigFile);
-            //if (categories.Count > 0)
-            //{
-            //    string category = Name;
-            //    if (categories.Contains(category))
-            //    {
-            //        List<string> keys = INIManipulator.GetKeys(CommonInfo.UserConfigFile, category);
-            //        int key_len = keys.Count;
-            //        if (key_len > 1)
-            //        {
-            //            for (int i = 0; i < key_len; i += 3)
-            //            {
-            //                string name;
-            //                string url;
-            //                string term;
-            //                try
-            //                {
-            //                    if (i == key_len - 1)
-            //                    {
-            //                        Int32.TryParse(INIManipulator.GetValue(CommonInfo.UserConfigFile, category, keys[i], "0"), out favorite);
-            //                    }
-            //                    else
-            //                    {
-            //                        name = INIManipulator.GetValue(CommonInfo.UserConfigFile, category, keys[i], "");
-            //                        url = INIManipulator.GetValue(CommonInfo.UserConfigFile, category, keys[i + 1], "");
-            //                        term = INIManipulator.GetValue(CommonInfo.UserConfigFile, category, keys[i + 2], "");
-            //                        search_engine_names.Add(name);
-            //                        search_engines.Add(new SearchEngine(name, url, term));
-            //                    }
-            //                }
-            //                catch (Exception)
-            //                {
-            //                    return;
-            //                }
-            //            }
-            //        }
-            //        else
-            //        {
-            //            return;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        return;
-            //    }
-            //}
-            //else
-            //{
-            //    return;
-            //}
         }
 
         public void SaveSettings(/*List<string> names, List<SearchEngine> engines, int fav*/)
         {
-            //_search_engine_names = names;
-            //_search_engines = engines;
-            //_favorite_engine = fav;
-            //string category = Name;
-            //int len = _search_engine_names.Count+1;
-            //INIManipulator.DeleteCategory(CommonInfo.UserConfigFile, category);
-            //for (int i = 0; i < len; i++)
-            //{
-            //    int pos = i + 1;
-            //    if (i == len-1)
-            //    {
-            //        INIManipulator.WriteValue(CommonInfo.UserConfigFile, category, "default", _favorite_engine.ToString());
-            //    }
-            //    else
-            //    {
-            //        INIManipulator.WriteValue(CommonInfo.UserConfigFile, category, pos.ToString() + "\\name", _search_engines[i].Name);
-            //        INIManipulator.WriteValue(CommonInfo.UserConfigFile, category, pos.ToString() + "\\url", _search_engines[i].Url);
-            //        INIManipulator.WriteValue(CommonInfo.UserConfigFile, category, pos.ToString() + "\\query", _search_engines[i].SearchQuery);
-            //    }
-            //}
-            _search_engines[_favorite_engine].IsFavorite = true;
+                        _search_engines[_favorite_engine].IsFavorite = true;
             XmlSerializer serializer = new XmlSerializer(typeof(List<SearchEngine>));
             TextWriter writer = new StreamWriter(CommonInfo.UserFolder + Name + ".xml", false, Encoding.Default);
             serializer.Serialize(writer, _search_engines);
@@ -482,32 +238,6 @@ namespace WebSearch
 
         private SearchEngine AssistingSearchEngine(string item)
         {
-            //List<string> text = new List<string>(item.ToLower().Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries));
-            //int min = Int32.MaxValue;
-            //SearchEngine min_search_engine = null;
-
-            //if (text.Count > 0)
-            //{
-            //    for (int i = 0; i < text.Count; i++)
-            //    {
-            //        foreach (SearchEngine engine in _search_engines)
-            //        {
-            //            if (StringUtility.WordContainsWord(text[i], engine.Name))
-            //            {
-            //                int dist = LevenshteinMeasurer.Instance.GetDistance(text[i], engine.Name);
-            //                if (dist < min)
-            //                {
-            //                    min = dist;
-            //                    min_search_engine = engine;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-            //if (min_search_engine != null)
-            //    return min_search_engine;
-            //else
-            //    return null;
             foreach (SearchEngine engine in _search_engines)
                 if (item == engine.Name)
                     return engine;
@@ -548,16 +278,13 @@ namespace WebSearch
             _search_engines.Add(new SearchEngine("Yahoo", @"http://search.yahoo.com/", @"http://search.yahoo.com/search?p=%s"));
             // Weather
             _search_engine_names.Add("Weather");
-            _search_engines.Add(new SearchEngine("Weather", @"http://www.weather.com/", @"http://www.weather.com/weather/local/%s"));
+            _search_engines.Add(new SearchEngine("Weather", @"http://www.weather.com/", @"http://www.weather.com/weather/today/%s"));
             // Maps
             _search_engine_names.Add("Maps");
             _search_engines.Add(new SearchEngine("Maps", @"http://maps.google.com/", @"http://maps.google.com/maps?f=q&hl=en&geocode=&q=%s&ie=UTF8&z=12&iwloc=addr&om=1"));
-            // MSN
-            _search_engine_names.Add("MSN");
-            _search_engines.Add(new SearchEngine("MSN", @"http://search.msn.com/", @"http://search.msn.com/results.aspx?q=%s"));
-            // Live Search
-            _search_engine_names.Add("Live Search");
-            _search_engines.Add(new SearchEngine("Live Search", @"http://search.live.com/", @"http://search.live.com/results.aspx?q=%s"));
+            // Bing
+            _search_engine_names.Add("Bing");
+            _search_engines.Add(new SearchEngine("Bing", @"http://www.bing.com/", @"http://www.bing.com/search?q=%s"));
             //Dictionary
             _search_engine_names.Add("Dictionary");
             _search_engines.Add(new SearchEngine("Dictionary", @"http://www.dictionary.com/", @"http://www.dictionary.com/browse/%s"));
