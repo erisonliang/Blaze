@@ -224,45 +224,45 @@ namespace Blaze.Interpreter
 
             if (_systemBrowser.IsOwner(user_text))
             {
-                List<string> user_tokens = new List<string>();
-                user_tokens.Add(user_text.ToLower());
+                //List<string> user_tokens = new List<string>();
+                //user_tokens.Add(user_text.ToLower());
 
-                Dictionary<string, double> distances = new Dictionary<string, double>();
-                Dictionary<string, string[]> displacements = new Dictionary<string, string[]>();
-                List<string> suited_names = new List<string>();
-                List<string> min_names = new List<string>();
+                //Dictionary<string, double> distances = new Dictionary<string, double>();
+                //Dictionary<string, string[]> displacements = new Dictionary<string, string[]>();
+                //List<string> suited_names = new List<string>();
+                //List<string> min_names = new List<string>();
 
-                List<string> paths = _systemBrowser.RetrieveItems(text);
-                paths.Sort();
+                List<string> paths = _systemBrowser.RetrieveItems(user_text);
+                //paths.Sort();
 
-                Dictionary<string, List<string>> keywords = new Dictionary<string, List<string>>();
+                //Dictionary<string, List<string>> keywords = new Dictionary<string, List<string>>();
+                //foreach (string s in paths)
+                //    keywords.Add(s, new List<string>(new string[] { s.ToLower() }));
+
+                //TextPredictor.Instance.PredictNamesAndDistance(user_text, user_tokens, paths, keywords, ref suited_names, ref distances, ref displacements, false);
+
+                //while (suited_names.Count > 0)
+                //{
+                //    string min_name = string.Empty;
+                //    for (int i = 0; i < suited_names.Count; i++)
+                //    {
+                //        if (min_name == string.Empty)
+                //        {
+                //            min_name = suited_names[i];
+                //        }
+                //        else if (distances[min_name] > distances[suited_names[i]])
+                //        {
+                //            min_name = suited_names[i];
+                //        }
+                //    }
+                //    if (min_name != string.Empty)
+                //    {
+                //        min_names.Add(min_name);
+                //        suited_names.Remove(min_name);
+                //    }
+                //}
+
                 foreach (string s in paths)
-                    keywords.Add(s, new List<string>(new string[] { s.ToLower() }));
-
-                TextPredictor.Instance.PredictNamesAndDistance(user_text, user_tokens, paths, keywords, ref suited_names, ref distances, ref displacements, false);
-
-                while (suited_names.Count > 0)
-                {
-                    string min_name = string.Empty;
-                    for (int i = 0; i < suited_names.Count; i++)
-                    {
-                        if (min_name == string.Empty)
-                        {
-                            min_name = suited_names[i];
-                        }
-                        else if (distances[min_name] > distances[suited_names[i]])
-                        {
-                            min_name = suited_names[i];
-                        }
-                    }
-                    if (min_name != string.Empty)
-                    {
-                        min_names.Add(min_name);
-                        suited_names.Remove(min_name);
-                    }
-                }
-
-                foreach (string s in min_names)
                 {
                     ret.Add(new InterpreterItem(FileNameManipulator.GetFolderName(s),
                                                 s,
@@ -273,12 +273,12 @@ namespace Blaze.Interpreter
                 }
 
                 // clean up
-                user_tokens = null;
-                distances = null;
-                suited_names = null;
-                min_names = null;
+                //user_tokens = null;
+                //distances = null;
+                //suited_names = null;
+                //min_names = null;
                 paths = null;
-                keywords = null;
+                //keywords = null;
 
                 filesystem_assisted = true;
             }

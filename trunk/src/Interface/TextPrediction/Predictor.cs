@@ -25,13 +25,20 @@ namespace Blaze.TextPrediction
 {
     public class Predictor
     {
+        #region Properties
         private static readonly Predictor _instance = new Predictor();
         private PredictorCache _cache;
+        #endregion
 
+        #region Accessors
         public static Predictor Instance { get { return _instance; } }
+        #endregion
 
+        #region Constrctors
         private Predictor() { _cache = new PredictorCache(16); }
+        #endregion
 
+        #region Public Methods
         public IndexItem[] GetBestItems(Index index, string user_text, List<string> user_tokens, ref Dictionary<IndexItem, List<string>> item_tokens, LearnedContent learned_commands)
         {
             Dictionary<string, IndexItemSearchResult[]> matches = new Dictionary<string, IndexItemSearchResult[]>();
@@ -145,7 +152,9 @@ namespace Blaze.TextPrediction
         {
             _cache.Clear();
         }
+        #endregion
 
+        #region Private Methods
         private short LeastSimilarIndex(List<short> vals, short lim)
         {
             short max = -1;
@@ -190,5 +199,6 @@ namespace Blaze.TextPrediction
                 return ret;
             }
         }
+        #endregion
     }
 }
