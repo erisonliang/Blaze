@@ -1,6 +1,4 @@
-﻿import sys
-import clr
-import System
+﻿import System
 clr.AddReference("System.Windows.Forms")
 
 class MustScream(BaseIronPythonCommand):
