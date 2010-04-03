@@ -1,10 +1,16 @@
 ﻿using System;
+using SystemCore.CommonTypes;
 
 namespace IronPythonPlugins
 {
-    public abstract class BaseIronPythonCommandPlugin : IIronPythonCommandPlugin
+    public abstract class BaseIronPythonCommand : IIronPythonCommand
     {
         public abstract string Name { get; }
+
+        public virtual CommandUsage Usage(string parameters)
+        {
+            return new CommandUsage(Name);
+        }
 
         public virtual string GetName(string parameters)
         {

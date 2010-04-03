@@ -3,10 +3,11 @@ import clr
 import System
 clr.AddReference("System.Windows.Forms")
 
-class MustScream(BaseIronPythonCommandPlugin):
+class MustScream(BaseIronPythonCommand):
 	@property
 	def Name(self):
 		return "MustScream"
 		
 	def Execute(self, args):
 		System.Windows.Forms.MessageBox.Show(args, "Shout!", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning)
+
