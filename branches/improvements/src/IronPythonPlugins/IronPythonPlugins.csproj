@@ -63,8 +63,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseIronPythonCommandPlugin.cs" />
-    <Compile Include="IIronPythonCommandPlugin.cs" />
+    <Compile Include="BaseIronPythonCommand.cs" />
+    <Compile Include="IIronPythonCommand.cs" />
     <Compile Include="IronPythonHostPlugin.cs" />
     <Compile Include="IronPythonPluginCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -96,6 +96,11 @@
   <ItemGroup>
     <None Include="Resources\python-clear.ico" />
     <None Include="IronPythonPlugins\Sample.ipy">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="IronPythonPlugins\Putty.ipy">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -40,8 +40,8 @@ namespace IronPythonPlugins
                     CompiledCode code = script.Compile();
                     ScriptScope scope = _engine.CreateScope();
                     
-                    scope.SetVariable("IIronPythonCommandPlugin", ClrModule.GetPythonType(typeof(IIronPythonCommandPlugin)));
-                    scope.SetVariable("BaseIronPythonCommandPlugin", ClrModule.GetPythonType(typeof(BaseIronPythonCommandPlugin)));
+                    scope.SetVariable("IIronPythonCommand", ClrModule.GetPythonType(typeof(IIronPythonCommand)));
+                    scope.SetVariable("BaseIronPythonCommand", ClrModule.GetPythonType(typeof(BaseIronPythonCommand)));
                     code.Execute(scope);
                     
                     _plugins[pythonFile] = new List<Command>();
@@ -49,14 +49,14 @@ namespace IronPythonPlugins
 
                     var pluginClasses = scope.GetItems()
                         .Where(kvp => kvp.Value is IronPython.Runtime.Types.PythonType)
-                        .Where(kvp => typeof (IIronPythonCommandPlugin).IsAssignableFrom(((IronPython.Runtime.Types.PythonType)kvp.Value).__clrtype__()))
+                        .Where(kvp => typeof (IIronPythonCommand).IsAssignableFrom(((IronPython.Runtime.Types.PythonType)kvp.Value).__clrtype__()))
                         .Select(kvp => kvp.Key)
-                        .Where(c => c != "BaseIronPythonCommandPlugin" && c != "IIronPythonCommandPlugin");
+                        .Where(c => c != "BaseIronPythonCommand" && c != "IIronPythonCommand");
                     
 
                     foreach (var p in pluginClasses)
                     {
-                        var plugin = (IIronPythonCommandPlugin)_engine.Execute(string.Format("{0}()", p), scope);
+                        var plugin = (IIronPythonCommand)_engine.Execute(string.Format("{0}()", p), scope);
 
                         var command = new IronPythonPluginCommand(plugin);
 
@@ -67,7 +67,7 @@ namespace IronPythonPlugins
                 }
                 catch(Exception e)
                 {
-                    System.Console.Error.Write(string.Format("Error with file {1}: {0}", e, pythonFile));
+                    System.Diagnostics.Debug.Write(string.Format("Error with file {1}: {0}", e, pythonFile));
                 }
             }
         }
