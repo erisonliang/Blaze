@@ -22,6 +22,7 @@ using System.Drawing.Imaging;
 using System.Security.Cryptography;
 using System.IO;
 using System.Linq;
+using SystemCore.Settings;
 
 namespace SystemCore.CommonTypes
 {
@@ -112,6 +113,44 @@ namespace SystemCore.CommonTypes
         #endregion
 
         #region Public Methods
+        public IndexItemSearchResult[] GetLearnedMatches(LearnedItem[] learned_commands, ushort n_results, ref Dictionary<IndexItem, List<string>> tokens)
+        {
+            List<IndexItemSearchResult> ret = new List<IndexItemSearchResult>();
+
+            foreach (LearnedItem cmd in learned_commands)
+            {
+                foreach (IndexItem item in _items)
+                {
+                    //if (item.Name == "Notepad")
+                    //    System.Windows.Forms.MessageBox.Show("box");
+                    if (item.IsCommand &&
+                        (cmd.Type == InterpreterItem.OwnerType.Menu ||
+                         cmd.Type == InterpreterItem.OwnerType.Plugin))
+                    {
+                        if (item.Name == cmd.Distinguisher)
+                        {
+                            ret.Add(new IndexItemSearchResult(item, 0, true));
+                            tokens.Add(item, new List<string>(cmd.Tokens));
+                            break;
+                        }
+                    }
+                    else if (!item.IsCommand &&
+                                (cmd.Type == InterpreterItem.OwnerType.Indexer))
+                    {
+                        if (item.Path == cmd.Distinguisher)
+                        {
+                            ret.Add(new IndexItemSearchResult(item, 0, true));
+                            tokens.Add(item, new List<string>(cmd.Tokens));
+                            break;
+                        }
+                    }
+                }
+                if (ret.Count > 0)
+                    break;
+            }
+            return ret.ToArray();
+        }
+
         public IndexItemSearchResult[] GetBestMatches(string key, ushort n_results, ushort max_error)
         {
             List<string> keys = new List<string>();
@@ -142,14 +181,15 @@ namespace SystemCore.CommonTypes
             {
                 return errors[x].CompareTo(errors[y]);
             });
+
             List<IndexItemSearchResult> ret = GenerateSearchResult(keys, errors, n_results);
             return ret.ToArray();
         }
 
-        public void AddEntry(string key, string name, int n_tokens, string path, Bitmap icon)
+        public void AddEntry(string key, string name, int n_tokens, string path, Bitmap icon, bool is_command)
         {
             string hashed_icon = HashBmp(icon);
-            IndexItem new_item = new IndexItem(this, name, path, hashed_icon, (short)n_tokens);
+            IndexItem new_item = new IndexItem(this, name, path, hashed_icon, (short)n_tokens, is_command);
             if (!_items.Contains(new_item))
             {
                 _items.Add(new_item);
@@ -166,26 +206,31 @@ namespace SystemCore.CommonTypes
             {
                 _dictionary.Add(key, new List<IndexItem>());
                 _info_keyword_count++;
+                _tree.Add(key);
             }
             // bind the items to the keyword
             if (!_dictionary[key].Contains(new_item))
                 _dictionary[key].Add(new_item);
-            _tree.Add(key);
         }
 
-        public void AddItemByName(string name, string path, Bitmap icon)
+        public void AddItemByName(string name, string path, Bitmap icon, bool is_command)
         {
             if (!string.IsNullOrEmpty(name))
             {
                 string[] keywords = SystemCore.SystemAbstraction.StringUtilities.StringUtility.GenerateKeywords(name);
                 foreach (string keyword in keywords)
-                    AddEntry(keyword, name, keywords.Length, path, icon);
+                    AddEntry(keyword, name, keywords.Length, path, icon, is_command);
             }
         }
 
-        public void AddItemByName(string name)
+        public void AddItemByName(string name, string path, bool is_command)
         {
-            AddItemByName(name, string.Empty, null);
+            AddItemByName(name, path, null, is_command);
+        }
+
+        public void AddItemByName(string name, bool is_command)
+        {
+            AddItemByName(name, string.Empty, null, is_command);
         }
 
         public Bitmap GetItemIcon(IndexItem item)
@@ -203,6 +248,12 @@ namespace SystemCore.CommonTypes
         public bool ContainsItem(IndexItem item)
         {
             return _items.Contains(item);
+        }
+
+        public bool ContainsItem(string name, string path, bool is_command)
+        {
+            List<IndexItem> items = (from item in _items where (item.Name == name && item.Path == path && item.IsCommand == is_command) select item).ToList();
+            return items.Count > 0;
         }
 
         public void Merge(Index index)

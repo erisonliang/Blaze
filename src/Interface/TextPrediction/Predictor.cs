@@ -19,53 +19,75 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SystemCore.CommonTypes;
+using SystemCore.Settings;
 
 namespace Blaze.TextPrediction
 {
     public class Predictor
     {
+        #region Properties
         private static readonly Predictor _instance = new Predictor();
         private PredictorCache _cache;
+        #endregion
 
+        #region Accessors
         public static Predictor Instance { get { return _instance; } }
+        #endregion
 
-        private Predictor() { _cache = new PredictorCache(15); }
+        #region Constrctors
+        private Predictor() { _cache = new PredictorCache(16); }
+        #endregion
 
-        public IndexItem[] GetBestItems(Index index, List<string> user_tokens, ref Dictionary<IndexItem, List<string>> item_tokens)
+        #region Public Methods
+        public IndexItem[] GetBestItems(Index index, string user_text, List<string> user_tokens, ref Dictionary<IndexItem, List<string>> item_tokens, LearnedContent learned_commands)
         {
             Dictionary<string, IndexItemSearchResult[]> matches = new Dictionary<string, IndexItemSearchResult[]>();
             Dictionary<IndexItem, List<string>> tokens = new Dictionary<IndexItem, List<string>>();
             Dictionary<IndexItem, List<short>> tokens_values = new Dictionary<IndexItem, List<short>>();
+            ushort n_results = (ushort)(SystemCore.Settings.SettingsManager.Instance.GetNumberOfSuggestions() * 10);
+            
+            LearnedItem[] cmds = learned_commands.GetSortedItems(user_text);
+            Dictionary<IndexItem, List<string>> learned_tokens = new Dictionary<IndexItem, List<string>>();
+            List<IndexItemSearchResult> learned_items = new List<IndexItemSearchResult>(index.GetLearnedMatches(cmds, n_results, ref learned_tokens));
+            foreach (IndexItemSearchResult item in learned_items)
+            {
+                tokens.Add(item.Result, FixLearnedTokens(item.Result, user_tokens, learned_tokens[item.Result]));
+                tokens_values.Add(item.Result, new List<short> (new short[] { item.Error }));
+            }
+
             foreach (string token in user_tokens)
             {
                 IndexItemSearchResult[] results;
                 if (_cache.Contains(token))
                     results = _cache.Get(token);
                 else
-                    results = index.GetBestMatches(token, (ushort)(SystemCore.Settings.SettingsManager.Instance.GetNumberOfSuggestions() * 2), (ushort)5);
+                    results = index.GetBestMatches(token, n_results, (ushort)5);
                 foreach (IndexItemSearchResult result in results)
                 {
-                    if (!tokens.ContainsKey(result.Result))
+                    if (!learned_items.Contains(result))
                     {
-                        tokens.Add(result.Result, new List<string>(new string[] { token }));
-                        tokens_values.Add(result.Result, new List<short>( new short[] { result.Error }));
-                    }
-                    else
-                    {
-                        if (string.IsNullOrEmpty(result.Result.Path) &&
-                            tokens[result.Result].Count == result.Result.NTokens)
+                        if (!tokens.ContainsKey(result.Result))
                         {
-                            short lsi = LeastSimilarIndex(tokens_values[result.Result], result.Error);
-                            if (lsi != -1)
-                            {
-                                tokens[result.Result][lsi] = token;
-                                tokens_values[result.Result][lsi] = result.Error;
-                            }
+                            tokens.Add(result.Result, new List<string>(new string[] { token }));
+                            tokens_values.Add(result.Result, new List<short>(new short[] { result.Error }));
                         }
                         else
                         {
-                            tokens[result.Result].Add(token);
-                            tokens_values[result.Result].Add(result.Error);
+                            if (result.Result.IsCommand &&
+                                tokens[result.Result].Count == result.Result.NTokens)
+                            {
+                                short lsi = LeastSimilarIndex(tokens_values[result.Result], result.Error);
+                                if (lsi != -1)
+                                {
+                                    tokens[result.Result][lsi] = token;
+                                    tokens_values[result.Result][lsi] = result.Error;
+                                }
+                            }
+                            else
+                            {
+                                tokens[result.Result].Add(token);
+                                tokens_values[result.Result].Add(result.Error);
+                            }
                         }
                     }
                 }
@@ -81,10 +103,8 @@ namespace Blaze.TextPrediction
                 List<IndexItemSearchResult> aux = new List<IndexItemSearchResult>();
                 foreach (IndexItemSearchResult result in matches[token])
                 {
-                    if (string.IsNullOrEmpty(result.Result.Path))
+                    if (result.Result.IsCommand)
                     {
-                        //if (result.Result.Name == "redo")
-                        //    System.Windows.Forms.MessageBox.Show("test");
                         if (!command_items_dic.ContainsKey(result))
                         {
                             command_items_dic.Add(result, result);
@@ -114,12 +134,14 @@ namespace Blaze.TextPrediction
             List<IndexItemSearchResult> command_items = command_items_dic.Values.ToList();
 
             List<IndexItemSearchResult> items = Enumerable.Union(non_command_items, command_items).ToList();
+            foreach (IndexItemSearchResult item in learned_items)
+                items.Remove(item);
+            learned_items.AddRange(items);
+            items = learned_items;
             if (items != null)
             {
                 item_tokens = tokens;
                 items.Sort();
-                //if (user_tokens.Contains("faiafo"))
-                //    System.Windows.Forms.MessageBox.Show("woot");
                 return new List<IndexItem>(from item in items select item.Result).Take(SystemCore.Settings.SettingsManager.Instance.GetNumberOfSuggestions()).ToArray();
             }
             else
@@ -130,7 +152,9 @@ namespace Blaze.TextPrediction
         {
             _cache.Clear();
         }
+        #endregion
 
+        #region Private Methods
         private short LeastSimilarIndex(List<short> vals, short lim)
         {
             short max = -1;
@@ -141,5 +165,40 @@ namespace Blaze.TextPrediction
             }
             return max;
         }
+
+        private List<string> FixLearnedTokens(IndexItem item, List<string> user_tokens, List<string> learned_tokens)
+        {
+            if (!item.IsCommand)
+                return new List<string>(user_tokens);
+            else
+            {
+                List<string> ret = new List<string>();
+                foreach (string ltoken in learned_tokens)
+                {
+                    int smallest_length = -1;
+                    string token_to_add = string.Empty;
+                    foreach (string utoken in user_tokens)
+                    {
+                        if (SystemCore.SystemAbstraction.StringUtilities.StringUtility.WordContainsStr(ltoken, utoken))
+                        {
+                            if (smallest_length == -1)
+                            {
+                                smallest_length = utoken.Length;
+                                token_to_add = utoken;
+                            }
+                            else if (utoken.Length < smallest_length)
+                            {
+                                smallest_length = utoken.Length;
+                                token_to_add = utoken;
+                            }
+                        }
+                    }
+                    if (smallest_length > -1)
+                        ret.Add(token_to_add);
+                }
+                return ret;
+            }
+        }
+        #endregion
     }
 }

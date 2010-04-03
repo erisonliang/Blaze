@@ -224,71 +224,45 @@ namespace Blaze.Interpreter
 
             if (_systemBrowser.IsOwner(user_text))
             {
-                List<string> user_tokens = new List<string>();
-                user_tokens.Add(user_text.ToLower());
+                //List<string> user_tokens = new List<string>();
+                //user_tokens.Add(user_text.ToLower());
 
-                Dictionary<string, double> distances = new Dictionary<string, double>();
-                Dictionary<string, string[]> displacements = new Dictionary<string, string[]>();
-                List<string> suited_names = new List<string>();
-                List<string> min_names = new List<string>();
+                //Dictionary<string, double> distances = new Dictionary<string, double>();
+                //Dictionary<string, string[]> displacements = new Dictionary<string, string[]>();
+                //List<string> suited_names = new List<string>();
+                //List<string> min_names = new List<string>();
 
-                List<string> paths = _systemBrowser.RetrieveItems(text);
-                paths.Sort();
+                List<string> paths = _systemBrowser.RetrieveItems(user_text);
+                //paths.Sort();
 
-                // take care of learned contents
-                //LearnedContent lc = new LearnedContent(SettingsManager.Instance.GetLearnedContents());
-                //List<string> lc_temp = new List<string>(lc.Keywords);
-                //lc_temp.Reverse();
-                //foreach (string keyword in lc_temp)
+                //Dictionary<string, List<string>> keywords = new Dictionary<string, List<string>>();
+                //foreach (string s in paths)
+                //    keywords.Add(s, new List<string>(new string[] { s.ToLower() }));
+
+                //TextPredictor.Instance.PredictNamesAndDistance(user_text, user_tokens, paths, keywords, ref suited_names, ref distances, ref displacements, false);
+
+                //while (suited_names.Count > 0)
                 //{
-                //    if (StringUtility.WordContainsStr(keyword, user_text))
+                //    string min_name = string.Empty;
+                //    for (int i = 0; i < suited_names.Count; i++)
                 //    {
-                //        string content = lc.Distinguishers[keyword];
-                //        // file system
-                //        if (_systemBrowser.IsOwner(content) && paths.Contains(content))
+                //        if (min_name == string.Empty)
                 //        {
-                //            InterpreterItem item = new InterpreterItem(FileNameManipulator.GetFolderName(content),
-                //                                                        content,
-                //                                                        content,
-                //                                                        _systemBrowser.GetItemIcon(content),
-                //                                                        InterpreterItem.OwnerType.FileSystem,
-                //                                                        user_text);
-                //            ret.Add(item);
-                //            paths.Remove(content);
+                //            min_name = suited_names[i];
+                //        }
+                //        else if (distances[min_name] > distances[suited_names[i]])
+                //        {
+                //            min_name = suited_names[i];
                 //        }
                 //    }
+                //    if (min_name != string.Empty)
+                //    {
+                //        min_names.Add(min_name);
+                //        suited_names.Remove(min_name);
+                //    }
                 //}
-                //lc = null;
-                //lc_temp = null;
 
-                Dictionary<string, List<string>> keywords = new Dictionary<string, List<string>>();
                 foreach (string s in paths)
-                    keywords.Add(s, new List<string>(new string[] { s.ToLower() }));
-
-                TextPredictor.Instance.PredictNamesAndDistance(user_text, user_tokens, paths, keywords, ref suited_names, ref distances, ref displacements, false);
-
-                while (suited_names.Count > 0)
-                {
-                    string min_name = string.Empty;
-                    for (int i = 0; i < suited_names.Count; i++)
-                    {
-                        if (min_name == string.Empty)
-                        {
-                            min_name = suited_names[i];
-                        }
-                        else if (distances[min_name] > distances[suited_names[i]])
-                        {
-                            min_name = suited_names[i];
-                        }
-                    }
-                    if (min_name != string.Empty)
-                    {
-                        min_names.Add(min_name);
-                        suited_names.Remove(min_name);
-                    }
-                }
-
-                foreach (string s in min_names)
                 {
                     ret.Add(new InterpreterItem(FileNameManipulator.GetFolderName(s),
                                                 s,
@@ -299,18 +273,18 @@ namespace Blaze.Interpreter
                 }
 
                 // clean up
-                user_tokens = null;
-                distances = null;
-                suited_names = null;
-                min_names = null;
+                //user_tokens = null;
+                //distances = null;
+                //suited_names = null;
+                //min_names = null;
                 paths = null;
-                keywords = null;
+                //keywords = null;
 
                 filesystem_assisted = true;
             }
             if (!filesystem_assisted)
             {
-                List<string> user_tokens = new List<string>(StringUtility.GenerateKeywords(user_text));
+                List<string> user_tokens = new List<string>(StringUtility.GenerateKeywords(user_text, true, true));
                 int user_tokens_size = user_tokens.Count;
 
                 Index index = _fileIndexer.RetrieveItems();
@@ -326,172 +300,10 @@ namespace Blaze.Interpreter
                     index.Merge(_commandCache.Index);
                     _fileIndexer.IsCacheMerged = true;
                 }
-                //if (index.Names.Count == 0)
-                //    return ret;
-                //List<string> names = new List<string>(index.Names);
-                //Dictionary<string, List<string>> paths = new Dictionary<string, List<string>>(index.Paths);
-                //Dictionary<string, List<string>> keywords = new Dictionary<string, List<string>>(index.Keywords);
-
-                //// add blaze commands to index
-                //List<string> menu_options = new List<string>();
-                //Dictionary<string, List<string>> menu_keywords = new Dictionary<string, List<string>>();
-                //foreach (string option in _menuEngine.Names)
-                //{
-                //    menu_options.Add(option + " " + CommonInfo.GUID);
-                //    menu_keywords.Add(option + " " + CommonInfo.GUID, _menuEngine.Keywords[option]);
-                //}
-                //foreach (string option in menu_options)
-                //{
-                //    names.Add(option);
-                //    paths.Add(option, new List<string>());
-                //    keywords.Add(option, menu_keywords[option]);
-                //}
-
-                // add plugin commands to index
-                //names.AddRange(_commandCache.Index.Names);
-                //foreach (KeyValuePair<string, List<string>> pair in _commandCache.Index.Paths)
-                //    paths.Add(pair.Key, pair.Value);
-                //foreach (KeyValuePair<string, List<string>> pair in _commandCache.Index.Keywords)
-                //    keywords.Add(pair.Key, pair.Value);
-
-                // take care of learned contents
-                //LearnedContent lc = new LearnedContent(SettingsManager.Instance.GetLearnedContents());
-                //List<string> lc_temp = new List<string>(lc.Keywords);
-                //lc_temp.Reverse();
-                //InterpreterPlugin ap;
-                //foreach (string keyword in lc_temp)
-                //{
-                //    //if (StringUtility.WordContainsStr(keyword, user_text))
-                //    //{
-                //        string content = lc.Contents[keyword];
-                //        // menu
-                //        if (_menuEngine.IsOwner(UnprotectCommand(content)))
-                //        {
-                //            //if (StringUtility.WordContainsStr(keyword, user_text))
-                //            //{
-                //            //    string ucontent = UnprotectCommand(content);
-                //            //    InterpreterItem item = new InterpreterItem(_menuEngine.GetItemName(ucontent, text, null),
-                //            //                                                _menuEngine.GetItemDescription(ucontent, text, null),
-                //            //                                                OwnerType.Menu,
-                //            //                                                _menuEngine.GetItemAutoComplete(ucontent, text, null),
-                //            //                                                _menuEngine.GetItemIcon(ucontent, text, null));
-                //            //    item.Type = ItemType.Learned;
-                //            //    ret.Add(item);
-                //            //    names.Remove(content);
-                //            //    paths.Remove(content);
-                //            //    keywords.Remove(content);
-                //            //}
-                //            //if (!keywords[content].Contains(keyword))
-                //            //    keywords[content].Add(keyword);
-                //        }
-                //        else if ((ap = GetAssistingPlugin(UnprotectCommand(content), keyword, Command.PriorityType.Medium)) != null /*&& !assisting_plugins.Contains(ap.Name)*/)
-                //        {
-                //            string command_name = UnprotectCommand(content);
-                //            Command command = ap.GetCommandByName(command_name);
-                //            if (command != null && command.FitsPriority(Command.PriorityType.Medium) && !assisting_commands.Contains(command_name))
-                //            {
-
-                //                //InterpreterItem item = new InterpreterItem(ap.GetItemName(command_name, keyword, null),
-                //                //                                            ap.GetItemDescription(command_name, keyword, null),
-                //                //                                            OwnerType.Plugin,
-                //                //                                            ap.GetItemAutoComplete(command_name, keyword, null),
-                //                //                                            ap.GetItemIcon(command_name, keyword, null));
-                //                //item.OwnerId = ap.Name;
-                //                //item.CommandName = command_name;
-                //                //item.CommandTokens = null;
-                //                //item.Text = text;
-                //                //assisting_commands.Add(command_name);
-                //                //assisting_plugins.Add(ap.Name);
-                //                //ret.Add(item);
-                //                //item = null;
-                //                //if (!keywords[content].Contains(keyword))
-                //                //    keywords[content].Add(keyword);
-                //            }
-                //        }
-                //        else if (File.Exists(content)) // indexer
-                //        {
-                //            if (StringUtility.WordContainsStr(keyword, user_text))
-                //            {
-                //                string name = FileNameManipulator.GetFileName(content);
-                //                List<string> list;
-                //                try
-                //                {
-                //                    list = paths[name];
-                //                }
-                //                catch (Exception)
-                //                {
-                //                    //SettingsManager.Instance.RemoveLearned(keyword, content);
-                //                    continue;
-                //                }
-                //                for (int i = 0; i < list.Count; i++)
-                //                {
-                //                    InterpreterItem item = new InterpreterItem(name, list[i], OwnerType.Indexer, name, i, _fileIndexer.GetItemIcon(name, i));
-                //                    item.Type = ItemType.Learned;
-                //                    ret.Add(item);
-                //                }
-                //                names.Remove(name);
-                //                paths.Remove(name);
-                //                keywords.Remove(name);
-                //            }
-                //        }
-                //        //else
-                //        //{
-                //        //    if (StringUtility.WordContainsStr(keyword, user_text))
-                //        //    {
-                //        //        SettingsManager.Instance.RemoveLearned(keyword, content);
-                //        //    }
-                //        //}
-                //    //}
-                //}
-                //lc = null;
-                //lc_temp = null;
-                //ap = null;
-
-                //int names_size = names.Count;
-                //int paths_size = paths.Count;
-                //int keywords_size = keywords.Count;
-
-                //Dictionary<string, double> distances = new Dictionary<string, double>();
-                //Dictionary<string, string[]> tokens = new Dictionary<string, string[]>();
-                //List<string> suited_names = new List<string>();
-                //List<string> min_names = new List<string>();
-                //List<string> visited = new List<string>();
-
-                //TextPredictor.Instance.PredictNamesAndDistance(user_text, user_tokens, names, keywords, ref suited_names, ref distances, ref tokens, true);
-
-                //int limit = SettingsManager.Instance.GetNumberOfSuggestions();
-                //for (int num = 0; num < limit; num++)
-                //{
-                //    string min_name = string.Empty;
-                //    for (int i = 0; i < suited_names.Count; i++)
-                //    {
-                //        if (visited.Contains(suited_names[i]))
-                //        {
-                //            continue;
-                //        }
-                //        else if (min_name == string.Empty)
-                //        {
-                //            min_name = suited_names[i];
-                //        }
-                //        else if (distances[min_name] > distances[suited_names[i]])
-                //        {
-                //            min_name = suited_names[i];
-                //        }
-                //        else if (distances[min_name] == distances[suited_names[i]])
-                //        {
-                //            if (min_name.Length > suited_names[i].Length)
-                //                min_name = suited_names[i];
-                //        }
-                //    }
-                //    if (min_name != string.Empty)
-                //    {
-                //        min_names.Add(min_name);
-                //        visited.Add(min_name);
-                //    }
-                //}
 
                 Dictionary<IndexItem, List<string>> tokens = null;
-                IndexItem[] items = Predictor.Instance.GetBestItems(index, user_tokens, ref tokens);
+                LearnedContent learned_commands = SettingsManager.Instance.GetLearnedContents();
+                IndexItem[] items = Predictor.Instance.GetBestItems(index, user_text, user_tokens, ref tokens, learned_commands);
                 // TODO
                 foreach (IndexItem i in items)
                 {
@@ -567,35 +379,35 @@ namespace Blaze.Interpreter
                 }
             }
 
-            LearnedContent lc = SettingsManager.Instance.GetLearnedContents();
-            int pos = 0;
-            foreach (string token in lc.GetSortedKeywords(user_text))
-            {
-                int curr_pos = -1;
-                string distinguisher = lc.Distinguishers[token];
-                switch (lc.Types[token])
-                {
-                    case InterpreterItem.OwnerType.Indexer:
-                        curr_pos = ret.FindIndex(delegate(InterpreterItem a)
-                        {
-                            return a.Desciption == distinguisher;
-                        });
-                        break;
-                    default:
-                        curr_pos = ret.FindIndex(delegate(InterpreterItem a)
-                        {
-                            return a.Name == distinguisher;
-                        });
-                        break;
-                }
-                if (curr_pos != -1)
-                {
-                    InterpreterItem to_insert = ret[curr_pos];
-                    ret.RemoveAt(curr_pos);
-                    ret.Insert(0, to_insert);
-                    pos++;
-                }
-            }
+            //LearnedContent lc = SettingsManager.Instance.GetLearnedContents();
+            //int pos = 0;
+            //foreach (string token in lc.GetSortedKeywords(user_text))
+            //{
+            //    int curr_pos = -1;
+            //    string distinguisher = lc.Distinguishers[token];
+            //    switch (lc.Types[token])
+            //    {
+            //        case InterpreterItem.OwnerType.Indexer:
+            //            curr_pos = ret.FindIndex(delegate(InterpreterItem a)
+            //            {
+            //                return a.Desciption == distinguisher;
+            //            });
+            //            break;
+            //        default:
+            //            curr_pos = ret.FindIndex(delegate(InterpreterItem a)
+            //            {
+            //                return a.Name == distinguisher;
+            //            });
+            //            break;
+            //    }
+            //    if (curr_pos != -1)
+            //    {
+            //        InterpreterItem to_insert = ret[curr_pos];
+            //        ret.RemoveAt(curr_pos);
+            //        ret.Insert(0, to_insert);
+            //        pos++;
+            //    }
+            //}
 
             user_text = null;
             assisting_commands = null;
@@ -696,13 +508,13 @@ namespace Blaze.Interpreter
             if (item.Type == InterpreterItem.OwnerType.Indexer)
             {
                 //if (str != item.Desciption.ToLower())
-                SettingsManager.Instance.AddLearned(str, item.Type, item.Desciption);
+                SettingsManager.Instance.AddLearned(str, item.Type, item.Desciption, item.CommandTokens);
             }
             else if (item.Type == InterpreterItem.OwnerType.Menu)
             {
                 //SettingsManager.Instance.AddLearned(str, ProtectCommand(item.Name));
                 //SettingsManager.Instance.AddLearned(item.Text, Command.ProtectCommand(item.CommandName)); // StringUtility.ArrayToStr(item.CommandTokens), item.CommandName
-                SettingsManager.Instance.AddLearned(str, item.Type, item.Name);
+                SettingsManager.Instance.AddLearned(StringUtility.ArrayToStr(item.CommandTokens, false), item.Type, item.Name, item.CommandTokens);
             }
             else if (item.Type == InterpreterItem.OwnerType.Plugin)
             {
@@ -716,7 +528,7 @@ namespace Blaze.Interpreter
                 //    SettingsManager.Instance.AddLearned(item.Text, command.ProtectedName);
                 //else if (command.FitsPriority(Command.PriorityType.Medium))
                 //    SettingsManager.Instance.AddLearned(BuildCommandParameters(item.Text, item.CommandTokens), command.ProtectedName);
-                SettingsManager.Instance.AddLearned(str, item.Type, item.Name);
+                SettingsManager.Instance.AddLearned(StringUtility.ArrayToStr(item.CommandTokens, false), item.Type, item.Name, item.CommandTokens);
             }
             //else
             //{
