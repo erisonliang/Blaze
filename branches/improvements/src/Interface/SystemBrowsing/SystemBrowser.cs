@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using SystemCore.CommonTypes;
 using SystemCore.SystemAbstraction.FileHandling;
 using SystemCore.SystemAbstraction.ImageHandling;
+using System.Linq;
 
 namespace Blaze.SystemBrowsing
 {
@@ -31,7 +32,7 @@ namespace Blaze.SystemBrowsing
         #region Properties
         private Regex _regex;
         private Regex _web;
-        private List<string> _index;
+        private List<string> best_paths;
         #endregion
 
         #region Constructors
@@ -39,7 +40,7 @@ namespace Blaze.SystemBrowsing
         {
             _regex = new Regex(@"^.:");
             _web = new Regex(@"^(((h|H)(t|T)(t|T)(p|P)(s?|S?))\://)?(www.|[a-zA-Z0-9].)[a-zA-Z0-9\-\.]+\..*$");
-            _index = new List<string>();
+            best_paths = new List<string>();
         }
         #endregion
 
@@ -58,7 +59,7 @@ namespace Blaze.SystemBrowsing
 
         public List<string> RetrieveItems(string input)
         {
-            _index = new List<string>();
+            best_paths = new List<string>();
             if (_regex.IsMatch(input))
             {
                 // Get all directories
@@ -75,72 +76,77 @@ namespace Blaze.SystemBrowsing
                     int f = dir.LastIndexOf('\\');
                     // If there is no '\' in the path or there is only one '\', which means an invalid drive letter, return empy index
                     if (f == -1 || (f == i && f == dir.Length-1))
-                        return _index;
+                        return best_paths;
                     else if (f == dir.Length -1) // If it is and invalid path, trim the string (of '\') and validade it again
                         dir = dir.Substring(0, f);
                     else
                         dir = dir.Substring(0, f + 1);
                 }
                 // Add root to index
-                _index.Add(dir);
-                string[] directories;
-                string[] files;
+                if (input.Length <= dir.Length)
+                    best_paths.Add(dir);
+
+                string[] available_directories;
+                string[] available_files;
+                HashSet<string> accepted_directories = new HashSet<string>();
+                HashSet<string> accepted_files = new HashSet<string>();
                 try
                 {
                     // Get all directories
-                    directories = Directory.GetDirectories(FileNameManipulator.GetPath(dir));
+                    available_directories = Directory.GetDirectories(FileNameManipulator.GetPath(dir));
                     // Get all files
-                    files = FileSearcher.SearchFullNames(dir, false, false, false);
+                    available_files = FileSearcher.SearchFullNames(dir, false, false, false);
                 }
                 catch /*(Exception e)*/
                 {
                     //MessageBox.Show(e.Message);
-                    return _index;
+                    return best_paths;
                 }
-                //List<string> index_directories = new List<string>();
-                //List<string> index_files = new List<string>();
+
                 // For each directory
-                for (int i = 0; i < directories.Length; i++)
+                for (int i = 0; i < available_directories.Length; i++)
                 {
-                    string directory = directories[i];
+                    string directory = available_directories[i];
                     directory += "\\";
-                    if (!_index.Contains(directory))
+                    if (!string.IsNullOrEmpty(directory) &&
+                        !accepted_directories.Contains(directory) &&
+                        SystemCore.SystemAbstraction.StringUtilities.StringUtility.WordContainsStr(directory, input))
                     {
                         // Add directory path
-                        _index.Add(directory);
+                        accepted_directories.Add(directory);
                     }
                 }
                 // For each file
-                for (int i = 0; i < files.Length; i++)
+                for (int i = 0; i < available_files.Length; i++)
                 {
-                    string file = files[i];
-                    if (!_index.Contains(file))
+                    string file = available_files[i];
+                    if (!string.IsNullOrEmpty(file) &&
+                        !accepted_files.Contains(file) &&
+                        SystemCore.SystemAbstraction.StringUtilities.StringUtility.WordContainsStr(file, input))
                     {
                         // Add file path
-                        _index.Add(file);
+                        accepted_files.Add(file);
                     }
                 }
-                // Sort directories and files
-                //index_directories.Sort();
-                //index_files.Sort();
-                // Add them to the index
-                //_index.AddRange(index_directories);
-                //_index.AddRange(index_files);
-                // Clean possible empty entries
-                _index.RemoveAll(delegate(string s)
-                {
-                    return s == string.Empty;
-                });
+                List<string> acc_dir_lst = accepted_directories.ToList();
+                List<string> acc_fil_lst = accepted_files.ToList();
+
+                acc_dir_lst.Sort();
+                acc_fil_lst.Sort();
+
+                best_paths.AddRange(acc_dir_lst.Union(acc_fil_lst));
                 
-                directories = null;
-                files = null;
+                available_directories = null;
+                available_files = null;
+                acc_dir_lst = null;
+                acc_fil_lst = null;
             }
-            return _index;
+            return best_paths;
         }
 
         public Bitmap GetItemIcon(string item)
         {
-            if (_index.Contains(item))
+            if (best_paths.Contains(item))
                 return (Bitmap)IconManager.Instance.GetIcon(item);
             else
                 return null;

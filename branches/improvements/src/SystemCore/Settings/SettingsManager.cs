@@ -259,6 +259,8 @@ namespace SystemCore.Settings
                     try
                     {
                         _learned_contents = (LearnedContent)binaryRead.Deserialize(streamRead);
+                        if (_learned_contents.KeywordToItem == null || _learned_contents.LearnedItems == null)
+                            _learned_contents = new LearnedContent();
                     }
                     catch
                     {
@@ -275,26 +277,6 @@ namespace SystemCore.Settings
                 {
                     _learned_contents = new LearnedContent();
                 }
-            //    LearnedContent learned_content = new LearnedContent();
-            //    List<string> categories = INIManipulator.GetCategories(_path);
-            //    if (categories.Count > 0)
-            //    {
-            //        string category = "learned";
-            //        if (categories.Contains(category))
-            //        {
-            //            List<string> keys = INIManipulator.GetKeys(_path, category);
-            //            int key_len = keys.Count;
-            //            for (int i = 0; i < key_len; i++)
-            //            {
-            //                string name = keys[i];
-            //                string val = INIManipulator.GetValue(_path, category, name, string.Empty);
-            //                learned_content.AddKeyword(name, val);
-            //            }
-            //            keys = null;
-            //        }
-            //    }
-            //    categories = null;
-            //    _learned_contents = learned_content;
             }
             return _learned_contents;
 
@@ -318,11 +300,11 @@ namespace SystemCore.Settings
             binaryWrite = null;
         }
 
-        public void AddLearned(string cmd, InterpreterItem.OwnerType type, string content)
+        public void AddLearned(string cmd, InterpreterItem.OwnerType type, string content, string[] tokens)
         {
             if (_learned_contents == null)
                 _learned_contents = new LearnedContent();
-            _learned_contents.AddKeyword(cmd, type, content);
+            _learned_contents.AddKeyword(cmd, type, content, tokens);
             SaveLearned(_learned_contents);
         }
 

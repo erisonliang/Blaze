@@ -183,6 +183,11 @@ namespace SystemCore.SystemAbstraction.StringUtilities
 
         public static string ArrayToStr(string[] arr)
         {
+            return ArrayToStr(arr, true);
+        }
+
+        public static string ArrayToStr(string[] arr, bool comma)
+        {
             string ret = string.Empty;
             if (arr != null)
             {
@@ -192,7 +197,7 @@ namespace SystemCore.SystemAbstraction.StringUtilities
                     if (i == len - 1)
                         ret += arr[i];
                     else
-                        ret += arr[i] + ", ";
+                        ret += arr[i] + (comma ? ", " : string.Empty);
                 }
             }
             return ret;
@@ -200,10 +205,10 @@ namespace SystemCore.SystemAbstraction.StringUtilities
 
         public static string[] GenerateKeywords(string str)
         {
-            return GenerateKeywords(str, true);
+            return GenerateKeywords(str, true, true);
         }
 
-        public static string[] GenerateKeywords(string str, bool lower)
+        public static string[] GenerateKeywords(string str, bool lower, bool rem_ind_artcl)
         {
             List<string> tokens;
             if (lower)
@@ -223,7 +228,7 @@ namespace SystemCore.SystemAbstraction.StringUtilities
             {
                 if (s == string.Empty)
                     return true;
-                else if (s.Length == 1 && can_remove_possible_indefinite_article && Char.IsLetter(s[0]))
+                else if (s.Length == 1 && rem_ind_artcl && can_remove_possible_indefinite_article && Char.IsLetter(s[0]))
                     return true;
                 //else if (s.Length == 2 && can_remove_possible_preposition)
                 //    return true;

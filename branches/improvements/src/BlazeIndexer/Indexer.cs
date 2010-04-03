@@ -137,21 +137,21 @@ namespace BlazeIndexer
                     if (icon == null)
                         continue;
 
-                    List<string> list_keywords = new List<string>(StringUtility.GenerateKeywords(name, true));
+                    List<string> list_keywords = new List<string>(StringUtility.GenerateKeywords(name, true, true));
                     foreach (string key in list_keywords)
                     {
-                        _index.AddEntry(key, name, list_keywords.Count, path, icon);
+                        _index.AddEntry(key, name, list_keywords.Count, path, icon, false);
                     }
                     list_keywords.Clear();
                     foreach (IndexerPlugin plugin in assistingPlugins)
                     {
                         string[] tmp_keywords = plugin.GetFileKeywords(path);
                         foreach (string key in tmp_keywords)
-                            list_keywords.AddRange(StringUtility.GenerateKeywords(key, true));
+                            list_keywords.AddRange(StringUtility.GenerateKeywords(key, true, true));
                     }
                     foreach (string key in list_keywords)
                     {
-                        _index.AddEntry(key, name, list_keywords.Count, path, icon);
+                        _index.AddEntry(key, name, list_keywords.Count, path, icon, false);
                     }
                 }
             }

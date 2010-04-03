@@ -100,10 +100,7 @@ namespace Blaze
             }
             catch (ArgumentException)
             {
-                //icon.Dispose();
-                //icon = null;
-                //RecoverIcon(icon_rectangle, e);
-                while(!RecoverIcon(icon_rectangle, e));
+                for (int i = 0; i < 8 && RecoverIcon(icon_rectangle, e) == false; i++) ;
             }
             e.Graphics.DrawString(_items[e.Index].Name, font_name, brush_name, name_rectangle, sfname);
             e.Graphics.DrawString(_items[e.Index].Desciption, font_description, brush_description, description_rectangle, sfdescription);
