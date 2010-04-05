@@ -15,6 +15,12 @@ Shift. If this happens, press each stuck key once and it will be fixed.
 
 VERSION HISTORY:
 
+(05/04/2010) - Blaze 0.5.6.10 beta
+
+* User preferred commands learning was fixed.
+* File system browsing performance was improved.
+* Some minor bug fixes.
+
 (23/03/2010) - Blaze 0.5.6.3 beta
 
 * Blaze is again able to learn user preferred commands.
