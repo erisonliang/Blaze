@@ -25,6 +25,7 @@ using System.Xml.Serialization;
 using SystemCore.CommonTypes;
 using SystemCore.SystemAbstraction.StringUtilities;
 using Configurator;
+using System.Threading;
 
 namespace WebSearch
 {
@@ -34,14 +35,18 @@ namespace WebSearch
         #region Properties
         private Regex _regex;
         private Regex _wwwRegex;
-        private List<string> _search_engine_names;
-        private List<SearchEngine> _search_engines;
-        private int _favorite_engine;
+        //private List<string> _search_engine_names;
+        //private List<SearchEngine> _search_engines;
+        //private int _favorite_engine;
         private Icon _browser_icon;
         private Icon _search_icon;
         private Icon _add_icon;
         private Command _add_command;
         private Command _process_url_command;
+        private IconWebCache _icon_cache;
+        //private int _cache_ttl;
+        private string _settings_file_path;
+        WebSearchConfig _config;
         #endregion
 
         #region Accessors
@@ -51,51 +56,34 @@ namespace WebSearch
             set { _regex = value; }
         }
 
-        public List<string> SearchEngineNames
-        {
-            get { return _search_engine_names; }
-            set { _search_engine_names = value; }
-        }
+        //public List<string> SearchEngineNames
+        //{
+        //    get { return _search_engine_names; }
+        //    set { _search_engine_names = value; }
+        //}
 
         public List<SearchEngine> SearchEngines
         {
-            get { return _search_engines; }
-            set { _search_engines = value; }
+            get { return _config.SearchEngines; }
+            set { _config.SearchEngines = value; }
         }
 
         public int FavoriteEngine
         {
-            get { return _favorite_engine; }
-            set { _favorite_engine = value; }
+            get { return _config.FavoriteEngine; }
+            set { _config.FavoriteEngine = value; }
         }
 
-        //public override string Name
-        //{
-        //    get
-        //    {
-        //        // Get all Title attributes on this assembly
-        //        object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-        //        // If there is at least one Title attribute
-        //        if (attributes.Length > 0)
-        //        {
-        //            // Select the first one
-        //            AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
-        //            // If it is not an empty string, return it
-        //            if (titleAttribute.Title != "")
-        //                return titleAttribute.Title;
-        //        }
-        //        // If there was no Title attribute, or if the Title attribute was the empty string, return the .exe name
-        //        return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
-        //    }
-        //}
+        public int CacheTTL
+        {
+            get { return _icon_cache.GetTTLhours(); }
+            set { _config.CacheTTL = value; _icon_cache.SetTTLhours(value); }
+        }
 
-        //public override string Version
-        //{
-        //    get
-        //    {
-        //        return Assembly.GetExecutingAssembly().GetName().Version.ToString();
-        //    }
-        //}
+        public IconWebCache IconCache
+        {
+            get { return _icon_cache; }
+        }
         #endregion
 
         #region Constructors
@@ -112,6 +100,7 @@ namespace WebSearch
             _browser_icon = Properties.Resources.browser;
             _search_icon = Properties.Resources.search;
             _add_icon = Properties.Resources.add;
+            _icon_cache = new IconWebCache(_config.CacheTTL);
         }
         #endregion
 
@@ -130,49 +119,37 @@ namespace WebSearch
        
         public void LoadSettings()
         {
-            LoadDefaultEngines();
-            string file = CommonInfo.UserFolder + Name + ".xml";
-            if (File.Exists(file))
+            _settings_file_path = CommonInfo.UserFolder + Name + @"\" + Name + ".xml";
+            _config = new WebSearchConfig();
+            _config.Reset();
+            if (File.Exists(_settings_file_path))
             {
-                List<SearchEngine> search_engines = new List<SearchEngine>();
-                List<string> search_engine_names = new List<string>();
-                int favorite = 0;
                 XmlSerializer serializer = null;
                 TextReader reader = null;
                 try
                 {
-                    serializer = new XmlSerializer(typeof(List<SearchEngine>));
-                    reader = new StreamReader(file, Encoding.Default);
-                    search_engines = (List<SearchEngine>)serializer.Deserialize(reader);
+                    serializer = new XmlSerializer(typeof(WebSearchConfig));
+                    reader = new StreamReader(_settings_file_path, Encoding.Default);
+                    _config = (WebSearchConfig)serializer.Deserialize(reader);
+                    _icon_cache.SetTTLhours(_config.CacheTTL);
                 }
                 catch
                 {
-                    reader.Dispose();
                     return;
                 }
-                if (search_engines != null)
+                finally
                 {
-                    for (int i = 0; i < search_engines.Count; i++)
-                    {
-                        search_engine_names.Add(search_engines[i].Name);
-                        if (search_engines[i].IsFavorite)
-                            favorite = i;
-                    }
-
-                    _search_engine_names = search_engine_names;
-                    _search_engines = search_engines;
-                    _favorite_engine = favorite;
+                    reader.Dispose();
                 }
-                reader.Dispose();
             }
         }
 
-        public void SaveSettings(/*List<string> names, List<SearchEngine> engines, int fav*/)
+        public void SaveSettings()
         {
-                        _search_engines[_favorite_engine].IsFavorite = true;
-            XmlSerializer serializer = new XmlSerializer(typeof(List<SearchEngine>));
-            TextWriter writer = new StreamWriter(CommonInfo.UserFolder + Name + ".xml", false, Encoding.Default);
-            serializer.Serialize(writer, _search_engines);
+            // save search engines
+            XmlSerializer serializer = new XmlSerializer(typeof(WebSearchConfig));
+            TextWriter writer = new StreamWriter(_settings_file_path, false, Encoding.Default);
+            serializer.Serialize(writer, _config);
             writer.Close();
         }
         #endregion
@@ -238,7 +215,7 @@ namespace WebSearch
 
         private SearchEngine AssistingSearchEngine(string item)
         {
-            foreach (SearchEngine engine in _search_engines)
+            foreach (SearchEngine engine in SearchEngines)
                 if (item == engine.Name)
                     return engine;
             return null;
@@ -254,41 +231,103 @@ namespace WebSearch
             return false;
         }
 
-        private void LoadDefaultEngines()
-        {
-            _search_engines = new List<SearchEngine>();
-            _search_engine_names = new List<string>();
-            //// add search engines
-            // Google
-            _search_engine_names.Add("Google");
-            _search_engines.Add(new SearchEngine("Google", @"http://www.google.com/ncr", @"http://www.google.com/search?hl=en&q=%s&btnG=Google+Search&aq=f&oq="));
-            _favorite_engine = 0;
-            // Youtube
-            _search_engine_names.Add("YouTube");
-            _search_engines.Add(new SearchEngine("YouTube", @"http://www.youtube.com/", @"http://www.youtube.com/results?search_query=%s"));
-            // Wikipedia
-            _search_engine_names.Add("Wikipedia");
-            _search_engines.Add(new SearchEngine("Wikipedia", @"http://www.wikipedia.org/", @"http://en.wikipedia.org/wiki/Special:Search?search=%s&go=Go"));
-            //old: http://en.wikipedia.org/wiki/Special:Search?search=%s&fulltext=Search
-            // IMDB
-            _search_engine_names.Add("IMDB");
-            _search_engines.Add(new SearchEngine("IMDB", @"http://www.imdb.com/", @"http://www.imdb.com/find?s=all&q=%s"));
-            // Yahoo
-            _search_engine_names.Add("Yahoo");
-            _search_engines.Add(new SearchEngine("Yahoo", @"http://search.yahoo.com/", @"http://search.yahoo.com/search?p=%s"));
-            // Weather
-            _search_engine_names.Add("Weather");
-            _search_engines.Add(new SearchEngine("Weather", @"http://www.weather.com/", @"http://www.weather.com/weather/today/%s"));
-            // Maps
-            _search_engine_names.Add("Maps");
-            _search_engines.Add(new SearchEngine("Maps", @"http://maps.google.com/", @"http://maps.google.com/maps?f=q&hl=en&geocode=&q=%s&ie=UTF8&z=12&iwloc=addr&om=1"));
-            // Bing
-            _search_engine_names.Add("Bing");
-            _search_engines.Add(new SearchEngine("Bing", @"http://www.bing.com/", @"http://www.bing.com/search?q=%s"));
-            //Dictionary
-            _search_engine_names.Add("Dictionary");
-            _search_engines.Add(new SearchEngine("Dictionary", @"http://www.dictionary.com/", @"http://www.dictionary.com/browse/%s"));
-        }
+        //private void LoadDefaultEngines()
+        //{
+        //    _search_engines = new List<SearchEngine>();
+        //    _search_engine_names = new List<string>();
+        //    //// add search engines
+        //    // Google
+        //    _search_engine_names.Add("Google");
+        //    _search_engines.Add(new SearchEngine("Google",
+        //                                        @"http://www.google.com/ncr",
+        //                                        @"http://www.google.com/search?hl=en&q=%s&btnG=Google+Search&aq=f&oq=",
+        //                                        @"http://www.iconarchive.com/icons/fasticon/web-2/32/Google-icon.png"));
+        //    _favorite_engine = 0;
+        //    // Youtube
+        //    _search_engine_names.Add("YouTube");
+        //    _search_engines.Add(new SearchEngine("YouTube",
+        //                                        @"http://www.youtube.com/",
+        //                                        @"http://www.youtube.com/results?search_query=%s",
+        //                                        @"http://www.iconarchive.com/icons/fasticon/web-2/32/Youtube-icon.png"));
+        //    // Wikipedia
+        //    _search_engine_names.Add("Wikipedia");
+        //    _search_engines.Add(new SearchEngine("Wikipedia",
+        //                                        @"http://www.wikipedia.org/",
+        //                                        @"http://en.wikipedia.org/wiki/Special:Search?search=%s&go=Go",
+        //                                        @"http://www.iconarchive.com/icons/sykonist/popular-sites/32/Wikipedia-globe-icon.png"));
+        //    // IMDB
+        //    _search_engine_names.Add("IMDB");
+        //    _search_engines.Add(new SearchEngine("IMDB",
+        //                                        @"http://www.imdb.com/",
+        //                                        @"http://www.imdb.com/find?s=all&q=%s",
+        //                                        @"http://www.iconarchive.com/icons/iconshock/cinema/32/film-reel-icon.png"));
+        //    // Yahoo
+        //    _search_engine_names.Add("Yahoo");
+        //    _search_engines.Add(new SearchEngine("Yahoo",
+        //                                        @"http://search.yahoo.com/",
+        //                                        @"http://search.yahoo.com/search?p=%s",
+        //                                        @"http://www.iconarchive.com/icons/deleket/puck/32/Yahoo-Messenger-Alternate-icon.png"));
+        //    // Weather
+        //    _search_engine_names.Add("Weather");
+        //    _search_engines.Add(new SearchEngine("Weather",
+        //                                        @"http://www.weather.com/",
+        //                                        @"http://www.weather.com/weather/today/%s",
+        //                                        @"http://www.iconarchive.com/icons/icons-land/weather/32/Snow-Occasional-icon.png"));
+        //    // Maps
+        //    _search_engine_names.Add("Maps");
+        //    _search_engines.Add(new SearchEngine("Maps",
+        //                                        @"http://maps.google.com/",
+        //                                        @"http://maps.google.com/maps?f=q&hl=en&geocode=&q=%s&ie=UTF8&z=12&iwloc=addr&om=1",
+        //                                        @"http://www.iconarchive.com/icons/walrick/openphone/32/Maps-icon.png"));
+        //    // Bing
+        //    _search_engine_names.Add("Bing");
+        //    _search_engines.Add(new SearchEngine("Bing",
+        //                                        @"http://www.bing.com/",
+        //                                        @"http://www.bing.com/search?q=%s",
+        //                                        @"http://www.bing.com/"));
+        //    // Dictionary
+        //    _search_engine_names.Add("Dictionary");
+        //    _search_engines.Add(new SearchEngine("Dictionary",
+        //                                        @"http://www.dictionary.com/",
+        //                                        @"http://www.dictionary.com/browse/%s",
+        //                                        @"http://www.iconarchive.com/icons/dimension-of-deskmod/micro/32/Dictionary-icon.png"));
+        //    // Thesaurus
+        //    _search_engine_names.Add("Thesaurus");
+        //    _search_engines.Add(new SearchEngine("Thesaurus",
+        //                                        @"http://thesaurus.com/",
+        //                                        @"http://thesaurus.reference.com/browse/%s",
+        //                                        @"http://www.iconarchive.com/icons/dimension-of-deskmod/micro/32/Dictionary-icon.png"));
+        //    // MSDN
+        //    _search_engine_names.Add("MSDN");
+        //    _search_engines.Add(new SearchEngine("MSDN",
+        //                                        @"http://msdn.microsoft.com/",
+        //                                        @"http://search.msdn.microsoft.com/search/default.aspx?siteId=0&tab=0&query=%s",
+        //                                        @"http://msdn.microsoft.com/"));
+        //    // Amazon
+        //    _search_engine_names.Add("Amazon");
+        //    _search_engines.Add(new SearchEngine("Amazon",
+        //                                        @"http://www.amazon.com/",
+        //                                        @"http://www.amazon.com/gp/search?keywords=%s&index=blended",
+        //                                        @"http://www.amazon.com/"));
+        //    // Facebook
+        //    _search_engine_names.Add("Facebook");
+        //    _search_engines.Add(new SearchEngine("Facebook",
+        //                                        @"http://www.facebook.com/",
+        //                                        @"http://www.facebook.com/search/?ref=search&q=%s",
+        //                                        @"http://www.iconarchive.com/icons/fasticon/web-2/32/FaceBook-icon.png"));
+        //    // Twitter
+        //    _search_engine_names.Add("Twitter");
+        //    _search_engines.Add(new SearchEngine("Twitter",
+        //                                        @"http://twitter.com/",
+        //                                        @"http://twitter.com/#search?q=%s",
+        //                                        @"http://www.iconarchive.com/icons/fasticon/web-2/32/Twitter-icon.png"));
+        //    // Flickr
+        //    _search_engine_names.Add("Flickr");
+        //    _search_engines.Add(new SearchEngine("Flickr",
+        //                                        @"http://www.flickr.com/",
+        //                                        @"http://www.flickr.com/search/?q=%s",
+        //                                        @"http://www.iconarchive.com/icons/fasticon/web-2/32/Flickr-icon.png"));
+        //}
         #endregion
 
         #region Overrided Methods
@@ -297,11 +336,11 @@ namespace WebSearch
             LoadSettings();
             // create search commands
             // problema com os delegates e ciclos: http://decav.com/blogs/andre/archive/2007/11/18/wtf-quot-problems-quot-with-anonymous-delegates-linq-lambdas-and-quot-foreach-quot-or-quot-for-quot-loops.aspx
-            foreach (SearchEngine engine in _search_engines)
+            foreach (SearchEngine engine in SearchEngines)
             {
                 SearchEngine eng = new SearchEngine(engine);
                 Command cmd;
-                if (eng.Name != _search_engine_names[_favorite_engine])
+                if (eng.Name != SearchEngines[FavoriteEngine].Name)
                     cmd = new Command(eng.Name);
                 else
                     cmd = new Command(eng.Name, Command.PriorityType.Medium | Command.PriorityType.Low);
@@ -341,13 +380,8 @@ namespace WebSearch
                 }));
                 cmd.SetIconDelegate(new Command.IconDelegate(delegate(string parameters)
                 {
-                    return _search_icon.ToBitmap();
-                    //string iconURL = "http://www.google.com/s2/favicons?domain_url=" + eng.Url;
-                    //System.Net.HttpWebRequest wr = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(iconURL);
-                    //System.Net.HttpWebResponse ws = (System.Net.HttpWebResponse)wr.GetResponse();
-                    //System.IO.Stream stream = ws.GetResponseStream();
-                    //Image urlImage = System.Drawing.Image.FromStream(stream);
-                    //return Icon.FromHandle(((Bitmap)urlImage).GetHicon());
+                    //return _search_icon.ToBitmap();
+                    return _icon_cache.GetIcon(eng);
                 }));
                 cmd.SetUsageDelegate(new Command.UsageDelegate(delegate(string parameters)
                 {

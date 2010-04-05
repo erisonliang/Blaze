@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.IO;
 
 namespace WebSearch
 {
@@ -40,6 +41,7 @@ namespace WebSearch
             _dataSource = new BindingList<SearchEngine>(_engines);
             Text = _parent.Name + " settings";
             descriptionLabel.Text = _parent.Name + " searches your favorite websites for whatever you want.";
+            iconCacheTTL.Value = _parent.IconCache.GetTTLhours();
 
             //dataGridView1.RowHeadersVisible = false;
             dataGridView1.ReadOnly = false;
@@ -79,13 +81,15 @@ namespace WebSearch
         private void ConfigDialog_Load(object sender, EventArgs e)
         {
             dataGridView1.DataSource = _dataSource;
-            //dataGridView1.Columns.RemoveAt(1);
             dataGridView1.Columns[0].HeaderText = "Name";
             dataGridView1.Columns[0].Width = 75;
             dataGridView1.Columns[1].HeaderText = "URL";
             dataGridView1.Columns[1].Width = 150;
             dataGridView1.Columns[2].HeaderText = "Search Query (optional)";
             dataGridView1.Columns[2].Width = 277;
+            dataGridView1.Columns[3].HeaderText = "Icon URL (optional)";
+            dataGridView1.Columns[3].Width = 250;
+            //dataGridView1.Columns.RemoveAt(4);
             DefaultLinkLabel.Text = _engines[_favorite].Name;
             UpdateColSize();
         }
@@ -119,7 +123,7 @@ namespace WebSearch
         // add a new empty row to the table
         private void addButton_Click(object sender, EventArgs e)
         {
-            _dataSource.Add(new SearchEngine("", "", ""));
+            _dataSource.Add(new SearchEngine("", "", "", ""));
             UpdateColSize();
         }
 
@@ -165,9 +169,9 @@ namespace WebSearch
                 }
             }
 
-            _parent.SearchEngineNames = new List<string>(names);
             _parent.SearchEngines = _engines;
             _parent.FavoriteEngine = _favorite;
+            _parent.CacheTTL = (int)iconCacheTTL.Value;
             DialogResult = DialogResult.OK;
             Close();
         }
@@ -184,6 +188,16 @@ namespace WebSearch
                 dataGridView1.Columns[2].Width = 277;
             else
                 dataGridView1.Columns[2].Width = 260;
+        }
+
+        private void deleteIconCacheButton_Click(object sender, EventArgs e)
+        {
+            _parent.IconCache.Clear();
+            if (Directory.Exists(_parent.IconCache.CachePath))
+            {
+                Array.ForEach(Directory.GetFiles(_parent.IconCache.CachePath),
+                                delegate(string path) { try { File.Delete(path); } catch { } });
+            }
         }
     }
 }

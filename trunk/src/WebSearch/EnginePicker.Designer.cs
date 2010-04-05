@@ -35,10 +35,12 @@
             this.siteQueryLabel = new System.Windows.Forms.Label();
             this.siteNameTextBox = new System.Windows.Forms.TextBox();
             this.siteUrlTextBox = new System.Windows.Forms.TextBox();
-            this.siteQueyTextBox = new System.Windows.Forms.TextBox();
+            this.siteQueryTextBox = new System.Windows.Forms.TextBox();
             this.tipLabel = new System.Windows.Forms.Label();
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
+            this.siteIconTextBox = new System.Windows.Forms.TextBox();
+            this.siteIconLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // siteNameLabel
@@ -85,12 +87,12 @@
             this.siteUrlTextBox.Size = new System.Drawing.Size(255, 20);
             this.siteUrlTextBox.TabIndex = 4;
             // 
-            // siteQueyTextBox
+            // siteQueryTextBox
             // 
-            this.siteQueyTextBox.Location = new System.Drawing.Point(15, 122);
-            this.siteQueyTextBox.Name = "siteQueyTextBox";
-            this.siteQueyTextBox.Size = new System.Drawing.Size(255, 20);
-            this.siteQueyTextBox.TabIndex = 5;
+            this.siteQueryTextBox.Location = new System.Drawing.Point(15, 122);
+            this.siteQueryTextBox.Name = "siteQueryTextBox";
+            this.siteQueryTextBox.Size = new System.Drawing.Size(255, 20);
+            this.siteQueryTextBox.TabIndex = 5;
             // 
             // tipLabel
             // 
@@ -104,9 +106,10 @@
             // 
             // cancelButton
             // 
+            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelButton.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cancelButton.Location = new System.Drawing.Point(195, 179);
+            this.cancelButton.Location = new System.Drawing.Point(195, 222);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 7;
@@ -116,8 +119,9 @@
             // 
             // okButton
             // 
+            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.okButton.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.okButton.Location = new System.Drawing.Point(114, 179);
+            this.okButton.Location = new System.Drawing.Point(114, 222);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 8;
@@ -125,17 +129,36 @@
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
+            // siteIconTextBox
+            // 
+            this.siteIconTextBox.Location = new System.Drawing.Point(15, 187);
+            this.siteIconTextBox.Name = "siteIconTextBox";
+            this.siteIconTextBox.Size = new System.Drawing.Size(255, 20);
+            this.siteIconTextBox.TabIndex = 10;
+            // 
+            // siteIconLabel
+            // 
+            this.siteIconLabel.AutoSize = true;
+            this.siteIconLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.siteIconLabel.Location = new System.Drawing.Point(15, 168);
+            this.siteIconLabel.Name = "siteIconLabel";
+            this.siteIconLabel.Size = new System.Drawing.Size(134, 16);
+            this.siteIconLabel.TabIndex = 9;
+            this.siteIconLabel.Text = "Icon Url (optional):";
+            // 
             // EnginePicker
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(282, 214);
+            this.ClientSize = new System.Drawing.Size(282, 257);
+            this.Controls.Add(this.siteIconTextBox);
+            this.Controls.Add(this.siteIconLabel);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.tipLabel);
-            this.Controls.Add(this.siteQueyTextBox);
+            this.Controls.Add(this.siteQueryTextBox);
             this.Controls.Add(this.siteUrlTextBox);
             this.Controls.Add(this.siteNameTextBox);
             this.Controls.Add(this.siteQueryLabel);
@@ -164,9 +187,11 @@
         private System.Windows.Forms.Label siteQueryLabel;
         private System.Windows.Forms.TextBox siteNameTextBox;
         private System.Windows.Forms.TextBox siteUrlTextBox;
-        private System.Windows.Forms.TextBox siteQueyTextBox;
+        private System.Windows.Forms.TextBox siteQueryTextBox;
         private System.Windows.Forms.Label tipLabel;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button okButton;
+        private System.Windows.Forms.TextBox siteIconTextBox;
+        private System.Windows.Forms.Label siteIconLabel;
     }
 }
