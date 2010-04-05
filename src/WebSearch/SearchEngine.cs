@@ -24,7 +24,7 @@ namespace WebSearch
         private string _name;
         private string _url;
         private string _search_query;
-        private bool _favorite;
+        private string _icon_source;
         private static string _search_term_token = "%s";
         #endregion
 
@@ -33,10 +33,10 @@ namespace WebSearch
         public string Name { get { return _name; } set { _name = value; } }
         [XmlAttribute("url")]
         public string Url { get { return _url; } set { _url = value; } }
-        [XmlAttribute("search query")]
+        [XmlAttribute("search_query")]
         public string SearchQuery { get { return _search_query; } set { _search_query = value; } }
-        [XmlAttribute("favorite")]
-        public bool IsFavorite { get { return _favorite; } set { _favorite = value; } }
+        [XmlAttribute("icon_source")]
+        public string IconSource { get { return _icon_source; } set { _icon_source = value; } }
         public static string SearchTermToken { get { return _search_term_token; } }
         #endregion
 
@@ -44,25 +44,25 @@ namespace WebSearch
         public SearchEngine()
         {
             _name = string.Empty;
-            _favorite = false;
             _url = string.Empty;
             _search_query = string.Empty;
+            _icon_source = string.Empty;
         }
 
         public SearchEngine(SearchEngine engine)
         {
             _name = engine.Name;
-            _favorite = false;
             _url = engine.Url;
             _search_query = engine.SearchQuery;
+            _icon_source = engine.IconSource;
         }
 
-        public SearchEngine(string name, string url, string search_query)
+        public SearchEngine(string name, string url, string search_query, string icon_source)
         {
             _name = name;
-            _favorite = false;
             _url = url;
             _search_query = search_query;
+            _icon_source = icon_source;
         }
         #endregion
 
