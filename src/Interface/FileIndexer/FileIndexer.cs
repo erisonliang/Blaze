@@ -96,9 +96,9 @@ namespace Blaze.Indexer
             proc.WaitForExit();
             proc.Dispose();
             info = null;
-            _is_cache_merged = false;
             //LoadIndex();
             UpdateIndex();
+            _is_cache_merged = false;
 
             // release mutex
             _mutex.ReleaseMutex();

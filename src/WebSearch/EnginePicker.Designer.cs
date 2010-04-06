@@ -142,9 +142,9 @@
             this.siteIconLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.siteIconLabel.Location = new System.Drawing.Point(15, 168);
             this.siteIconLabel.Name = "siteIconLabel";
-            this.siteIconLabel.Size = new System.Drawing.Size(134, 16);
+            this.siteIconLabel.Size = new System.Drawing.Size(232, 16);
             this.siteIconLabel.TabIndex = 9;
-            this.siteIconLabel.Text = "Icon Url (optional):";
+            this.siteIconLabel.Text = "Icon Url (optional, .jpg and .png):";
             // 
             // EnginePicker
             // 

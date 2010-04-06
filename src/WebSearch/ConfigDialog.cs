@@ -87,7 +87,7 @@ namespace WebSearch
             dataGridView1.Columns[1].Width = 150;
             dataGridView1.Columns[2].HeaderText = "Search Query (optional)";
             dataGridView1.Columns[2].Width = 277;
-            dataGridView1.Columns[3].HeaderText = "Icon URL (optional)";
+            dataGridView1.Columns[3].HeaderText = "Icon URL (optional, .jpg and .png)";
             dataGridView1.Columns[3].Width = 250;
             //dataGridView1.Columns.RemoveAt(4);
             DefaultLinkLabel.Text = _engines[_favorite].Name;

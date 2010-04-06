@@ -43,10 +43,10 @@
             this.tipLabel = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.iconCacheGroupBox = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.deleteIconCacheButton = new System.Windows.Forms.Button();
             this.iconCacheTTL = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
             this.iconCacheGroupBox.SuspendLayout();
@@ -184,13 +184,22 @@
             this.iconCacheGroupBox.TabStop = false;
             this.iconCacheGroupBox.Text = "Icon Cache";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(227, 25);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(90, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "(0 for no cleanup)";
+            // 
             // deleteIconCacheButton
             // 
             this.deleteIconCacheButton.Location = new System.Drawing.Point(325, 20);
             this.deleteIconCacheButton.Name = "deleteIconCacheButton";
             this.deleteIconCacheButton.Size = new System.Drawing.Size(170, 23);
             this.deleteIconCacheButton.TabIndex = 2;
-            this.deleteIconCacheButton.Text = "Delete Icon Cache Now!";
+            this.deleteIconCacheButton.Text = "Clean Icon Cache Now!";
             this.deleteIconCacheButton.UseVisualStyleBackColor = true;
             this.deleteIconCacheButton.Click += new System.EventHandler(this.deleteIconCacheButton_Click);
             // 
@@ -220,15 +229,6 @@
             this.label1.Size = new System.Drawing.Size(170, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Cache Periodic Cleanup (in hours):";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(227, 25);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(90, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "(0 for no cleanup)";
             // 
             // ConfigDialog
             // 
