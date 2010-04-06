@@ -197,7 +197,7 @@ namespace SystemCore.SystemAbstraction.StringUtilities
                     if (i == len - 1)
                         ret += arr[i];
                     else
-                        ret += arr[i] + (comma ? ", " : string.Empty);
+                        ret += arr[i] + (comma ? ", " : " ");
                 }
             }
             return ret;
