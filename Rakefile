@@ -8,7 +8,7 @@ msbuild = tasks_from_module(Microsoft::Build::Tasks)
 
 task :default => :build
 
-task :build_portable_package do
+task :build_portable do
   build_directory = 'src/Interface/bin/Debug/'
   output_directory = "build"
   mkdir_p output_directory
@@ -21,7 +21,6 @@ task :build_portable_package do
 
   cp_r(Dir.glob(File.join(build_directory,"Plugins/*.dll")), plugins_directory)
   cp_r(File.join(build_directory, "Plugins/IronPythonPlugins"), File.join(output_directory, "Plugins"))
-  cp_r(File.join(build_directory, "Scripts"), output_directory)
   cp_r(File.join(build_directory, "Skins"), output_directory)
   cp_r(File.join(build_directory, "Utilities"), output_directory)
 
