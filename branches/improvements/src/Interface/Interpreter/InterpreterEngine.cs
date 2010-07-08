@@ -496,7 +496,6 @@ namespace Blaze.Interpreter
             else if (!on && _auto_update_timer.Enabled)
                 _auto_update_timer.Stop();
         }
-
         #endregion
 
         #region Private Methods

@@ -41,11 +41,23 @@ namespace Blaze
             }
             if (test)
             {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainApplication());
-                mutex.ReleaseMutex();
-                mutex.Close();
+                //try
+                //{
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.Run(new MainApplication());
+                    mutex.ReleaseMutex();
+                    mutex.Close();
+                //}
+                //catch (Exception e)
+                //{
+                //    SystemCore.SystemAbstraction.FileHandling.Logger logger = new SystemCore.SystemAbstraction.FileHandling.Logger("Blaze_error_dump.log");
+                //    logger.WriteLine(e.ToString());
+                //    System.Windows.Forms.MessageBox.Show(
+                //        "Blaze has crashed: " + Environment.NewLine + Environment.NewLine + e.ToString(), "Error",
+                //        System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                //    logger = null;
+                //}
             }
             else
             {

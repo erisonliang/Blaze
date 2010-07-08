@@ -286,12 +286,6 @@ namespace SystemCore.Settings
         {
             _learned_contents = null;
             _learned_contents = learned;
-            //string category = "learned";
-            //INIManipulator.DeleteCategory(_config_file, category);
-            //foreach (string keyword in learned.Keywords)
-            //{
-            //    INIManipulator.WriteValue(_config_file, category, keyword, learned.Distinguishers[keyword]); //ArrayToStr(learned.Contents[keyword].ToArray())
-            //}
             Stream streamWrite = File.Create(_cmd_cache);
             BinaryFormatter binaryWrite = new BinaryFormatter();
             binaryWrite.Serialize(streamWrite, _learned_contents);

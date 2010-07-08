@@ -127,26 +127,22 @@ namespace SystemCore.CommonTypes
                         (cmd.Type == InterpreterItem.OwnerType.Menu ||
                          cmd.Type == InterpreterItem.OwnerType.Plugin))
                     {
-                        if (item.Name == cmd.Distinguisher)
+                        if (item.Name == cmd.Distinguisher && !tokens.ContainsKey(item))
                         {
                             ret.Add(new IndexItemSearchResult(item, 0, true));
                             tokens.Add(item, new List<string>(cmd.Tokens));
-                            break;
                         }
                     }
                     else if (!item.IsCommand &&
                                 (cmd.Type == InterpreterItem.OwnerType.Indexer))
                     {
-                        if (item.Path == cmd.Distinguisher)
+                        if (item.Path == cmd.Distinguisher && !tokens.ContainsKey(item))
                         {
                             ret.Add(new IndexItemSearchResult(item, 0, true));
                             tokens.Add(item, new List<string>(cmd.Tokens));
-                            break;
                         }
                     }
                 }
-                if (ret.Count > 0)
-                    break;
             }
             return ret.ToArray();
         }

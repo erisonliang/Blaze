@@ -50,6 +50,7 @@ namespace WebSearch
             {
                 siteNameTextBox.Text = UserContext.Instance.GetBrowserPageName();
                 siteUrlTextBox.Text = UserContext.Instance.GetBrowserUrl();
+                siteIconTextBox.Text = siteUrlTextBox.Text;
             }
             data.Dispose();
         }
@@ -64,7 +65,7 @@ namespace WebSearch
                 //_tooltip.RemoveAll();
                 return;
             }
-            else if (_parent.SearchEngineNames.Contains(siteNameTextBox.Text))
+            else if (_parent.SearchEngines.Find(delegate(SearchEngine se) { return se.Name == siteNameTextBox.Text; }) != null)
             {
                 siteNameTextBox.Focus();
                 _tooltip.SetToolTip(siteNameTextBox, "Error");
@@ -88,27 +89,38 @@ namespace WebSearch
                 //_tooltip.RemoveAll();
                 return;
             }
-            else if (siteQueyTextBox.Text != string.Empty)
+            else if (siteQueryTextBox.Text != string.Empty)
             {
-                if (!_parent.UrlRegex.IsMatch(siteQueyTextBox.Text))
+                if (!_parent.UrlRegex.IsMatch(siteQueryTextBox.Text))
                 {
-                    siteQueyTextBox.Focus();
-                    _tooltip.SetToolTip(siteQueyTextBox, "Error");
-                    _tooltip.Show("This is not a valid search query.", siteQueyTextBox, 3000);
+                    siteQueryTextBox.Focus();
+                    _tooltip.SetToolTip(siteQueryTextBox, "Error");
+                    _tooltip.Show("This is not a valid search query.", siteQueryTextBox, 3000);
                     //_tooltip.RemoveAll();
                     return;
                 }
-                else if (!siteQueyTextBox.Text.Contains(SearchEngine.SearchTermToken))
+                else if (!siteQueryTextBox.Text.Contains(SearchEngine.SearchTermToken))
                 {
-                    siteQueyTextBox.Focus();
-                    _tooltip.SetToolTip(siteQueyTextBox, "Error");
-                    _tooltip.Show("The search query must have a search term ('" + SearchEngine.SearchTermToken + "').", siteQueyTextBox, 3000);
+                    siteQueryTextBox.Focus();
+                    _tooltip.SetToolTip(siteQueryTextBox, "Error");
+                    _tooltip.Show("The search query must have a search term ('" + SearchEngine.SearchTermToken + "').", siteQueryTextBox, 3000);
                     //_tooltip.RemoveAll();
                     return;
                 }
             }
-            _parent.SearchEngineNames.Add(siteNameTextBox.Text);
-            SearchEngine new_engine = new SearchEngine(siteNameTextBox.Text, siteUrlTextBox.Text, siteQueyTextBox.Text);
+            else if (siteIconTextBox.Text != string.Empty)
+            {
+                if (!_parent.UrlRegex.IsMatch(siteIconTextBox.Text))
+                {
+                    siteIconTextBox.Focus();
+                    _tooltip.SetToolTip(siteIconTextBox, "Error");
+                    _tooltip.Show("This is not a valid icon url.", siteIconTextBox, 3000);
+                    //_tooltip.RemoveAll();
+                    return;
+                }
+            }
+
+            SearchEngine new_engine = new SearchEngine(siteNameTextBox.Text, siteUrlTextBox.Text, siteQueryTextBox.Text, siteIconTextBox.Text);
             _parent.SearchEngines.Add(new_engine);
 
             Command new_command = new Command(siteNameTextBox.Text);
@@ -147,7 +159,7 @@ namespace WebSearch
             }));
             new_command.SetIconDelegate(new Command.IconDelegate(delegate(string parameters)
             {
-                return Properties.Resources.search.ToBitmap();
+                return _parent.IconCache.GetIcon(new_engine);
             }));
             new_command.SetUsageDelegate(new Command.UsageDelegate(delegate(string parameters)
             {
