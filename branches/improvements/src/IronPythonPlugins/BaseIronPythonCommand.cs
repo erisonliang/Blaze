@@ -19,7 +19,7 @@ namespace IronPythonPlugins
 
         public virtual string GetDescription(string parameters)
         {
-            return parameters;
+            return string.Empty;
         }
 
         public virtual string AutoComplete(string parameters)

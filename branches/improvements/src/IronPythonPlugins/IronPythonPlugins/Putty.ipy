@@ -1,5 +1,5 @@
 from Microsoft.Win32 import Registry
-from System.Diagnostics import Debug
+from System.Diagnostics import Debug, Process
 
 class Putty(BaseIronPythonCommand):
     def __init__(self):
@@ -13,11 +13,12 @@ class Putty(BaseIronPythonCommand):
         return "putty"
 
     def AutoComplete(self, str):
+        if str.strip() == "": return "putty "
         result = filter(lambda x: x.startswith(str), self.sessionNames)
+        
         if len(result) > 0: return "putty "+result[0]
         else: return "putty "+str
 
     def Execute(self, args):
         Debug.Write("execute: "+args)
-        System.Diagnostics.Process.Start("putty.exe",
-                                         "-load "+ args)
+        Process.Start("putty.exe", "-load "+ args)
