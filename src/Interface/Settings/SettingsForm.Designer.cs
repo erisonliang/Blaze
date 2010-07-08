@@ -123,7 +123,6 @@ namespace Blaze
             this.AvailablePluginsGroupBox.SuspendLayout();
             this.AboutTab.SuspendLayout();
             this.AutomatorInfoGroupBox.SuspendLayout();
-            this.autoUpdatesGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -869,8 +868,6 @@ namespace Blaze
             this.LastIndexEditableLabel.TabIndex = 9;
             this.LastIndexEditableLabel.Text = "Liast Index";
             // 
-            this.autoUpdatesCheckBox.UseVisualStyleBackColor = true;
-            // 
             // SettingsForm
             // 
             this.AcceptButton = this.okButton;
@@ -919,8 +916,6 @@ namespace Blaze
             this.AboutTab.PerformLayout();
             this.AutomatorInfoGroupBox.ResumeLayout(false);
             this.AutomatorInfoGroupBox.PerformLayout();
-            this.autoUpdatesGroupBox.ResumeLayout(false);
-            this.autoUpdatesGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }

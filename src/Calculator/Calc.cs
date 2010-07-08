@@ -187,7 +187,7 @@ namespace Calculator
             return string.Format("{0:0.##}", expr.Eval());
         }
 
-        private string ConvertBase(string input)
+         private string ConvertBase(string input)
         {
             int index = input.LastIndexOf("to");
             if (index == -1)
@@ -253,9 +253,6 @@ namespace Calculator
                 return final;
             }
         }
-
-       
-
         #endregion
 
         #region Overrided Methods

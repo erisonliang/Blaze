@@ -114,7 +114,7 @@ namespace SystemCore.Settings
             }
             accepted_tokens.Sort(delegate(string a, string b)
             {
-                return weights[a].CompareTo(weights[b]);
+                return weights[b].CompareTo(weights[a]);
             });
             List<LearnedItem> ret = new List<LearnedItem>();
             foreach (string token in accepted_tokens)

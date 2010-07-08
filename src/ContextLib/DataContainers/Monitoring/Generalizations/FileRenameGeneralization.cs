@@ -235,8 +235,8 @@ namespace ContextLib.DataContainers.Monitoring.Generalizations
             List<Generalization> gens = new List<Generalization>();
             if (prev_gens.Length > 0 && new_gens.Length > 0 && prev_gens[0].Type == new_gens[0].Type)
             {
-                FileRenameGeneralization prev_gen;
-                FileRenameGeneralization next_gen;
+                FileRenameGeneralization prev_gen = null;
+                FileRenameGeneralization next_gen = null;
                 Function.FunctionType prev_old_func_type;
                 Function.FunctionType prev_new_func_type;
                 Function.FunctionType next_old_func_type;
@@ -254,950 +254,964 @@ namespace ContextLib.DataContainers.Monitoring.Generalizations
                 string last_old_name;
                 string last_new_name;
 
-                for (int i = 0; i < prev_gens.Length; i++) // for all old generalizations
+                try
                 {
-                    prev_gen = (FileRenameGeneralization)prev_gens[i]; // mark the actual old generalization
-                    prev_old_func_type = prev_gen.OldNameFunctions[0].Type; // mark the actual old generalization's (old name) function type
-                    prev_new_func_type = prev_gen.NewNameFunctions[0].Type; // mark the actual old generalization's (new name) function type
-                    next_expression = prev_gen.SolveExpressionNextValues(); // get the value that the new generalzation should have to meet the old generalization's requirements
-
-                    for (int j = 0; j < new_gens.Length; j++) // and all new generalizations
+                    for (int i = 0; i < prev_gens.Length; i++) // for all old generalizations
                     {
-                        next_gen = (FileRenameGeneralization)new_gens[j]; // mark the actual new generalization
-                        next_old_func_type = next_gen.OldNameFunctions[0].Type; // mark the actual new generalization's (old name) function type
-                        next_new_func_type = next_gen.NewNameFunctions[0].Type; // mark the actual new generalization's (new name) function type
-                        prev_expression = next_gen.SolveExpressionPrevValues(); // get the value that the old generalzation should have to meet the new generalization's requirements
+                        prev_gen = (FileRenameGeneralization)prev_gens[i]; // mark the actual old generalization
+                        prev_old_func_type = prev_gen.OldNameFunctions[0].Type; // mark the actual old generalization's (old name) function type
+                        prev_new_func_type = prev_gen.NewNameFunctions[0].Type; // mark the actual old generalization's (new name) function type
+                        next_expression = prev_gen.SolveExpressionNextValues(); // get the value that the new generalzation should have to meet the old generalization's requirements
 
-                        // clear constructor values
-                        old_name_expression = string.Empty;
-                        new_name_expression = string.Empty;
-                        old_name_functions = new Function[0];
-                        new_name_functions = new Function[0];
-                        last_old_name = string.Empty;
-                        last_new_name = string.Empty;
-
-                        // merge old names
-                        switch (prev_old_func_type)    
+                        for (int j = 0; j < new_gens.Length; j++) // and all new generalizations
                         {
-                            case Function.FunctionType.ConstantFileDiffFunction: // if old generalization has a constant file diff function type
-                                switch (next_old_func_type)
-                                {
-                                    case Function.FunctionType.ConstantFileDiffFunction: // if new generalization has a constant file diff function type
-                                        {
-                                            if (prev_gen.OldNameFunctions.Length == next_gen.OldNameFunctions.Length)
+                            next_gen = (FileRenameGeneralization)new_gens[j]; // mark the actual new generalization
+                            next_old_func_type = next_gen.OldNameFunctions[0].Type; // mark the actual new generalization's (old name) function type
+                            next_new_func_type = next_gen.NewNameFunctions[0].Type; // mark the actual new generalization's (new name) function type
+                            prev_expression = next_gen.SolveExpressionPrevValues(); // get the value that the old generalzation should have to meet the new generalization's requirements
+
+                            // clear constructor values
+                            old_name_expression = string.Empty;
+                            new_name_expression = string.Empty;
+                            old_name_functions = new Function[0];
+                            new_name_functions = new Function[0];
+                            last_old_name = string.Empty;
+                            last_new_name = string.Empty;
+
+                            // merge old names
+                            switch (prev_old_func_type)
+                            {
+                                case Function.FunctionType.ConstantFileDiffFunction: // if old generalization has a constant file diff function type
+                                    switch (next_old_func_type)
+                                    {
+                                        case Function.FunctionType.ConstantFileDiffFunction: // if new generalization has a constant file diff function type
                                             {
-                                                bool add_functions = true;
-                                                ConstantFileDiffFunction old_func;
-                                                ConstantFileDiffFunction new_func;
-                                                HashSet<string> common_exts = new HashSet<string>();
-                                                for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
+                                                if (prev_gen.OldNameFunctions.Length == next_gen.OldNameFunctions.Length)
                                                 {
-                                                    common_exts.Clear();
-                                                    old_func = (ConstantFileDiffFunction)prev_gen.OldNameFunctions[n];
-                                                    new_func = (ConstantFileDiffFunction)next_gen.OldNameFunctions[n];
-
-                                                    // find common extensions
-                                                    foreach (string ext1 in old_func.Extensions)
+                                                    bool add_functions = true;
+                                                    ConstantFileDiffFunction old_func;
+                                                    ConstantFileDiffFunction new_func;
+                                                    HashSet<string> common_exts = new HashSet<string>();
+                                                    for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
                                                     {
-                                                        foreach (string ext2 in new_func.Extensions)
-                                                        {
-                                                            if (ext1 == ext2)
-                                                            {
-                                                                common_exts.Add(ext1);
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
+                                                        common_exts.Clear();
+                                                        old_func = (ConstantFileDiffFunction)prev_gen.OldNameFunctions[n];
+                                                        new_func = (ConstantFileDiffFunction)next_gen.OldNameFunctions[n];
 
-                                                    HashSet<int> original_positions = new HashSet<int>();
-                                                    List<string> original_tokens = new List<string>();
-                                                    HashSet<int> replacement_positions = new HashSet<int>();
-                                                    List<string> replacement_tokens = new List<string>();
-
-                                                    // merge original tokens
-                                                    for (int l = 0; l < old_func.OriginalPositions.Length; l++)
-                                                    {
-                                                        for (int m = 0; m < new_func.OriginalPositions.Length; m++)
+                                                        // find common extensions
+                                                        foreach (string ext1 in old_func.Extensions)
                                                         {
-                                                            if (old_func.OriginalPositions[l] == new_func.OriginalPositions[m] &&
-                                                                old_func.OriginalTokens[l] == new_func.OriginalTokens[m])
+                                                            foreach (string ext2 in new_func.Extensions)
                                                             {
-                                                                if (!original_positions.Contains(new_func.OriginalPositions[m]))
+                                                                if (ext1 == ext2)
                                                                 {
-                                                                    original_positions.Add(new_func.OriginalPositions[m]);
-                                                                    original_tokens.Add(new_func.OriginalTokens[m]);
+                                                                    common_exts.Add(ext1);
+                                                                    break;
                                                                 }
                                                             }
                                                         }
-                                                    }
 
-                                                    // merge replacement tokens
-                                                    for (int l = 0; l < old_func.ReplacementPositions.Length; l++)
-                                                    {
-                                                        for (int m = 0; m < new_func.ReplacementPositions.Length; m++)
+                                                        HashSet<int> original_positions = new HashSet<int>();
+                                                        List<string> original_tokens = new List<string>();
+                                                        HashSet<int> replacement_positions = new HashSet<int>();
+                                                        List<string> replacement_tokens = new List<string>();
+
+                                                        // merge original tokens
+                                                        for (int l = 0; l < old_func.OriginalPositions.Length; l++)
                                                         {
-                                                            if (old_func.ReplacementPositions[l] == new_func.ReplacementPositions[m] &&
-                                                                old_func.ReplacementTokens[l] == new_func.ReplacementTokens[m])
+                                                            for (int m = 0; m < new_func.OriginalPositions.Length; m++)
                                                             {
-                                                                if (!replacement_positions.Contains(new_func.ReplacementPositions[m]))
+                                                                if (old_func.OriginalPositions[l] == new_func.OriginalPositions[m] &&
+                                                                    old_func.OriginalTokens[l] == new_func.OriginalTokens[m])
                                                                 {
-                                                                    replacement_positions.Add(new_func.ReplacementPositions[m]);
-                                                                    replacement_tokens.Add(new_func.ReplacementTokens[m]);
+                                                                    if (!original_positions.Contains(new_func.OriginalPositions[m]))
+                                                                    {
+                                                                        original_positions.Add(new_func.OriginalPositions[m]);
+                                                                        original_tokens.Add(new_func.OriginalTokens[m]);
+                                                                    }
                                                                 }
                                                             }
                                                         }
-                                                    }
 
-                                                    if (original_positions.Count == 0 || original_positions.Count != replacement_positions.Count)
-                                                    {
-                                                        add_functions = false;
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
-                                                        new_func.Extensions = common_exts.ToArray<string>();
-                                                        new_func.OriginalPositions = original_positions.ToArray<int>();
-                                                        new_func.OriginalTokens = original_tokens.ToArray();
-                                                        new_func.ReplacementPositions = replacement_positions.ToArray<int>();
-                                                        new_func.ReplacementTokens = replacement_tokens.ToArray();
-                                                    }
-                                                }
-                                                if (add_functions)
-                                                {
-                                                    old_name_expression = next_gen.OldNameExpression;
-                                                    old_name_functions = next_gen.OldNameFunctions;
-                                                    last_old_name = next_gen.LastOldName;
-                                                }
-                                                //else
-                                                //    return new Generalization[0];
-                                            }
-                                        }
-                                        break;
-                                }
-                                break;
-                            case Function.FunctionType.ConstantFileFunction: // if old generalization has a constant file function type
-                                switch (next_old_func_type)
-                                {
-                                    case Function.FunctionType.ConstantFileFunction: // if new generalization has a constant file function type
-                                        {
-                                            if (prev_gen.OldNameFunctions.Length == next_gen.OldNameFunctions.Length)
-                                            {
-                                                bool add_functions = true;
-                                                ConstantFileFunction old_func;
-                                                ConstantFileFunction new_func;
-                                                HashSet<string> common_exts = new HashSet<string>();
-                                                for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
-                                                {
-                                                    common_exts.Clear();
-                                                    old_func = (ConstantFileFunction)prev_gen.OldNameFunctions[n];
-                                                    new_func = (ConstantFileFunction)next_gen.OldNameFunctions[n];
-
-                                                    // find common extensions
-                                                    foreach (string ext1 in old_func.Extensions)
-                                                    {
-                                                        foreach (string ext2 in new_func.Extensions)
+                                                        // merge replacement tokens
+                                                        for (int l = 0; l < old_func.ReplacementPositions.Length; l++)
                                                         {
-                                                            if (ext1 == ext2)
+                                                            for (int m = 0; m < new_func.ReplacementPositions.Length; m++)
                                                             {
-                                                                common_exts.Add(ext1);
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-
-                                                    // find common file name beginning and ending
-                                                    if ((new_func.Biginning != old_func.Biginning && new_func.Ending != old_func.Ending) ||
-                                                        ((new_func.Biginning == old_func.Biginning ? new_func.Biginning == string.Empty : false) ||
-                                                        (new_func.Ending == old_func.Ending ? new_func.Ending == string.Empty : false)))
-                                                    {
-                                                        add_functions = false;
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
-                                                        new_func.Extensions = common_exts.ToArray<string>();
-                                                        if (new_func.Biginning != old_func.Biginning)
-                                                            new_func.Biginning = string.Empty;
-                                                        else if (new_func.Ending != old_func.Ending)
-                                                            new_func.Ending = string.Empty;
-                                                    }
-                                                }
-                                                if (add_functions)
-                                                {
-                                                    old_name_expression = next_gen.OldNameExpression;
-                                                    old_name_functions = next_gen.OldNameFunctions;
-                                                    last_old_name = next_gen.LastOldName;
-                                                }
-                                                //else
-                                                //    return new Generalization[0];
-                                            }
-                                        }
-                                        break;
-                                }
-                                break;
-                            case Function.FunctionType.ConstantFileFunctionEx: // if old generalization has a constant file function ex type
-                                switch (next_old_func_type)
-                                {
-                                    case Function.FunctionType.ConstantFileFunctionEx: // if new generalization has a constant file function ex type
-                                        {
-                                            if (prev_gen.OldNameFunctions.Length == next_gen.OldNameFunctions.Length)
-                                            {
-                                                bool add_functions = true;
-                                                ConstantFileFunctionEx old_func;
-                                                ConstantFileFunctionEx new_func;
-                                                HashSet<string> common_exts = new HashSet<string>();
-                                                HashSet<string> common_tokens = new HashSet<string>();
-
-                                                for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
-                                                {
-                                                    common_exts.Clear();
-                                                    common_tokens.Clear();
-                                                    old_func = (ConstantFileFunctionEx)prev_gen.OldNameFunctions[n];
-                                                    new_func = (ConstantFileFunctionEx)next_gen.OldNameFunctions[n];
-
-                                                    // find common extensions
-                                                    foreach (string ext1 in old_func.Extensions)
-                                                    {
-                                                        foreach (string ext2 in new_func.Extensions)
-                                                        {
-                                                            if (ext1 == ext2)
-                                                            {
-                                                                common_exts.Add(ext1);
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-
-                                                    // find common file name tokens
-                                                    foreach (string token1 in old_func.Contents)
-                                                    {
-                                                        foreach (string token2 in new_func.Contents)
-                                                        {
-                                                            if (token1 == token2)
-                                                            {
-                                                                common_tokens.Add(token1);
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-
-                                                    if (common_tokens.Count == 0)
-                                                    {
-                                                        add_functions = false;
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
-                                                        new_func.Extensions = common_exts.ToArray<string>();
-                                                        new_func.Contents = common_tokens.ToArray<string>();
-                                                    }
-                                                }
-                                                if (add_functions)
-                                                {
-                                                    old_name_expression = next_gen.OldNameExpression;
-                                                    old_name_functions = next_gen.OldNameFunctions;
-                                                    last_old_name = next_gen.LastOldName;
-                                                }
-                                                //else
-                                                //    return new Generalization[0];
-                                            }
-                                        }
-                                        break;
-                                }
-                                break;
-                            case Function.FunctionType.ConstantFileExtFunction: // if old generalization has a constant file extension function type
-                                switch (next_old_func_type)
-                                {
-                                    case Function.FunctionType.ConstantFileExtFunction: // if new generalization has a constant file extension function type
-                                        {
-                                            if (prev_gen.OldNameFunctions.Length == next_gen.OldNameFunctions.Length)
-                                            {
-                                                bool add_functions = true;
-                                                ConstantFileExtFunction old_func;
-                                                ConstantFileExtFunction new_func;
-                                                HashSet<string> common_exts = new HashSet<string>();
-
-                                                for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
-                                                {
-                                                    common_exts.Clear();
-                                                    old_func = (ConstantFileExtFunction)prev_gen.OldNameFunctions[n];
-                                                    new_func = (ConstantFileExtFunction)next_gen.OldNameFunctions[n];
-
-                                                    // find common extensions
-                                                    foreach (string ext1 in old_func.Extensions)
-                                                    {
-                                                        foreach (string ext2 in new_func.Extensions)
-                                                        {
-                                                            if (ext1 == ext2)
-                                                            {
-                                                                common_exts.Add(ext1);
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-
-                                                    if (common_exts.Count == 0 && old_func.Extensions.Length > 0 && old_func.Extensions.Length > 0)
-                                                    {
-                                                        add_functions = false;
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
-                                                        new_func.Extensions = common_exts.ToArray<string>();
-                                                    }
-                                                }
-                                                if (add_functions)
-                                                {
-                                                    old_name_expression = next_gen.OldNameExpression;
-                                                    old_name_functions = next_gen.OldNameFunctions;
-                                                    last_old_name = next_gen.LastOldName;
-                                                }
-                                                //else
-                                                //    return new Generalization[0];
-                                            }
-                                        }
-                                        break;
-                                }
-                                break;
-                            case Function.FunctionType.SequentialIntFunction: // if old generalization has a sequential integer function type
-                                switch (next_old_func_type)
-                                {
-                                    case Function.FunctionType.SequentialIntFunction: // if new generalization has a sequential integer function type
-                                        {
-                                            if (prev_gen.OldNameFunctions.Length == next_gen.OldNameFunctions.Length)
-                                            {
-                                                bool add_functions = true;
-                                                SequentialIntFunction old_func;
-                                                SequentialIntFunction new_func;
-                                                for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
-                                                {
-                                                    old_func = (SequentialIntFunction)prev_gen.OldNameFunctions[n];
-                                                    new_func = (SequentialIntFunction)next_gen.OldNameFunctions[n];
-                                                    if (new_func.LastValue != old_func.NextVal() ||
-                                                        new_func.Increment != old_func.Increment)
-                                                    {
-                                                        add_functions = false;
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
-                                                        new_func.Skip = old_func.Skip;
-                                                    }
-                                                }
-                                                if (add_functions)
-                                                {
-                                                    old_name_expression = next_gen.OldNameExpression;
-                                                    old_name_functions = next_gen.OldNameFunctions;
-                                                    last_old_name = next_gen.LastOldName;
-                                                }
-                                                //else
-                                                //    return new Generalization[0];
-                                            }
-                                        }
-                                        break;
-                                    case Function.FunctionType.ConstantTextFunction: // if new generalization has a constant text function type
-                                        {
-                                            if (next_gen.LastOldName == next_expression)
-                                            {
-                                                SequentialIntFunction prev_func;
-                                                for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
-                                                {
-                                                    prev_func = (SequentialIntFunction)prev_gen.OldNameFunctions[n];
-                                                    prev_func.NumberOfOccurrences++;
-                                                }
-                                                old_name_expression = prev_gen.OldNameExpression;
-                                                old_name_functions = prev_gen.OldNameFunctions;
-                                                last_old_name = prev_gen.LastOldName;
-                                            }
-                                        }
-                                        break;
-                                }
-                                break;
-                            case Function.FunctionType.SequentialCharFunction: // if old generalization has a sequential char function type
-                                switch (next_old_func_type)
-                                {
-                                    case Function.FunctionType.SequentialCharFunction: // if new generalization has a sequential char function type
-                                        {
-                                            if (prev_gen.OldNameFunctions.Length == next_gen.OldNameFunctions.Length)
-                                            {
-                                                bool add_functions = true;
-                                                SequentialCharFunction old_func;
-                                                SequentialCharFunction new_func;
-                                                for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
-                                                {
-                                                    old_func = (SequentialCharFunction)prev_gen.OldNameFunctions[n];
-                                                    new_func = (SequentialCharFunction)next_gen.OldNameFunctions[n];
-                                                    if (new_func.LastValue != old_func.NextVal() ||
-                                                        new_func.Increment != old_func.Increment)
-                                                    {
-                                                        add_functions = false;
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
-                                                        new_func.Skip = old_func.Skip;
-                                                    }
-                                                }
-                                                if (add_functions)
-                                                {
-                                                    old_name_expression = next_gen.OldNameExpression;
-                                                    old_name_functions = next_gen.OldNameFunctions;
-                                                    last_old_name = next_gen.LastOldName;
-                                                }
-                                                //else
-                                                //    return new Generalization[0];
-                                            }
-                                        }
-                                        break;
-                                    case Function.FunctionType.ConstantTextFunction: // if new generalization has a constant text function type
-                                        {
-                                            if (next_gen.LastOldName == next_expression)
-                                            {
-                                                SequentialCharFunction prev_func;
-                                                for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
-                                                {
-                                                    prev_func = (SequentialCharFunction)prev_gen.OldNameFunctions[n];
-                                                    prev_func.NumberOfOccurrences++;
-                                                }
-                                                old_name_expression = prev_gen.OldNameExpression;
-                                                old_name_functions = prev_gen.OldNameFunctions;
-                                                last_old_name = prev_gen.LastOldName;
-                                            }
-                                        }
-                                        break;
-                                }
-                                break;
-                            case Function.FunctionType.ConstantTextFunction: // if old generalization has a constant text function type
-                                switch (next_old_func_type)
-                                {
-                                    case Function.FunctionType.SequentialIntFunction: // if new generalization has a sequential integer function type
-                                        {
-                                            if (prev_gen.LastOldName == prev_expression)
-                                            {
-                                                ConstantTextFunction prev_func = (ConstantTextFunction)prev_gen.OldNameFunctions[0];
-                                                SequentialIntFunction new_func;
-                                                for (int n = 0; n < next_gen.OldNameFunctions.Length; n++)
-                                                {
-                                                    new_func = (SequentialIntFunction)next_gen.OldNameFunctions[n];
-                                                    new_func.NumberOfOccurrences = prev_func.NumberOfOccurrences + 1;
-                                                    new_func.Skip = prev_func.NumberOfOccurrences - 1;
-                                                }
-                                                old_name_expression = next_gen.OldNameExpression;
-                                                old_name_functions = next_gen.OldNameFunctions;
-                                                last_old_name = next_gen.LastOldName;
-                                            }
-                                        }
-                                        break;
-                                    case Function.FunctionType.SequentialCharFunction: // if new generalization has a sequential char function type
-                                        {
-                                            if (prev_gen.LastOldName == prev_expression)
-                                            {
-                                                ConstantTextFunction prev_func = (ConstantTextFunction)prev_gen.OldNameFunctions[0];
-                                                SequentialCharFunction new_func;
-                                                for (int n = 0; n < next_gen.OldNameFunctions.Length; n++)
-                                                {
-                                                    new_func = (SequentialCharFunction)next_gen.OldNameFunctions[n];
-                                                    new_func.NumberOfOccurrences = prev_func.NumberOfOccurrences + 1;
-                                                    new_func.Skip = prev_func.NumberOfOccurrences - 1;
-                                                }
-                                                old_name_expression = next_gen.OldNameExpression;
-                                                old_name_functions = next_gen.OldNameFunctions;
-                                                last_old_name = next_gen.LastOldName;
-                                            }
-                                        }
-                                        break;
-                                    case Function.FunctionType.ConstantTextFunction: // if new generalization has a constant text function type
-                                        {
-                                            if (prev_gen.LastOldName == prev_expression)
-                                            {
-                                                ConstantTextFunction prev_func = (ConstantTextFunction)prev_gen.OldNameFunctions[0];
-                                                ConstantTextFunction new_func;
-                                                for (int n = 0; n < next_gen.OldNameFunctions.Length; n++)
-                                                {
-                                                    new_func = (ConstantTextFunction)next_gen.OldNameFunctions[n];
-                                                    new_func.NumberOfOccurrences += prev_func.NumberOfOccurrences;
-                                                }
-                                                old_name_expression = next_gen.OldNameExpression;
-                                                old_name_functions = next_gen.OldNameFunctions;
-                                                last_old_name = next_gen.LastOldName;
-                                            }
-                                        }
-                                        break;
-                                }
-                                break;
-                        }
-
-                        // merge new names
-                        switch (prev_new_func_type)
-                        {
-                            case Function.FunctionType.ConstantFileDiffFunction: // if old generalization has a constant file diff function type
-                                switch (next_new_func_type)
-                                {
-                                    case Function.FunctionType.ConstantFileDiffFunction: // if new generalization has a constant file diff function type
-                                        {
-                                            if (prev_gen.NewNameFunctions.Length == next_gen.NewNameFunctions.Length)
-                                            {
-                                                bool add_functions = true;
-                                                ConstantFileDiffFunction old_func;
-                                                ConstantFileDiffFunction new_func;
-                                                HashSet<string> common_exts = new HashSet<string>();
-                                                for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
-                                                {
-                                                    common_exts.Clear();
-                                                    old_func = (ConstantFileDiffFunction)prev_gen.NewNameFunctions[n];
-                                                    new_func = (ConstantFileDiffFunction)next_gen.NewNameFunctions[n];
-
-                                                    // find common extensions
-                                                    foreach (string ext1 in old_func.Extensions)
-                                                    {
-                                                        foreach (string ext2 in new_func.Extensions)
-                                                        {
-                                                            if (ext1 == ext2)
-                                                            {
-                                                                common_exts.Add(ext1);
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-
-                                                    HashSet<int> original_positions = new HashSet<int>();
-                                                    List<string> original_tokens = new List<string>();
-                                                    HashSet<int> replacement_positions = new HashSet<int>();
-                                                    List<string> replacement_tokens = new List<string>();
-
-                                                    // merge original tokens
-                                                    for (int l = 0; l < old_func.OriginalPositions.Length; l++)
-                                                    {
-                                                        for (int m = 0; m < new_func.OriginalPositions.Length; m++)
-                                                        {
-                                                            if (old_func.OriginalPositions[l] == new_func.OriginalPositions[m] &&
-                                                                old_func.OriginalTokens[l] == new_func.OriginalTokens[m])
-                                                            {
-                                                                if (!original_positions.Contains(new_func.OriginalPositions[m]))
+                                                                if (old_func.ReplacementPositions[l] == new_func.ReplacementPositions[m] &&
+                                                                    old_func.ReplacementTokens[l] == new_func.ReplacementTokens[m])
                                                                 {
-                                                                    original_positions.Add(new_func.OriginalPositions[m]);
-                                                                    original_tokens.Add(new_func.OriginalTokens[m]);
+                                                                    if (!replacement_positions.Contains(new_func.ReplacementPositions[m]))
+                                                                    {
+                                                                        replacement_positions.Add(new_func.ReplacementPositions[m]);
+                                                                        replacement_tokens.Add(new_func.ReplacementTokens[m]);
+                                                                    }
                                                                 }
                                                             }
                                                         }
-                                                    }
 
-                                                    // merge replacement tokens
-                                                    for (int l = 0; l < old_func.ReplacementPositions.Length; l++)
-                                                    {
-                                                        for (int m = 0; m < new_func.ReplacementPositions.Length; m++)
+                                                        if (original_positions.Count == 0 || original_positions.Count != replacement_positions.Count)
                                                         {
-                                                            if (old_func.ReplacementPositions[l] == new_func.ReplacementPositions[m] &&
-                                                                old_func.ReplacementTokens[l] == new_func.ReplacementTokens[m])
+                                                            add_functions = false;
+                                                            break;
+                                                        }
+                                                        else
+                                                        {
+                                                            new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
+                                                            new_func.Extensions = common_exts.ToArray<string>();
+                                                            new_func.OriginalPositions = original_positions.ToArray<int>();
+                                                            new_func.OriginalTokens = original_tokens.ToArray();
+                                                            new_func.ReplacementPositions = replacement_positions.ToArray<int>();
+                                                            new_func.ReplacementTokens = replacement_tokens.ToArray();
+                                                        }
+                                                    }
+                                                    if (add_functions)
+                                                    {
+                                                        old_name_expression = next_gen.OldNameExpression;
+                                                        old_name_functions = next_gen.OldNameFunctions;
+                                                        last_old_name = next_gen.LastOldName;
+                                                    }
+                                                    //else
+                                                    //    return new Generalization[0];
+                                                }
+                                            }
+                                            break;
+                                    }
+                                    break;
+                                case Function.FunctionType.ConstantFileFunction: // if old generalization has a constant file function type
+                                    switch (next_old_func_type)
+                                    {
+                                        case Function.FunctionType.ConstantFileFunction: // if new generalization has a constant file function type
+                                            {
+                                                if (prev_gen.OldNameFunctions.Length == next_gen.OldNameFunctions.Length)
+                                                {
+                                                    bool add_functions = true;
+                                                    ConstantFileFunction old_func;
+                                                    ConstantFileFunction new_func;
+                                                    HashSet<string> common_exts = new HashSet<string>();
+                                                    for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
+                                                    {
+                                                        common_exts.Clear();
+                                                        old_func = (ConstantFileFunction)prev_gen.OldNameFunctions[n];
+                                                        new_func = (ConstantFileFunction)next_gen.OldNameFunctions[n];
+
+                                                        // find common extensions
+                                                        foreach (string ext1 in old_func.Extensions)
+                                                        {
+                                                            foreach (string ext2 in new_func.Extensions)
                                                             {
-                                                                if (!replacement_positions.Contains(new_func.ReplacementPositions[m]))
+                                                                if (ext1 == ext2)
                                                                 {
-                                                                    replacement_positions.Add(new_func.ReplacementPositions[m]);
-                                                                    replacement_tokens.Add(new_func.ReplacementTokens[m]);
+                                                                    common_exts.Add(ext1);
+                                                                    break;
                                                                 }
                                                             }
                                                         }
-                                                    }
 
-                                                    if (original_positions.Count == 0 || original_positions.Count != replacement_positions.Count)
-                                                    {
-                                                        add_functions = false;
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
-                                                        new_func.Extensions = common_exts.ToArray<string>();
-                                                        new_func.OriginalPositions = original_positions.ToArray<int>();
-                                                        new_func.OriginalTokens = original_tokens.ToArray();
-                                                        new_func.ReplacementPositions = replacement_positions.ToArray<int>();
-                                                        new_func.ReplacementTokens = replacement_tokens.ToArray();
-                                                    }
-                                                }
-                                                if (add_functions)
-                                                {
-                                                    new_name_expression = next_gen.NewNameExpression;
-                                                    new_name_functions = next_gen.NewNameFunctions;
-                                                    last_new_name = next_gen.LastNewName;
-                                                }
-                                                //else
-                                                //    return new Generalization[0];
-                                            }
-                                        }
-                                        break;
-                                }
-                                break;
-                            case Function.FunctionType.ConstantFileFunction: // if old generalization has a constant file function type
-                                switch (next_new_func_type)
-                                {
-                                    case Function.FunctionType.ConstantFileFunction: // if new generalization has a constant file function type
-                                        {
-                                            if (prev_gen.NewNameFunctions.Length == next_gen.NewNameFunctions.Length)
-                                            {
-                                                bool add_functions = true;
-                                                ConstantFileFunction old_func;
-                                                ConstantFileFunction new_func;
-                                                HashSet<string> common_exts = new HashSet<string>();
-                                                for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
-                                                {
-                                                    common_exts.Clear();
-                                                    old_func = (ConstantFileFunction)prev_gen.NewNameFunctions[n];
-                                                    new_func = (ConstantFileFunction)next_gen.NewNameFunctions[n];
-
-                                                    // find common extensions
-                                                    foreach (string ext1 in old_func.Extensions)
-                                                    {
-                                                        foreach (string ext2 in new_func.Extensions)
+                                                        // find common file name beginning and ending
+                                                        if ((new_func.Biginning != old_func.Biginning && new_func.Ending != old_func.Ending) ||
+                                                            ((new_func.Biginning == old_func.Biginning ? new_func.Biginning == string.Empty : false) ||
+                                                            (new_func.Ending == old_func.Ending ? new_func.Ending == string.Empty : false)))
                                                         {
-                                                            if (ext1 == ext2)
-                                                            {
-                                                                common_exts.Add(ext1);
-                                                                break;
-                                                            }
+                                                            add_functions = false;
+                                                            break;
+                                                        }
+                                                        else
+                                                        {
+                                                            new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
+                                                            new_func.Extensions = common_exts.ToArray<string>();
+                                                            if (new_func.Biginning != old_func.Biginning)
+                                                                new_func.Biginning = string.Empty;
+                                                            else if (new_func.Ending != old_func.Ending)
+                                                                new_func.Ending = string.Empty;
                                                         }
                                                     }
-
-                                                    // find common file name beginning and ending
-                                                    if (new_func.Biginning != old_func.Biginning && new_func.Ending != old_func.Ending)
+                                                    if (add_functions)
                                                     {
-                                                        add_functions = false;
-                                                        break;
+                                                        old_name_expression = next_gen.OldNameExpression;
+                                                        old_name_functions = next_gen.OldNameFunctions;
+                                                        last_old_name = next_gen.LastOldName;
                                                     }
-                                                    else
-                                                    {
-                                                        new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
-                                                        new_func.Extensions = common_exts.ToArray<string>();
-                                                        if (new_func.Biginning != old_func.Biginning)
-                                                            new_func.Biginning = string.Empty;
-                                                        else if (new_func.Ending != old_func.Ending)
-                                                            new_func.Ending = string.Empty;
-                                                    }
+                                                    //else
+                                                    //    return new Generalization[0];
                                                 }
-                                                if (add_functions)
-                                                {
-                                                    new_name_expression = next_gen.NewNameExpression;
-                                                    new_name_functions = next_gen.NewNameFunctions;
-                                                    last_new_name = next_gen.LastNewName;
-                                                }
-                                                //else
-                                                //    return new Generalization[0];
                                             }
-                                        }
-                                        break;
-                                }
-                                break;
-                            case Function.FunctionType.ConstantFileFunctionEx: // if old generalization has a constant file function ex type
-                                switch (next_new_func_type)
-                                {
-                                    case Function.FunctionType.ConstantFileFunctionEx: // if new generalization has a constant file function ex type
-                                        {
-                                            if (prev_gen.NewNameFunctions.Length == next_gen.NewNameFunctions.Length)
+                                            break;
+                                    }
+                                    break;
+                                case Function.FunctionType.ConstantFileFunctionEx: // if old generalization has a constant file function ex type
+                                    switch (next_old_func_type)
+                                    {
+                                        case Function.FunctionType.ConstantFileFunctionEx: // if new generalization has a constant file function ex type
                                             {
-                                                bool add_functions = true;
-                                                ConstantFileFunctionEx old_func;
-                                                ConstantFileFunctionEx new_func;
-                                                HashSet<string> common_exts = new HashSet<string>();
-                                                HashSet<string> common_tokens = new HashSet<string>();
-
-                                                for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
+                                                if (prev_gen.OldNameFunctions.Length == next_gen.OldNameFunctions.Length)
                                                 {
-                                                    common_exts.Clear();
-                                                    common_tokens.Clear();
-                                                    old_func = (ConstantFileFunctionEx)prev_gen.NewNameFunctions[n];
-                                                    new_func = (ConstantFileFunctionEx)next_gen.NewNameFunctions[n];
+                                                    bool add_functions = true;
+                                                    ConstantFileFunctionEx old_func;
+                                                    ConstantFileFunctionEx new_func;
+                                                    HashSet<string> common_exts = new HashSet<string>();
+                                                    HashSet<string> common_tokens = new HashSet<string>();
 
-                                                    // find common extensions
-                                                    foreach (string ext1 in old_func.Extensions)
+                                                    for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
                                                     {
-                                                        foreach (string ext2 in new_func.Extensions)
+                                                        common_exts.Clear();
+                                                        common_tokens.Clear();
+                                                        old_func = (ConstantFileFunctionEx)prev_gen.OldNameFunctions[n];
+                                                        new_func = (ConstantFileFunctionEx)next_gen.OldNameFunctions[n];
+
+                                                        // find common extensions
+                                                        foreach (string ext1 in old_func.Extensions)
                                                         {
-                                                            if (ext1 == ext2)
+                                                            foreach (string ext2 in new_func.Extensions)
                                                             {
-                                                                common_exts.Add(ext1);
-                                                                break;
+                                                                if (ext1 == ext2)
+                                                                {
+                                                                    common_exts.Add(ext1);
+                                                                    break;
+                                                                }
                                                             }
                                                         }
-                                                    }
 
-                                                    // find common file name tokens
-                                                    foreach (string token1 in old_func.Contents)
-                                                    {
-                                                        foreach (string token2 in new_func.Contents)
+                                                        // find common file name tokens
+                                                        foreach (string token1 in old_func.Contents)
                                                         {
-                                                            if (token1 == token2)
+                                                            foreach (string token2 in new_func.Contents)
                                                             {
-                                                                common_tokens.Add(token1);
-                                                                break;
+                                                                if (token1 == token2)
+                                                                {
+                                                                    common_tokens.Add(token1);
+                                                                    break;
+                                                                }
                                                             }
                                                         }
-                                                    }
 
-                                                    if (common_tokens.Count == 0)
-                                                    {
-                                                        add_functions = false;
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
-                                                        new_func.Extensions = common_exts.ToArray<string>();
-                                                        new_func.Contents = common_tokens.ToArray<string>();
-                                                    }
-                                                }
-                                                if (add_functions)
-                                                {
-                                                    new_name_expression = next_gen.NewNameExpression;
-                                                    new_name_functions = next_gen.NewNameFunctions;
-                                                    last_new_name = next_gen.LastNewName;
-                                                }
-                                                //else
-                                                //    return new Generalization[0];
-                                            }
-                                        }
-                                        break;
-                                }
-                                break;
-                            case Function.FunctionType.ConstantFileExtFunction: // if old generalization has a constant file extension function type
-                                switch (next_new_func_type)
-                                {
-                                    case Function.FunctionType.ConstantFileExtFunction: // if new generalization has a constant file extension function type
-                                        {
-                                            if (prev_gen.NewNameFunctions.Length == next_gen.NewNameFunctions.Length)
-                                            {
-                                                bool add_functions = true;
-                                                ConstantFileExtFunction old_func;
-                                                ConstantFileExtFunction new_func;
-                                                HashSet<string> common_exts = new HashSet<string>();
-
-                                                for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
-                                                {
-                                                    common_exts.Clear();
-                                                    old_func = (ConstantFileExtFunction)prev_gen.NewNameFunctions[n];
-                                                    new_func = (ConstantFileExtFunction)next_gen.NewNameFunctions[n];
-
-                                                    // find common extensions
-                                                    foreach (string ext1 in old_func.Extensions)
-                                                    {
-                                                        foreach (string ext2 in new_func.Extensions)
+                                                        if (common_tokens.Count == 0)
                                                         {
-                                                            if (ext1 == ext2)
-                                                            {
-                                                                common_exts.Add(ext1);
-                                                                break;
-                                                            }
+                                                            add_functions = false;
+                                                            break;
+                                                        }
+                                                        else
+                                                        {
+                                                            new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
+                                                            new_func.Extensions = common_exts.ToArray<string>();
+                                                            new_func.Contents = common_tokens.ToArray<string>();
                                                         }
                                                     }
+                                                    if (add_functions)
+                                                    {
+                                                        old_name_expression = next_gen.OldNameExpression;
+                                                        old_name_functions = next_gen.OldNameFunctions;
+                                                        last_old_name = next_gen.LastOldName;
+                                                    }
+                                                    //else
+                                                    //    return new Generalization[0];
+                                                }
+                                            }
+                                            break;
+                                    }
+                                    break;
+                                case Function.FunctionType.ConstantFileExtFunction: // if old generalization has a constant file extension function type
+                                    switch (next_old_func_type)
+                                    {
+                                        case Function.FunctionType.ConstantFileExtFunction: // if new generalization has a constant file extension function type
+                                            {
+                                                if (prev_gen.OldNameFunctions.Length == next_gen.OldNameFunctions.Length)
+                                                {
+                                                    bool add_functions = true;
+                                                    ConstantFileExtFunction old_func;
+                                                    ConstantFileExtFunction new_func;
+                                                    HashSet<string> common_exts = new HashSet<string>();
 
-                                                    if (common_exts.Count == 0)
+                                                    for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
                                                     {
-                                                        add_functions = false;
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
-                                                        new_func.Extensions = common_exts.ToArray<string>();
-                                                    }
-                                                }
-                                                if (add_functions)
-                                                {
-                                                    new_name_expression = next_gen.NewNameExpression;
-                                                    new_name_functions = next_gen.NewNameFunctions;
-                                                    last_new_name = next_gen.LastNewName;
-                                                }
-                                                //else
-                                                //    return new Generalization[0];
-                                            }
-                                        }
-                                        break;
-                                }
-                                break;
-                            case Function.FunctionType.SequentialIntFunction: // if old generalization has a sequential integer function type
-                                switch (next_new_func_type)
-                                {
-                                    case Function.FunctionType.SequentialIntFunction: // if new generalization has a sequential integer function type
-                                        {
-                                            if (prev_gen.NewNameFunctions.Length == next_gen.NewNameFunctions.Length)
-                                            {
-                                                bool add_functions = true;
-                                                SequentialIntFunction old_func;
-                                                SequentialIntFunction new_func;
-                                                for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
-                                                {
-                                                    old_func = (SequentialIntFunction)prev_gen.NewNameFunctions[n];
-                                                    new_func = (SequentialIntFunction)next_gen.NewNameFunctions[n];
-                                                    if (new_func.LastValue != old_func.NextVal() ||
-                                                        new_func.Increment != old_func.Increment)
-                                                    {
-                                                        add_functions = false;
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
-                                                        new_func.Skip = old_func.Skip;
-                                                    }
-                                                }
-                                                if (add_functions)
-                                                {
-                                                    new_name_expression = next_gen.NewNameExpression;
-                                                    new_name_functions = next_gen.NewNameFunctions;
-                                                    last_new_name = next_gen.LastNewName;
-                                                }
-                                                //else
-                                                //    return new Generalization[0];
-                                            }
-                                        }
-                                        break;
-                                    case Function.FunctionType.ConstantTextFunction: // if new generalization has a constant text function type
-                                        {
-                                            if (next_gen.LastNewName == next_expression)
-                                            {
-                                                SequentialIntFunction prev_func;
-                                                for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
-                                                {
-                                                    prev_func = (SequentialIntFunction)prev_gen.NewNameFunctions[n];
-                                                    prev_func.NumberOfOccurrences++;
-                                                }
-                                                new_name_expression = prev_gen.NewNameExpression;
-                                                new_name_functions = prev_gen.NewNameFunctions;
-                                                last_new_name = prev_gen.LastNewName;
-                                            }
-                                        }
-                                        break;
-                                }
-                                break;
-                            case Function.FunctionType.SequentialCharFunction: // if old generalization has a sequential char function type
-                                switch (next_new_func_type)
-                                {
-                                    case Function.FunctionType.SequentialCharFunction: // if new generalization has a sequential char function type
-                                        {
-                                            if (prev_gen.NewNameFunctions.Length == next_gen.NewNameFunctions.Length)
-                                            {
-                                                bool add_functions = true;
-                                                SequentialCharFunction old_func;
-                                                SequentialCharFunction new_func;
-                                                for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
-                                                {
-                                                    old_func = (SequentialCharFunction)prev_gen.NewNameFunctions[n];
-                                                    new_func = (SequentialCharFunction)next_gen.NewNameFunctions[n];
-                                                    if (new_func.LastValue != old_func.NextVal() ||
-                                                        new_func.Increment != old_func.Increment)
-                                                    {
-                                                        add_functions = false;
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
-                                                        new_func.Skip = old_func.Skip;
-                                                    }
-                                                }
-                                                if (add_functions)
-                                                {
-                                                    new_name_expression = next_gen.NewNameExpression;
-                                                    new_name_functions = next_gen.NewNameFunctions;
-                                                    last_new_name = next_gen.LastNewName;
-                                                }
-                                                //else
-                                                //    return new Generalization[0];
-                                            }
-                                        }
-                                        break;
-                                    case Function.FunctionType.ConstantTextFunction: // if new generalization has a constant text function type
-                                        {
-                                            if (next_gen.LastNewName == next_expression)
-                                            {
-                                                SequentialCharFunction prev_func;
-                                                for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
-                                                {
-                                                    prev_func = (SequentialCharFunction)prev_gen.NewNameFunctions[n];
-                                                    prev_func.NumberOfOccurrences++;
-                                                }
-                                                new_name_expression = prev_gen.NewNameExpression;
-                                                new_name_functions = prev_gen.NewNameFunctions;
-                                                last_new_name = prev_gen.LastNewName;
-                                            }
-                                        }
-                                        break;
-                                }
-                                break;
-                            case Function.FunctionType.ConstantTextFunction: // if old generalization has a constant text function type
-                                switch (next_new_func_type)
-                                {
-                                    case Function.FunctionType.SequentialIntFunction: // if new generalization has a sequential integer function type
-                                        {
-                                            if (prev_gen.LastNewName == prev_expression)
-                                            {
-                                                ConstantTextFunction prev_func = (ConstantTextFunction)prev_gen.NewNameFunctions[0];
-                                                SequentialIntFunction new_func;
-                                                for (int n = 0; n < next_gen.NewNameFunctions.Length; n++)
-                                                {
-                                                    new_func = (SequentialIntFunction)next_gen.NewNameFunctions[n];
-                                                    new_func.NumberOfOccurrences = prev_func.NumberOfOccurrences + 1;
-                                                    new_func.Skip = prev_func.NumberOfOccurrences - 1;
-                                                }
-                                                new_name_expression = next_gen.NewNameExpression;
-                                                new_name_functions = next_gen.NewNameFunctions;
-                                                last_new_name = next_gen.LastNewName;
-                                            }
-                                        }
-                                        break;
-                                    case Function.FunctionType.SequentialCharFunction: // if new generalization has a sequential char function type
-                                        {
-                                            if (prev_gen.LastNewName == prev_expression)
-                                            {
-                                                ConstantTextFunction prev_func = (ConstantTextFunction)prev_gen.NewNameFunctions[0];
-                                                SequentialCharFunction new_func;
-                                                for (int n = 0; n < next_gen.NewNameFunctions.Length; n++)
-                                                {
-                                                    new_func = (SequentialCharFunction)next_gen.NewNameFunctions[n];
-                                                    new_func.NumberOfOccurrences = prev_func.NumberOfOccurrences + 1;
-                                                    new_func.Skip = prev_func.NumberOfOccurrences - 1;
-                                                }
-                                                new_name_expression = next_gen.NewNameExpression;
-                                                new_name_functions = next_gen.NewNameFunctions;
-                                                last_new_name = next_gen.LastNewName;
-                                            }
-                                        }
-                                        break;
-                                    case Function.FunctionType.ConstantTextFunction: // if new generalization has a constant text function type
-                                        {
-                                            if (prev_gen.LastNewName == prev_expression)
-                                            {
-                                                ConstantTextFunction prev_func = (ConstantTextFunction)prev_gen.NewNameFunctions[0];
-                                                ConstantTextFunction new_func;
-                                                for (int n = 0; n < next_gen.NewNameFunctions.Length; n++)
-                                                {
-                                                    new_func = (ConstantTextFunction)next_gen.NewNameFunctions[n];
-                                                    new_func.NumberOfOccurrences += prev_func.NumberOfOccurrences;
-                                                }
-                                                new_name_expression = next_gen.NewNameExpression;
-                                                new_name_functions = next_gen.NewNameFunctions;
-                                                last_new_name = next_gen.LastNewName;
-                                            }
-                                        }
-                                        break;
-                                }
-                                break;
-                        }
+                                                        common_exts.Clear();
+                                                        old_func = (ConstantFileExtFunction)prev_gen.OldNameFunctions[n];
+                                                        new_func = (ConstantFileExtFunction)next_gen.OldNameFunctions[n];
 
-                        if (old_name_functions.Length > 0 && new_name_functions.Length > 0)
-                        {
-                            FileRenameGeneralization g = new FileRenameGeneralization(old_name_expression, new_name_expression, old_name_functions, new_name_functions, last_old_name, last_new_name, next_gen.Time, prev_gen.Occurrences + 1);
-                            foreach (string file in prev_gen._past_files)
-                                g._past_files.Add(file);
-                            foreach (string file in next_gen._past_files)
-                                g._past_files.Add(file);
-                            gens.Add(g);
+                                                        // find common extensions
+                                                        foreach (string ext1 in old_func.Extensions)
+                                                        {
+                                                            foreach (string ext2 in new_func.Extensions)
+                                                            {
+                                                                if (ext1 == ext2)
+                                                                {
+                                                                    common_exts.Add(ext1);
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        if (common_exts.Count == 0 && old_func.Extensions.Length > 0 && old_func.Extensions.Length > 0)
+                                                        {
+                                                            add_functions = false;
+                                                            break;
+                                                        }
+                                                        else
+                                                        {
+                                                            new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
+                                                            new_func.Extensions = common_exts.ToArray<string>();
+                                                        }
+                                                    }
+                                                    if (add_functions)
+                                                    {
+                                                        old_name_expression = next_gen.OldNameExpression;
+                                                        old_name_functions = next_gen.OldNameFunctions;
+                                                        last_old_name = next_gen.LastOldName;
+                                                    }
+                                                    //else
+                                                    //    return new Generalization[0];
+                                                }
+                                            }
+                                            break;
+                                    }
+                                    break;
+                                case Function.FunctionType.SequentialIntFunction: // if old generalization has a sequential integer function type
+                                    switch (next_old_func_type)
+                                    {
+                                        case Function.FunctionType.SequentialIntFunction: // if new generalization has a sequential integer function type
+                                            {
+                                                if (prev_gen.OldNameFunctions.Length == next_gen.OldNameFunctions.Length)
+                                                {
+                                                    bool add_functions = true;
+                                                    SequentialIntFunction old_func;
+                                                    SequentialIntFunction new_func;
+                                                    for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
+                                                    {
+                                                        old_func = (SequentialIntFunction)prev_gen.OldNameFunctions[n];
+                                                        new_func = (SequentialIntFunction)next_gen.OldNameFunctions[n];
+                                                        if (new_func.LastValue != old_func.NextVal() ||
+                                                            new_func.Increment != old_func.Increment)
+                                                        {
+                                                            add_functions = false;
+                                                            break;
+                                                        }
+                                                        else
+                                                        {
+                                                            new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
+                                                            new_func.Skip = old_func.Skip;
+                                                        }
+                                                    }
+                                                    if (add_functions)
+                                                    {
+                                                        old_name_expression = next_gen.OldNameExpression;
+                                                        old_name_functions = next_gen.OldNameFunctions;
+                                                        last_old_name = next_gen.LastOldName;
+                                                    }
+                                                    //else
+                                                    //    return new Generalization[0];
+                                                }
+                                            }
+                                            break;
+                                        case Function.FunctionType.ConstantTextFunction: // if new generalization has a constant text function type
+                                            {
+                                                if (next_gen.LastOldName == next_expression)
+                                                {
+                                                    SequentialIntFunction prev_func;
+                                                    for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
+                                                    {
+                                                        prev_func = (SequentialIntFunction)prev_gen.OldNameFunctions[n];
+                                                        prev_func.NumberOfOccurrences++;
+                                                    }
+                                                    old_name_expression = prev_gen.OldNameExpression;
+                                                    old_name_functions = prev_gen.OldNameFunctions;
+                                                    last_old_name = prev_gen.LastOldName;
+                                                }
+                                            }
+                                            break;
+                                    }
+                                    break;
+                                case Function.FunctionType.SequentialCharFunction: // if old generalization has a sequential char function type
+                                    switch (next_old_func_type)
+                                    {
+                                        case Function.FunctionType.SequentialCharFunction: // if new generalization has a sequential char function type
+                                            {
+                                                if (prev_gen.OldNameFunctions.Length == next_gen.OldNameFunctions.Length)
+                                                {
+                                                    bool add_functions = true;
+                                                    SequentialCharFunction old_func;
+                                                    SequentialCharFunction new_func;
+                                                    for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
+                                                    {
+                                                        old_func = (SequentialCharFunction)prev_gen.OldNameFunctions[n];
+                                                        new_func = (SequentialCharFunction)next_gen.OldNameFunctions[n];
+                                                        if (new_func.LastValue != old_func.NextVal() ||
+                                                            new_func.Increment != old_func.Increment)
+                                                        {
+                                                            add_functions = false;
+                                                            break;
+                                                        }
+                                                        else
+                                                        {
+                                                            new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
+                                                            new_func.Skip = old_func.Skip;
+                                                        }
+                                                    }
+                                                    if (add_functions)
+                                                    {
+                                                        old_name_expression = next_gen.OldNameExpression;
+                                                        old_name_functions = next_gen.OldNameFunctions;
+                                                        last_old_name = next_gen.LastOldName;
+                                                    }
+                                                    //else
+                                                    //    return new Generalization[0];
+                                                }
+                                            }
+                                            break;
+                                        case Function.FunctionType.ConstantTextFunction: // if new generalization has a constant text function type
+                                            {
+                                                if (next_gen.LastOldName == next_expression)
+                                                {
+                                                    SequentialCharFunction prev_func;
+                                                    for (int n = 0; n < prev_gen.OldNameFunctions.Length; n++)
+                                                    {
+                                                        prev_func = (SequentialCharFunction)prev_gen.OldNameFunctions[n];
+                                                        prev_func.NumberOfOccurrences++;
+                                                    }
+                                                    old_name_expression = prev_gen.OldNameExpression;
+                                                    old_name_functions = prev_gen.OldNameFunctions;
+                                                    last_old_name = prev_gen.LastOldName;
+                                                }
+                                            }
+                                            break;
+                                    }
+                                    break;
+                                case Function.FunctionType.ConstantTextFunction: // if old generalization has a constant text function type
+                                    switch (next_old_func_type)
+                                    {
+                                        case Function.FunctionType.SequentialIntFunction: // if new generalization has a sequential integer function type
+                                            {
+                                                if (prev_gen.LastOldName == prev_expression)
+                                                {
+                                                    ConstantTextFunction prev_func = (ConstantTextFunction)prev_gen.OldNameFunctions[0];
+                                                    SequentialIntFunction new_func;
+                                                    for (int n = 0; n < next_gen.OldNameFunctions.Length; n++)
+                                                    {
+                                                        new_func = (SequentialIntFunction)next_gen.OldNameFunctions[n];
+                                                        new_func.NumberOfOccurrences = prev_func.NumberOfOccurrences + 1;
+                                                        new_func.Skip = prev_func.NumberOfOccurrences - 1;
+                                                    }
+                                                    old_name_expression = next_gen.OldNameExpression;
+                                                    old_name_functions = next_gen.OldNameFunctions;
+                                                    last_old_name = next_gen.LastOldName;
+                                                }
+                                            }
+                                            break;
+                                        case Function.FunctionType.SequentialCharFunction: // if new generalization has a sequential char function type
+                                            {
+                                                if (prev_gen.LastOldName == prev_expression)
+                                                {
+                                                    ConstantTextFunction prev_func = (ConstantTextFunction)prev_gen.OldNameFunctions[0];
+                                                    SequentialCharFunction new_func;
+                                                    for (int n = 0; n < next_gen.OldNameFunctions.Length; n++)
+                                                    {
+                                                        new_func = (SequentialCharFunction)next_gen.OldNameFunctions[n];
+                                                        new_func.NumberOfOccurrences = prev_func.NumberOfOccurrences + 1;
+                                                        new_func.Skip = prev_func.NumberOfOccurrences - 1;
+                                                    }
+                                                    old_name_expression = next_gen.OldNameExpression;
+                                                    old_name_functions = next_gen.OldNameFunctions;
+                                                    last_old_name = next_gen.LastOldName;
+                                                }
+                                            }
+                                            break;
+                                        case Function.FunctionType.ConstantTextFunction: // if new generalization has a constant text function type
+                                            {
+                                                if (prev_gen.LastOldName == prev_expression)
+                                                {
+                                                    ConstantTextFunction prev_func = (ConstantTextFunction)prev_gen.OldNameFunctions[0];
+                                                    ConstantTextFunction new_func;
+                                                    for (int n = 0; n < next_gen.OldNameFunctions.Length; n++)
+                                                    {
+                                                        new_func = (ConstantTextFunction)next_gen.OldNameFunctions[n];
+                                                        new_func.NumberOfOccurrences += prev_func.NumberOfOccurrences;
+                                                    }
+                                                    old_name_expression = next_gen.OldNameExpression;
+                                                    old_name_functions = next_gen.OldNameFunctions;
+                                                    last_old_name = next_gen.LastOldName;
+                                                }
+                                            }
+                                            break;
+                                    }
+                                    break;
+                            }
+
+                            // merge new names
+                            switch (prev_new_func_type)
+                            {
+                                case Function.FunctionType.ConstantFileDiffFunction: // if old generalization has a constant file diff function type
+                                    switch (next_new_func_type)
+                                    {
+                                        case Function.FunctionType.ConstantFileDiffFunction: // if new generalization has a constant file diff function type
+                                            {
+                                                if (prev_gen.NewNameFunctions.Length == next_gen.NewNameFunctions.Length)
+                                                {
+                                                    bool add_functions = true;
+                                                    ConstantFileDiffFunction old_func;
+                                                    ConstantFileDiffFunction new_func;
+                                                    HashSet<string> common_exts = new HashSet<string>();
+                                                    for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
+                                                    {
+                                                        common_exts.Clear();
+                                                        old_func = (ConstantFileDiffFunction)prev_gen.NewNameFunctions[n];
+                                                        new_func = (ConstantFileDiffFunction)next_gen.NewNameFunctions[n];
+
+                                                        // find common extensions
+                                                        foreach (string ext1 in old_func.Extensions)
+                                                        {
+                                                            foreach (string ext2 in new_func.Extensions)
+                                                            {
+                                                                if (ext1 == ext2)
+                                                                {
+                                                                    common_exts.Add(ext1);
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        HashSet<int> original_positions = new HashSet<int>();
+                                                        List<string> original_tokens = new List<string>();
+                                                        HashSet<int> replacement_positions = new HashSet<int>();
+                                                        List<string> replacement_tokens = new List<string>();
+
+                                                        // merge original tokens
+                                                        for (int l = 0; l < old_func.OriginalPositions.Length; l++)
+                                                        {
+                                                            for (int m = 0; m < new_func.OriginalPositions.Length; m++)
+                                                            {
+                                                                if (old_func.OriginalPositions[l] == new_func.OriginalPositions[m] &&
+                                                                    old_func.OriginalTokens[l] == new_func.OriginalTokens[m])
+                                                                {
+                                                                    if (!original_positions.Contains(new_func.OriginalPositions[m]))
+                                                                    {
+                                                                        original_positions.Add(new_func.OriginalPositions[m]);
+                                                                        original_tokens.Add(new_func.OriginalTokens[m]);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+
+                                                        // merge replacement tokens
+                                                        for (int l = 0; l < old_func.ReplacementPositions.Length; l++)
+                                                        {
+                                                            for (int m = 0; m < new_func.ReplacementPositions.Length; m++)
+                                                            {
+                                                                if (old_func.ReplacementPositions[l] == new_func.ReplacementPositions[m] &&
+                                                                    old_func.ReplacementTokens[l] == new_func.ReplacementTokens[m])
+                                                                {
+                                                                    if (!replacement_positions.Contains(new_func.ReplacementPositions[m]))
+                                                                    {
+                                                                        replacement_positions.Add(new_func.ReplacementPositions[m]);
+                                                                        replacement_tokens.Add(new_func.ReplacementTokens[m]);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+
+                                                        if (original_positions.Count == 0 || original_positions.Count != replacement_positions.Count)
+                                                        {
+                                                            add_functions = false;
+                                                            break;
+                                                        }
+                                                        else
+                                                        {
+                                                            new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
+                                                            new_func.Extensions = common_exts.ToArray<string>();
+                                                            new_func.OriginalPositions = original_positions.ToArray<int>();
+                                                            new_func.OriginalTokens = original_tokens.ToArray();
+                                                            new_func.ReplacementPositions = replacement_positions.ToArray<int>();
+                                                            new_func.ReplacementTokens = replacement_tokens.ToArray();
+                                                        }
+                                                    }
+                                                    if (add_functions)
+                                                    {
+                                                        new_name_expression = next_gen.NewNameExpression;
+                                                        new_name_functions = next_gen.NewNameFunctions;
+                                                        last_new_name = next_gen.LastNewName;
+                                                    }
+                                                    //else
+                                                    //    return new Generalization[0];
+                                                }
+                                            }
+                                            break;
+                                    }
+                                    break;
+                                case Function.FunctionType.ConstantFileFunction: // if old generalization has a constant file function type
+                                    switch (next_new_func_type)
+                                    {
+                                        case Function.FunctionType.ConstantFileFunction: // if new generalization has a constant file function type
+                                            {
+                                                if (prev_gen.NewNameFunctions.Length == next_gen.NewNameFunctions.Length)
+                                                {
+                                                    bool add_functions = true;
+                                                    ConstantFileFunction old_func;
+                                                    ConstantFileFunction new_func;
+                                                    HashSet<string> common_exts = new HashSet<string>();
+                                                    for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
+                                                    {
+                                                        common_exts.Clear();
+                                                        old_func = (ConstantFileFunction)prev_gen.NewNameFunctions[n];
+                                                        new_func = (ConstantFileFunction)next_gen.NewNameFunctions[n];
+
+                                                        // find common extensions
+                                                        foreach (string ext1 in old_func.Extensions)
+                                                        {
+                                                            foreach (string ext2 in new_func.Extensions)
+                                                            {
+                                                                if (ext1 == ext2)
+                                                                {
+                                                                    common_exts.Add(ext1);
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        // find common file name beginning and ending
+                                                        if (new_func.Biginning != old_func.Biginning && new_func.Ending != old_func.Ending)
+                                                        {
+                                                            add_functions = false;
+                                                            break;
+                                                        }
+                                                        else
+                                                        {
+                                                            new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
+                                                            new_func.Extensions = common_exts.ToArray<string>();
+                                                            if (new_func.Biginning != old_func.Biginning)
+                                                                new_func.Biginning = string.Empty;
+                                                            else if (new_func.Ending != old_func.Ending)
+                                                                new_func.Ending = string.Empty;
+                                                        }
+                                                    }
+                                                    if (add_functions)
+                                                    {
+                                                        new_name_expression = next_gen.NewNameExpression;
+                                                        new_name_functions = next_gen.NewNameFunctions;
+                                                        last_new_name = next_gen.LastNewName;
+                                                    }
+                                                    //else
+                                                    //    return new Generalization[0];
+                                                }
+                                            }
+                                            break;
+                                    }
+                                    break;
+                                case Function.FunctionType.ConstantFileFunctionEx: // if old generalization has a constant file function ex type
+                                    switch (next_new_func_type)
+                                    {
+                                        case Function.FunctionType.ConstantFileFunctionEx: // if new generalization has a constant file function ex type
+                                            {
+                                                if (prev_gen.NewNameFunctions.Length == next_gen.NewNameFunctions.Length)
+                                                {
+                                                    bool add_functions = true;
+                                                    ConstantFileFunctionEx old_func;
+                                                    ConstantFileFunctionEx new_func;
+                                                    HashSet<string> common_exts = new HashSet<string>();
+                                                    HashSet<string> common_tokens = new HashSet<string>();
+
+                                                    for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
+                                                    {
+                                                        common_exts.Clear();
+                                                        common_tokens.Clear();
+                                                        old_func = (ConstantFileFunctionEx)prev_gen.NewNameFunctions[n];
+                                                        new_func = (ConstantFileFunctionEx)next_gen.NewNameFunctions[n];
+
+                                                        // find common extensions
+                                                        foreach (string ext1 in old_func.Extensions)
+                                                        {
+                                                            foreach (string ext2 in new_func.Extensions)
+                                                            {
+                                                                if (ext1 == ext2)
+                                                                {
+                                                                    common_exts.Add(ext1);
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        // find common file name tokens
+                                                        foreach (string token1 in old_func.Contents)
+                                                        {
+                                                            foreach (string token2 in new_func.Contents)
+                                                            {
+                                                                if (token1 == token2)
+                                                                {
+                                                                    common_tokens.Add(token1);
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        if (common_tokens.Count == 0)
+                                                        {
+                                                            add_functions = false;
+                                                            break;
+                                                        }
+                                                        else
+                                                        {
+                                                            new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
+                                                            new_func.Extensions = common_exts.ToArray<string>();
+                                                            new_func.Contents = common_tokens.ToArray<string>();
+                                                        }
+                                                    }
+                                                    if (add_functions)
+                                                    {
+                                                        new_name_expression = next_gen.NewNameExpression;
+                                                        new_name_functions = next_gen.NewNameFunctions;
+                                                        last_new_name = next_gen.LastNewName;
+                                                    }
+                                                    //else
+                                                    //    return new Generalization[0];
+                                                }
+                                            }
+                                            break;
+                                    }
+                                    break;
+                                case Function.FunctionType.ConstantFileExtFunction: // if old generalization has a constant file extension function type
+                                    switch (next_new_func_type)
+                                    {
+                                        case Function.FunctionType.ConstantFileExtFunction: // if new generalization has a constant file extension function type
+                                            {
+                                                if (prev_gen.NewNameFunctions.Length == next_gen.NewNameFunctions.Length)
+                                                {
+                                                    bool add_functions = true;
+                                                    ConstantFileExtFunction old_func;
+                                                    ConstantFileExtFunction new_func;
+                                                    HashSet<string> common_exts = new HashSet<string>();
+
+                                                    for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
+                                                    {
+                                                        common_exts.Clear();
+                                                        old_func = (ConstantFileExtFunction)prev_gen.NewNameFunctions[n];
+                                                        new_func = (ConstantFileExtFunction)next_gen.NewNameFunctions[n];
+
+                                                        // find common extensions
+                                                        foreach (string ext1 in old_func.Extensions)
+                                                        {
+                                                            foreach (string ext2 in new_func.Extensions)
+                                                            {
+                                                                if (ext1 == ext2)
+                                                                {
+                                                                    common_exts.Add(ext1);
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        if (common_exts.Count == 0)
+                                                        {
+                                                            add_functions = false;
+                                                            break;
+                                                        }
+                                                        else
+                                                        {
+                                                            new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
+                                                            new_func.Extensions = common_exts.ToArray<string>();
+                                                        }
+                                                    }
+                                                    if (add_functions)
+                                                    {
+                                                        new_name_expression = next_gen.NewNameExpression;
+                                                        new_name_functions = next_gen.NewNameFunctions;
+                                                        last_new_name = next_gen.LastNewName;
+                                                    }
+                                                    //else
+                                                    //    return new Generalization[0];
+                                                }
+                                            }
+                                            break;
+                                    }
+                                    break;
+                                case Function.FunctionType.SequentialIntFunction: // if old generalization has a sequential integer function type
+                                    switch (next_new_func_type)
+                                    {
+                                        case Function.FunctionType.SequentialIntFunction: // if new generalization has a sequential integer function type
+                                            {
+                                                if (prev_gen.NewNameFunctions.Length == next_gen.NewNameFunctions.Length)
+                                                {
+                                                    bool add_functions = true;
+                                                    SequentialIntFunction old_func;
+                                                    SequentialIntFunction new_func;
+                                                    for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
+                                                    {
+                                                        old_func = (SequentialIntFunction)prev_gen.NewNameFunctions[n];
+                                                        new_func = (SequentialIntFunction)next_gen.NewNameFunctions[n];
+                                                        if (new_func.LastValue != old_func.NextVal() ||
+                                                            new_func.Increment != old_func.Increment)
+                                                        {
+                                                            add_functions = false;
+                                                            break;
+                                                        }
+                                                        else
+                                                        {
+                                                            new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
+                                                            new_func.Skip = old_func.Skip;
+                                                        }
+                                                    }
+                                                    if (add_functions)
+                                                    {
+                                                        new_name_expression = next_gen.NewNameExpression;
+                                                        new_name_functions = next_gen.NewNameFunctions;
+                                                        last_new_name = next_gen.LastNewName;
+                                                    }
+                                                    //else
+                                                    //    return new Generalization[0];
+                                                }
+                                            }
+                                            break;
+                                        case Function.FunctionType.ConstantTextFunction: // if new generalization has a constant text function type
+                                            {
+                                                if (next_gen.LastNewName == next_expression)
+                                                {
+                                                    SequentialIntFunction prev_func;
+                                                    for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
+                                                    {
+                                                        prev_func = (SequentialIntFunction)prev_gen.NewNameFunctions[n];
+                                                        prev_func.NumberOfOccurrences++;
+                                                    }
+                                                    new_name_expression = prev_gen.NewNameExpression;
+                                                    new_name_functions = prev_gen.NewNameFunctions;
+                                                    last_new_name = prev_gen.LastNewName;
+                                                }
+                                            }
+                                            break;
+                                    }
+                                    break;
+                                case Function.FunctionType.SequentialCharFunction: // if old generalization has a sequential char function type
+                                    switch (next_new_func_type)
+                                    {
+                                        case Function.FunctionType.SequentialCharFunction: // if new generalization has a sequential char function type
+                                            {
+                                                if (prev_gen.NewNameFunctions.Length == next_gen.NewNameFunctions.Length)
+                                                {
+                                                    bool add_functions = true;
+                                                    SequentialCharFunction old_func;
+                                                    SequentialCharFunction new_func;
+                                                    for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
+                                                    {
+                                                        old_func = (SequentialCharFunction)prev_gen.NewNameFunctions[n];
+                                                        new_func = (SequentialCharFunction)next_gen.NewNameFunctions[n];
+                                                        if (new_func.LastValue != old_func.NextVal() ||
+                                                            new_func.Increment != old_func.Increment)
+                                                        {
+                                                            add_functions = false;
+                                                            break;
+                                                        }
+                                                        else
+                                                        {
+                                                            new_func.NumberOfOccurrences = old_func.NumberOfOccurrences + 1;
+                                                            new_func.Skip = old_func.Skip;
+                                                        }
+                                                    }
+                                                    if (add_functions)
+                                                    {
+                                                        new_name_expression = next_gen.NewNameExpression;
+                                                        new_name_functions = next_gen.NewNameFunctions;
+                                                        last_new_name = next_gen.LastNewName;
+                                                    }
+                                                    //else
+                                                    //    return new Generalization[0];
+                                                }
+                                            }
+                                            break;
+                                        case Function.FunctionType.ConstantTextFunction: // if new generalization has a constant text function type
+                                            {
+                                                if (next_gen.LastNewName == next_expression)
+                                                {
+                                                    SequentialCharFunction prev_func;
+                                                    for (int n = 0; n < prev_gen.NewNameFunctions.Length; n++)
+                                                    {
+                                                        prev_func = (SequentialCharFunction)prev_gen.NewNameFunctions[n];
+                                                        prev_func.NumberOfOccurrences++;
+                                                    }
+                                                    new_name_expression = prev_gen.NewNameExpression;
+                                                    new_name_functions = prev_gen.NewNameFunctions;
+                                                    last_new_name = prev_gen.LastNewName;
+                                                }
+                                            }
+                                            break;
+                                    }
+                                    break;
+                                case Function.FunctionType.ConstantTextFunction: // if old generalization has a constant text function type
+                                    switch (next_new_func_type)
+                                    {
+                                        case Function.FunctionType.SequentialIntFunction: // if new generalization has a sequential integer function type
+                                            {
+                                                if (prev_gen.LastNewName == prev_expression)
+                                                {
+                                                    ConstantTextFunction prev_func = (ConstantTextFunction)prev_gen.NewNameFunctions[0];
+                                                    SequentialIntFunction new_func;
+                                                    for (int n = 0; n < next_gen.NewNameFunctions.Length; n++)
+                                                    {
+                                                        new_func = (SequentialIntFunction)next_gen.NewNameFunctions[n];
+                                                        new_func.NumberOfOccurrences = prev_func.NumberOfOccurrences + 1;
+                                                        new_func.Skip = prev_func.NumberOfOccurrences - 1;
+                                                    }
+                                                    new_name_expression = next_gen.NewNameExpression;
+                                                    new_name_functions = next_gen.NewNameFunctions;
+                                                    last_new_name = next_gen.LastNewName;
+                                                }
+                                            }
+                                            break;
+                                        case Function.FunctionType.SequentialCharFunction: // if new generalization has a sequential char function type
+                                            {
+                                                if (prev_gen.LastNewName == prev_expression)
+                                                {
+                                                    ConstantTextFunction prev_func = (ConstantTextFunction)prev_gen.NewNameFunctions[0];
+                                                    SequentialCharFunction new_func;
+                                                    for (int n = 0; n < next_gen.NewNameFunctions.Length; n++)
+                                                    {
+                                                        new_func = (SequentialCharFunction)next_gen.NewNameFunctions[n];
+                                                        new_func.NumberOfOccurrences = prev_func.NumberOfOccurrences + 1;
+                                                        new_func.Skip = prev_func.NumberOfOccurrences - 1;
+                                                    }
+                                                    new_name_expression = next_gen.NewNameExpression;
+                                                    new_name_functions = next_gen.NewNameFunctions;
+                                                    last_new_name = next_gen.LastNewName;
+                                                }
+                                            }
+                                            break;
+                                        case Function.FunctionType.ConstantTextFunction: // if new generalization has a constant text function type
+                                            {
+                                                if (prev_gen.LastNewName == prev_expression)
+                                                {
+                                                    ConstantTextFunction prev_func = (ConstantTextFunction)prev_gen.NewNameFunctions[0];
+                                                    ConstantTextFunction new_func;
+                                                    for (int n = 0; n < next_gen.NewNameFunctions.Length; n++)
+                                                    {
+                                                        new_func = (ConstantTextFunction)next_gen.NewNameFunctions[n];
+                                                        new_func.NumberOfOccurrences += prev_func.NumberOfOccurrences;
+                                                    }
+                                                    new_name_expression = next_gen.NewNameExpression;
+                                                    new_name_functions = next_gen.NewNameFunctions;
+                                                    last_new_name = next_gen.LastNewName;
+                                                }
+                                            }
+                                            break;
+                                    }
+                                    break;
+                            }
+
+                            if (old_name_functions.Length > 0 && new_name_functions.Length > 0)
+                            {
+                                FileRenameGeneralization g = new FileRenameGeneralization(old_name_expression, new_name_expression, old_name_functions, new_name_functions, last_old_name, last_new_name, next_gen.Time, prev_gen.Occurrences + 1);
+                                foreach (string file in prev_gen._past_files)
+                                    g._past_files.Add(file);
+                                foreach (string file in next_gen._past_files)
+                                    g._past_files.Add(file);
+                                gens.Add(g);
+                            }
                         }
                     }
+                }
+                catch (Exception e)
+                {
+                    System.Windows.Forms.MessageBox.Show("Blaze found the following error: " + Environment.NewLine + e.Message +
+                                                            Environment.NewLine + "Additional data:" + Environment.NewLine +
+                                                            "pg_onf.l = " + (prev_gen.OldNameFunctions == null ? "null" : prev_gen.OldNameFunctions.Length.ToString()) +
+                                                            "pg_nnf.l = " + (prev_gen.NewNameFunctions == null ? "null" : prev_gen.NewNameFunctions.Length.ToString()) +
+                                                            "ng_onf.l = " + (next_gen.OldNameFunctions == null ? "null" : next_gen.OldNameFunctions.Length.ToString()) +
+                                                            "ng_nnf.l = " + (next_gen.NewNameFunctions == null ? "null" : next_gen.NewNameFunctions.Length.ToString()) +
+                                                            "Please post this on the bug tracker on SourceForge", "Error",
+                                                            System.Windows.Forms.MessageBoxButtons.OK);
                 }
             }
             return gens.ToArray();
