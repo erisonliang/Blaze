@@ -6,7 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Timers;
 using SystemCore.CommonTypes;
+using SystemCore.SystemAbstraction.WindowManagement;
 using Configurator;
+using ContextLib;
 using IronPython.Hosting;
 using IronPython.Runtime;
 using Microsoft.Scripting;
@@ -155,6 +157,8 @@ namespace IronPythonPlugins
                 
             scope.SetVariable("IIronPythonCommand", ClrModule.GetPythonType(typeof(IIronPythonCommand)));
             scope.SetVariable("BaseIronPythonCommand", ClrModule.GetPythonType(typeof(BaseIronPythonCommand)));
+            scope.SetVariable("UserContext", UserContext.Instance);
+            scope.SetVariable("WindowUtility", WindowUtility.Instance);
             scope.SetVariable("clr", _engine.GetClrModule());
             code.Execute(scope);
                 
