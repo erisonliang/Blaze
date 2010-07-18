@@ -17,6 +17,10 @@ class Putty(BaseIronPythonCommand):
         result = filter(lambda x: x.startswith(str), self.sessionNames)
         
         if len(result) > 0: return "putty "+result[0]
+
+        result = filter(lambda x: str in x, self.sessionNames)
+        if len(result) > 0: return "putty "+result[0]
+
         else: return "putty "+str
 
     def Execute(self, args):

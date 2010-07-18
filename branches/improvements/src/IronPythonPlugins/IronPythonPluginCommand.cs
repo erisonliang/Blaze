@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using SystemCore.CommonTypes;
 
@@ -29,6 +30,13 @@ namespace IronPythonPlugins
                                        }
                                        catch (Exception e)
                                        {
+                                           Debug.Write(string.Format("Error executing {0}:{1}", pythonFile.FullName,
+                                                                     e.Message));
+                                           Debug.Write(e.StackTrace);
+                                           if(e.InnerException != null)
+                                           {
+                                               Debug.Write(e.InnerException);
+                                           }
                                            SetDescriptionDelegate(s => string.Format("Error in past execution: {0}", e.Message));
                                        }
                                    });
