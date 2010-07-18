@@ -1,0 +1,15 @@
+from Microsoft.Win32 import Registry
+from System.Diagnostics import Debug, Process
+
+class EditWithNotepad2(BaseIronPythonCommand):
+    def __init__(self):
+        pass
+
+    @property
+    def Name(self):
+        return "edit with notepad2"
+
+    def Execute(self, args):
+        for path in UserContext.GetExplorerSelectedItems(True):
+            Debug.Write("edit "+path)
+            Process.Start("notepad2", path)

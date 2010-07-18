@@ -79,6 +79,10 @@
       <Project>{1E842C5E-9B48-48F7-9C87-927ADD3807B1}</Project>
       <Name>Configurator</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ContextLib\ContextLib.csproj">
+      <Project>{80E8CF2C-F505-42F1-88A8-3AA019C0BC73}</Project>
+      <Name>ContextLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SystemCore\SystemCore.csproj">
       <Project>{CF005F91-D831-4643-AB04-2B6BDDA7C3A3}</Project>
       <Name>SystemCore</Name>
@@ -103,6 +107,7 @@
     <None Include="IronPythonPlugins\Putty.ipy">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="IronPythonPlugins\RandomText.ipy" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
