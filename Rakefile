@@ -19,11 +19,12 @@ task :build_portable do
   plugins_directory = File.join(output_directory,"Plugins")
   mkdir_p plugins_directory
 
+  
   cp_r(Dir.glob(File.join(build_directory,"Plugins/*.dll")), plugins_directory)
-  cp_r(File.join(build_directory, "Plugins/IronPythonPlugins"), File.join(output_directory, "Plugins"))
   cp_r(File.join(build_directory, "Skins"), output_directory)
   cp_r(File.join(build_directory, "Utilities"), output_directory)
-
+  
+  system "junction #{output_directory}\\Plugins\\IronPythonPlugins #{build_directory}\\Plugins\\IronPythonPlugins"
 end
 
 task :build do
