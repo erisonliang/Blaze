@@ -472,7 +472,7 @@ namespace ContextLib
         /// <remarks>This method only works for Internet Explorer.</remarks>
         public string GetBrowserContent(bool onTop, bool html)
         {
-            VWindow top_window = WindowUtility.Instance.GetTopWindow("IEFrame");
+            VWindow top_window = WindowUtility.Instance.GetTopWindow("iexplore");
             bool is_browser_top_window = (top_window.Zorder == 0 ? true : false);
             if (onTop)
             {
@@ -510,7 +510,7 @@ namespace ContextLib
         /// <remarks>This method only works for Internet Explorer.</remarks>
         public string GetBrowserSelectedContent(bool onTop, bool html)
         {
-            VWindow top_window = WindowUtility.Instance.GetTopWindow("IEFrame");
+            VWindow top_window = WindowUtility.Instance.GetTopWindow("iexplore");
             bool is_browser_top_window = (top_window.Zorder == 0 ? true : false);
             if (onTop)
             {

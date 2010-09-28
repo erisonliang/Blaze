@@ -18,6 +18,7 @@ using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace ContextLib.DataContainers.Multimedia
 {
@@ -149,12 +150,29 @@ namespace ContextLib.DataContainers.Multimedia
         /// </summary>
         public void PopulateFromClipboard()
         {
-            _text = Clipboard.GetText();
-            StringCollection sc = Clipboard.GetFileDropList();
-            _fileList = new string[sc.Count];
-            sc.CopyTo(_fileList, 0);
-            _image = Clipboard.GetImage();
-            _audio = Clipboard.GetAudioStream();
+            Thread staThread = new Thread(
+                delegate()
+                {
+                    try
+                    {
+                        _text = Clipboard.GetText();
+                        StringCollection sc = Clipboard.GetFileDropList();
+                        _fileList = new string[sc.Count];
+                        sc.CopyTo(_fileList, 0);
+                        _image = Clipboard.GetImage();
+                        _audio = Clipboard.GetAudioStream();
+                    }
+                    catch
+                    {
+                        _text = string.Empty;
+                        _fileList = new string[0];
+                        _image = null;
+                        _audio = null;
+                    }
+                });
+            staThread.SetApartmentState(ApartmentState.STA);
+            staThread.Start();
+            staThread.Join();
         }
 
         /// <summary>
